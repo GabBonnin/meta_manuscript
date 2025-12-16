@@ -1,0 +1,498 @@
+---
+title: "META preprocessing"
+author: "Gabriel Bonnin"
+execute:
+  echo: true
+---
+
+# Preprocessing
+
+## prepare self-report rating scales from the outpatient clinic
+
+```{r}
+library(readxl)
+library(tidyverse)
+```
+
+### Demographics and context factors
+
+```{r}
+patient_kodap <- read_xlsx("/Volumes/meta_data/raw/raw_selfreport/Patient_KODAP_ab2017.xlsx",
+                        col_names = c("case_nr", "patient_chiffre","patient_sex","patient_dateofbirth","assessment_date","assessment_type","assessment_id","assessment_name","item_no","answerscale_value","freecomment","therapist_no","therapist_sex","therapist_dateofbirth"),
+                        skip = 1)
+
+therapist_kodap <- read_xlsx("/Volumes/meta_data/raw/raw_selfreport/Therapeuten_KODAP_ab2017.xlsx",
+                        col_names = c("case_nr", "patient_chiffre","patient_sex","patient_dateofbirth","assessment_date","assessment_type","assessment_id","assessment_name","item_no","answerscale_value","freecomment","therapist_no","therapist_sex","therapist_dateofbirth"),
+                        skip = 1)
+
+# show different assessment names (e.g. pre and post assesments)
+unique(patient_kodap$assessment_name)
+
+# show different assessment types (e.g. standardised assessment time points)
+unique(patient_kodap$assessment_type)
+
+#how many patients are there for each assessment type?
+patient_kodap |>
+  summarise(
+    n_patienten = n_distinct(case_nr),
+    .by = assessment_type
+  ) |> 
+  arrange(desc(n_patienten))
+
+#remove non-relevant assessment types (e.g.from children and adolesent database, group sessions, assessment types with very little cases) and assessment names (e.g. kodap post)
+patient_kodap_pre_demographics <- patient_kodap |> 
+  filter(assessment_name == "Patientenfragebogen KODAP_Pre" & assessment_type == "Diagnostisches Interview ab 01.04.2017")
+
+# pivot wider
+patient_kodap_pre_demographics_wider <- patient_kodap_pre_demographics |> 
+  filter(item_no != 1 & item_no!= 2) |>  #remove irrelevant items (1 = date of birth, 2 = sex)
+  pivot_wider(id_cols = c(case_nr), names_from = item_no, values_from = answerscale_value) |> # remove patient_chiffre and other redundant variables (date of birth, sex, etc.) for merging with other self-rating df's 
+  rename(marital_status = "3", in_relationship = "4", general_education = "5", vocational_qualification = "6", work_ability_status = "7")
+
+# transform to factors with labels
+
+# set labels
+
+marital_status_labels <- c("0" = "single", "1" = "married", "2" = "divorced", "3" = "seperated", "4" = "widowed", "5" = "other")
+
+relationship_labels <- c("0" = "yes", "1" = "no")
+
+general_education_labels <- c("0" = "student", "1" = "no school-leaving certificate", "2" = "lower secondary school certificate", "3" = "intermediate secondary school certificate", "4" = "higher education entrance qualification", "5" = "other") 
+
+vocational_qualification_labels  <- c("0" = "Currently in vocational training or studying", "1" = "No vocational qualification", "2" = "Apprenticeship / vocational training", "3" = "University or university of applied sciences degree", "4" = "Other") 
+
+work_ability_labels <- c("0" = "Able to work", "1" = "Unable to work (on sick leave)", "2" = "Disability pension", "3" = "Old-age pension", "4" = "Other") 
+
+# transform to factor and add labels
+
+patient_kodap_pre_demographics_wider$marital_status <- factor(patient_kodap_pre_demographics_wider$marital_status, levels = as.numeric(names(marital_status_labels)), labels = marital_status_labels)
+
+patient_kodap_pre_demographics_wider$in_relationship <- factor(patient_kodap_pre_demographics_wider$in_relationship, levels = as.numeric(names(relationship_labels)), labels = relationship_labels)
+
+patient_kodap_pre_demographics_wider$general_education <- factor(patient_kodap_pre_demographics_wider$general_education, levels = as.numeric(names(general_education_labels)), labels = general_education_labels)
+
+patient_kodap_pre_demographics_wider$vocational_qualification <- factor(patient_kodap_pre_demographics_wider$vocational_qualification, levels = as.numeric(names(vocational_qualification_labels)), labels = vocational_qualification_labels)
+
+patient_kodap_pre_demographics_wider$work_ability_status <- factor(patient_kodap_pre_demographics_wider$work_ability_status, levels = as.numeric(names(work_ability_labels)), labels = work_ability_labels)
+
+# show different assessment names (e.g. pre and post assesments)
+unique(therapist_kodap$assessment_name)
+
+# show different assessment types (e.g. standardised assessment time points)
+unique(therapist_kodap$assessment_type)
+
+#how many patients are there for each assessment type?
+therapist_kodap |>
+  summarise(
+    n_patienten = n_distinct(case_nr),
+    .by = assessment_type
+  ) |> 
+  arrange(desc(n_patienten))
+
+#remove non-relevant assessment types (e.g.from children and adolesent database, group sessions, assessment types with very little cases) and assessment names (e.g. kodap post)
+therapist_kodap_pre_context <- therapist_kodap |> 
+  filter(assessment_name == "Therapeutenfragebogen KODAP_Pre" & assessment_type == "Diagnostisches Interview ab 01.04.2017")
+
+# pivot wider
+therapist_kodap_pre_context_wider <- therapist_kodap_pre_context |> 
+  filter(item_no == 5 | item_no == 6 | item_no == 7 | item_no == 8) |>  #filter relevant items
+  pivot_wider(id_cols = c(case_nr), names_from = item_no, values_from = c(answerscale_value, freecomment)) |>  #remove patient_chiffre and other redundant variables (date of birth, sex, etc.) for merging with other self-rating df's 
+  select(case_nr, answerscale_value_5, answerscale_value_8, freecomment_6) |> #remove irrelevant variables
+  rename(previous_psychotherapy = "answerscale_value_5", icd10_code = "freecomment_6", CGI_severity = "answerscale_value_8")
+
+# transform to factors with labels
+
+previous_psychotherapy_labels <- c("0" = "no prior treatment", "1" = "outpatient psychotherapy", "2" = "inpatient psychotherapy", "3" = "both", "4" = "exact specification not available")
+
+CGI_severity_labels <- c("0" = "", "1" = "Normal, not at all ill", "2" = "Borderline mentally ill", "3" = "Mildly ill", "4" = "Moderately ill", "5" = "Markedly ill", "6" = "Severely ill", "7" = "Among the most extremely ill patients")
+
+therapist_kodap_pre_context_wider$previous_psychotherapy <- factor(therapist_kodap_pre_context_wider$previous_psychotherapy, levels = as.numeric(names(previous_psychotherapy_labels)), labels = previous_psychotherapy_labels)
+
+therapist_kodap_pre_context_wider$CGI_severity <- factor(therapist_kodap_pre_context_wider$CGI_severity, levels = as.numeric(names(CGI_severity_labels)), labels = CGI_severity_labels)
+```
+
+### Diagnosis
+
+```{r}
+dsmv_master <- read_xlsx("/Volumes/meta_data/raw/raw_selfreport/DSM_V_ab2017.xlsx",
+                        col_names = c("case_nr", "patient_chiffre","patient_sex","patient_dateofbirth","assessment_date","assessment_type","assessment_id","assessment_name","item_no","treenodepath","answerscale_value","therapist_no","therapist_sex","therapist_dateofbirth"),
+                        skip = 1)
+
+
+# this table codes the answescale_value of item_no 5 to a dsm-v diagnosis
+dsmv_codebook <- read_xlsx("/Volumes/meta_data/raw/raw_selfreport/DSMV_Diagno_inhalt_Code.xlsx",
+                           col_names = c("scalevalue","dsmv_diagnosis","assessment_id"),
+                           skip = 1)
+
+#how many patients are there for each assessment type?
+dsmv_master |> 
+  summarise(
+    n_patients = n_distinct(case_nr),
+    .by = assessment_type
+  ) |> 
+  arrange(desc(n_patients))
+
+#work with assessment_type "Diagnostisches Interview ab ..."
+
+#remove non-relevant assessment types (e.g.from children and adolesent database, assessment types with very little cases) and assessment names ()
+dsmv_filtered <- dsmv_master |> 
+  filter(assessment_name == "DSM V" & assessment_type == "Diagnostisches Interview ab 01.04.2017")
+
+dsmv_filtered_wider <- dsmv_filtered |> 
+  pivot_wider(id_cols = c(case_nr, patient_chiffre, patient_dateofbirth, patient_sex, therapist_dateofbirth, therapist_sex, assessment_date), names_from = item_no, values_from = c(treenodepath, answerscale_value)) |> 
+  unnest_wider(answerscale_value_5, names_sep = "_") |> #split up list-columns for cases with comorbidity
+  unnest_wider(answerscale_value_6, names_sep = "_") |>
+  unnest_wider(answerscale_value_7, names_sep = "_") |>
+  unnest_wider(answerscale_value_8, names_sep = "_") |>
+  unnest_wider(answerscale_value_9, names_sep = "_") |>
+  unnest_wider(answerscale_value_10, names_sep = "_") |> 
+  rename(assessment_date_DI = "assessment_date", dsmv_diagnosis_1 = "answerscale_value_5_1", dsmv_diagnosis_2 = "answerscale_value_5_2",dsmv_diagnosis_3 = "answerscale_value_5_3",dsmv_diagnosis_4 = "answerscale_value_5_4",dsmv_diagnosis_5 = "answerscale_value_5_5",dsmv_diagnosis_6 = "answerscale_value_5_6",dsmv_diagnosis_7 = "answerscale_value_5_7", dsmv_diagnosis_1_severity = "answerscale_value_6_1", dsmv_diagnosis_2_severity = "answerscale_value_6_2", dsmv_diagnosis_3_severity = "answerscale_value_6_3", dsmv_diagnosis_4_severity = "answerscale_value_6_4", dsmv_diagnosis_5_severity = "answerscale_value_6_5", dsmv_diagnosis_6_severity = "answerscale_value_6_6", dsmv_diagnosis_7_severity = "answerscale_value_6_7", dsmv_diagnosis_1_confidence = "answerscale_value_7_1", dsmv_diagnosis_2_confidence = "answerscale_value_7_2", dsmv_diagnosis_3_confidence = "answerscale_value_7_3", dsmv_diagnosis_4_confidence = "answerscale_value_7_4", dsmv_diagnosis_5_confidence = "answerscale_value_7_5", dsmv_diagnosis_6_confidence = "answerscale_value_7_6", dsmv_diagnosis_7_confidence = "answerscale_value_7_7", dsmv_diagnosis_1_type = "answerscale_value_8_1", dsmv_diagnosis_2_type = "answerscale_value_8_2", dsmv_diagnosis_3_type = "answerscale_value_8_3", dsmv_diagnosis_4_type = "answerscale_value_8_4", dsmv_diagnosis_5_type = "answerscale_value_8_5", dsmv_diagnosis_6_type = "answerscale_value_8_6", dsmv_diagnosis_7_type = "answerscale_value_8_7", dsmv_diagnosis_1_reason_for_therapy = "answerscale_value_9_1", dsmv_diagnosis_2_reason_for_therapy = "answerscale_value_9_2", dsmv_diagnosis_3_reason_for_therapy = "answerscale_value_9_3", dsmv_diagnosis_4_reason_for_therapy = "answerscale_value_9_4") |> 
+  select(case_nr, patient_chiffre, patient_dateofbirth, patient_sex, therapist_dateofbirth, therapist_sex, assessment_date_DI, dsmv_diagnosis_1, dsmv_diagnosis_1_severity, dsmv_diagnosis_1_confidence, dsmv_diagnosis_1_type, dsmv_diagnosis_1_reason_for_therapy, dsmv_diagnosis_2, dsmv_diagnosis_2_severity, dsmv_diagnosis_2_confidence, dsmv_diagnosis_2_type, dsmv_diagnosis_2_reason_for_therapy, dsmv_diagnosis_3, dsmv_diagnosis_3_severity, dsmv_diagnosis_3_confidence, dsmv_diagnosis_3_type, dsmv_diagnosis_3_reason_for_therapy, dsmv_diagnosis_4, dsmv_diagnosis_4_severity, dsmv_diagnosis_4_confidence, dsmv_diagnosis_4_type, dsmv_diagnosis_4_reason_for_therapy, dsmv_diagnosis_5, dsmv_diagnosis_5_severity, dsmv_diagnosis_5_confidence, dsmv_diagnosis_5_type, dsmv_diagnosis_6, dsmv_diagnosis_6_severity, dsmv_diagnosis_6_confidence, dsmv_diagnosis_6_type, dsmv_diagnosis_7, dsmv_diagnosis_7_severity, dsmv_diagnosis_7_confidence, dsmv_diagnosis_7_type)
+
+# replace arbitrary numeric codes with diagnostic labels from the codebook
+# create lookup vector from codebook
+lookup <- setNames(dsmv_codebook$dsmv_diagnosis, dsmv_codebook$scalevalue)
+
+# replace numeric codes with labels from lookup vector
+dsmv_filtered_wider_labeled <- dsmv_filtered_wider |> 
+  mutate(across(c(dsmv_diagnosis_1, dsmv_diagnosis_2, dsmv_diagnosis_3, dsmv_diagnosis_4, dsmv_diagnosis_5, dsmv_diagnosis_6, dsmv_diagnosis_7),
+                ~ lookup[as.character(.)]))
+
+# transform to factors with labels
+#patient_sex
+dsmv_filtered_wider_labeled$patient_sex <- factor(
+  tolower(dsmv_filtered_wider_labeled$patient_sex), # convert "M"→"m", "F"→"f"
+  levels = c("m", "w"),
+  labels = c("male", "female")
+)
+
+#therapist_sex
+dsmv_filtered_wider_labeled$therapist_sex <- factor(
+  tolower(dsmv_filtered_wider_labeled$therapist_sex),
+  levels = c("m", "w"),
+  labels = c("male", "female")
+)
+
+# set labels
+
+dsmv_diagnosis_type_labels <- c("1" = "primary diagnosis", "2" = "secondary diagnosis", "3" = "lifetime diagnosis")
+
+dsmv_diagnosis_reason_labels <- c("1" = "yes", "2" = "no")
+
+dsmv_filtered_wider_labeled$dsmv_diagnosis_1_type <- factor(dsmv_filtered_wider_labeled$dsmv_diagnosis_1_type, levels = as.numeric(names(dsmv_diagnosis_type_labels)), labels = dsmv_diagnosis_type_labels)
+
+dsmv_filtered_wider_labeled$dsmv_diagnosis_2_type <- factor(dsmv_filtered_wider_labeled$dsmv_diagnosis_2_type, levels = as.numeric(names(dsmv_diagnosis_type_labels)), labels = dsmv_diagnosis_type_labels)
+
+dsmv_filtered_wider_labeled$dsmv_diagnosis_3_type <- factor(dsmv_filtered_wider_labeled$dsmv_diagnosis_3_type, levels = as.numeric(names(dsmv_diagnosis_type_labels)), labels = dsmv_diagnosis_type_labels)
+
+dsmv_filtered_wider_labeled$dsmv_diagnosis_4_type <- factor(dsmv_filtered_wider_labeled$dsmv_diagnosis_4_type, levels = as.numeric(names(dsmv_diagnosis_type_labels)), labels = dsmv_diagnosis_type_labels)
+
+dsmv_filtered_wider_labeled$dsmv_diagnosis_5_type <- factor(dsmv_filtered_wider_labeled$dsmv_diagnosis_5_type, levels = as.numeric(names(dsmv_diagnosis_type_labels)), labels = dsmv_diagnosis_type_labels)
+
+dsmv_filtered_wider_labeled$dsmv_diagnosis_6_type <- factor(dsmv_filtered_wider_labeled$dsmv_diagnosis_6_type, levels = as.numeric(names(dsmv_diagnosis_type_labels)), labels = dsmv_diagnosis_type_labels)
+
+dsmv_filtered_wider_labeled$dsmv_diagnosis_7_type <- factor(dsmv_filtered_wider_labeled$dsmv_diagnosis_7_type, levels = as.numeric(names(dsmv_diagnosis_type_labels)), labels = dsmv_diagnosis_type_labels)
+
+dsmv_filtered_wider_labeled$dsmv_diagnosis_1_reason_for_therapy <- factor(dsmv_filtered_wider_labeled$dsmv_diagnosis_1_reason_for_therapy, levels = as.numeric(names(dsmv_diagnosis_reason_labels)), labels = dsmv_diagnosis_reason_labels)
+
+dsmv_filtered_wider_labeled$dsmv_diagnosis_2_reason_for_therapy <- factor(dsmv_filtered_wider_labeled$dsmv_diagnosis_2_reason_for_therapy, levels = as.numeric(names(dsmv_diagnosis_reason_labels)), labels = dsmv_diagnosis_reason_labels)
+
+dsmv_filtered_wider_labeled$dsmv_diagnosis_3_reason_for_therapy <- factor(dsmv_filtered_wider_labeled$dsmv_diagnosis_3_reason_for_therapy, levels = as.numeric(names(dsmv_diagnosis_reason_labels)), labels = dsmv_diagnosis_reason_labels)
+
+dsmv_filtered_wider_labeled$dsmv_diagnosis_4_reason_for_therapy <- factor(dsmv_filtered_wider_labeled$dsmv_diagnosis_4_reason_for_therapy, levels = as.numeric(names(dsmv_diagnosis_reason_labels)), labels = dsmv_diagnosis_reason_labels)
+
+# create variables patient_age_therapy_start and therapist_age_therapy_start
+dsmv_filtered_wider_labeled <- dsmv_filtered_wider_labeled |>
+  mutate(
+    patient_dateofbirth = as.Date(patient_dateofbirth),
+    therapist_dateofbirth = as.Date(therapist_dateofbirth),
+    assessment_date_DI = as.Date(assessment_date_DI),
+    patient_age_therapy_start = floor(time_length(interval(patient_dateofbirth, assessment_date_DI), "years")),
+    therapist_age_therapy_start = floor(time_length(interval(therapist_dateofbirth, assessment_date_DI), "years"))
+  ) |> 
+  select(case_nr, patient_chiffre, patient_sex, patient_dateofbirth, patient_age_therapy_start, therapist_dateofbirth, therapist_age_therapy_start, everything())
+
+# de-identify patient and therapist date of birth
+dsmv_filtered_wider_labeled$patient_dateofbirth <- as.integer(format(as.Date(dsmv_filtered_wider_labeled$patient_dateofbirth), "%Y"))
+
+dsmv_filtered_wider_labeled$therapist_dateofbirth <- as.integer(format(as.Date(dsmv_filtered_wider_labeled$therapist_dateofbirth), "%Y"))
+```
+
+### BDI II
+
+```{r}
+bdi_master <- read_xlsx("/Volumes/meta_data/raw/raw_selfreport/BDI II_ab2017.xlsx",
+                        col_names = c("case_nr", "patient_chiffre","patient_sex","patient_dateofbirth","assessment_date","assessment_type","assessment_id","assessment_name","item_no","answerscale_value","therapist_no","therapist_sex","therapist_dateofbirth"),
+                        skip = 1)
+
+#how many patients are there for each assessment type?
+bdi_master |>
+  summarise(
+    n_patients = n_distinct(case_nr),
+    .by = assessment_type
+  ) |> 
+  arrange(desc(n_patients))
+
+#remove non-relevant assessment types (e.g.from children and adolesent database, group sessions, assessment types with very little cases) 
+bdi_erw <- bdi_master |> 
+  filter(!str_detect(assessment_type, "KiJu|Krisen|DU-POST2|Gruppe|Einzeltherapiesitzung|Weitere|DU-4|DU-8|DU-12|DU-24|Erwachsene|Du-Post-KZT1|DU-Kat12|DU-Kat24|Interview|Abrechnung|außerplanmäßig|LZT-DU12|LZT-DU24|LZT-DU4|DU-Post"))
+
+unique(bdi_erw$assessment_type)
+
+# Check if one single chiffre is related to several case_nrs? 
+
+bdi_erw |> 
+  summarise(
+    n_chiffre = n_distinct(patient_chiffre), 
+    .by = case_nr) |> 
+  summarise(anzahl = n(), 
+            .by = n_chiffre)
+
+# Check if one single case_nr is related to several patient_chiffres.
+
+bdi_erw |> 
+  summarise(
+    n_cases = n_distinct(case_nr),
+    .by = patient_chiffre) |> 
+  summarise(anzahl = n(),
+            .by = n_cases)
+
+# calculate BDI sum scores
+bdi_erw_sum <- bdi_erw |> 
+  summarise(
+    patient_chiffre = first(patient_chiffre),
+    patient_sex = first(patient_sex),
+    patient_dateofbirth = first(patient_dateofbirth),
+    bdi_sum = sum(answerscale_value, na.rm = TRUE),
+    assessment_date = first(assessment_date),
+    therapist_sex = first(therapist_sex),
+    therapist_dateofbirth = first(therapist_dateofbirth),
+    .by = c(case_nr,assessment_type)
+  )  |> 
+  select(case_nr, patient_chiffre, patient_dateofbirth, patient_sex, assessment_type, bdi_sum, assessment_date, therapist_dateofbirth, therapist_sex)
+
+# pivot df to have one case_nr in each row
+bdi_wider <- bdi_erw_sum |> 
+  pivot_wider(id_cols = c(case_nr), names_from = assessment_type, values_from = c(bdi_sum, assessment_date)) |>  #remove redundant variables (date of birth, sex, etc.) for merging with other self-rating df's 
+  select(case_nr, "bdi_sum_DU-Prä", "assessment_date_DU-Prä", "bdi_sum_KZT1-DU4", "assessment_date_KZT1-DU4", "bdi_sum_KZT1-DUPost", "assessment_date_KZT1-DUPost", "bdi_sum_KZT2-DUPost", "assessment_date_KZT2-DUPost", "bdi_sum_LZT1-DUPost", "assessment_date_LZT1-DUPost", "bdi_sum_LZT2-DUPost","assessment_date_LZT2-DUPost" ,"bdi_sum_DU-Kat6", "assessment_date_DU-Kat6")
+
+#exclude cases without pre-measurement (most of the time cases where therapy startet before 2017)
+bdi_wider_complete <- bdi_wider |>
+  filter(!is.na(`bdi_sum_DU-Prä`))
+
+#how many cases are there in the dataset for each assessment type?
+bdi_wider_complete |> 
+  select(starts_with("bdi_sum_")) |> 
+  summarise(across(everything(), ~sum(!is.na(.))))
+```
+
+### BSI
+
+```{r}
+bsi_master <- read_xlsx("/Volumes/meta_data/raw/raw_selfreport/BSI_ab2017.xlsx", 
+                        col_names = c("case_nr", "patient_chiffre", "patient_sex", "patient_dateofbirth", "assessment_date", "assessment_type", "assessment_id", "assessment_name", "item_no", "answerscale_value", "therapist_no", "therapist_sex", "therapist_dateofbirth"), 
+                        skip = 1)
+
+#how many patients are there for each assessment type?
+bsi_master |>
+  summarise(
+    n_patients = n_distinct(case_nr),
+    .by = assessment_type
+  ) |> 
+  arrange(desc(n_patients))
+
+#remove non-relevant assessment types (e.g.from children and adolesent database, group sessions, assessment types with very little cases) 
+bsi_erw <- bsi_master |> 
+  filter(assessment_type == "Diagnostisches Interview ab 01.04.2017" | assessment_type == "KZT1-DU4" | assessment_type == "KZT1-DUPost" | assessment_type == "KZT2-DUPost" | assessment_type == "LZT1-DUPost" | assessment_type == "LZT2-DUPost" | assessment_type == "DU-Kat6")
+
+bsi_erw_gsi <- bsi_erw |> 
+  filter(item_no != "54" & item_no != "55" & item_no != "11", item_no != "25", item_no != "39", item_no != "52") |>  #items 54 and 55 don't belong to the bsi and 11, 25, 39 and 52 are not used for calculating the GSI
+  summarise(
+    bsi_gsi = mean(answerscale_value, na.rm = TRUE),
+    assessment_date = first(assessment_date),
+    .by = c(case_nr,assessment_type)
+  )  |> 
+  select(case_nr, assessment_type, bsi_gsi, assessment_date)
+
+# pivot df to have one case_nr in each row
+bsi_wider <- bsi_erw_gsi |> 
+  pivot_wider(id_cols = c(case_nr), names_from = assessment_type, values_from = c(bsi_gsi, assessment_date)) |> 
+    rename(assessment_date_DI = "assessment_date_Diagnostisches Interview ab 01.04.2017", bsi_gsi_DI = "bsi_gsi_Diagnostisches Interview ab 01.04.2017") |> 
+  select(case_nr, bsi_gsi_DI, `bsi_gsi_KZT1-DU4`, `bsi_gsi_KZT1-DUPost`, `bsi_gsi_KZT2-DUPost`, `bsi_gsi_LZT1-DUPost`, `bsi_gsi_LZT2-DUPost`, `bsi_gsi_DU-Kat6`)
+```
+
+55 Itemversion –\> item 54 und 55 gehören nicht zum BSI
+
+GSI: Mittelwert über alle Items, außer 11, 25, 39, 52
+
+### DASS-42
+
+```{r}
+dass_master <- read_xlsx("/Volumes/meta_data/raw/raw_selfreport/DASS_ab2017.xlsx",
+                        col_names = c("case_nr", "patient_chiffre","patient_sex","patient_dateofbirth","assessment_date","assessment_type","assessment_id","assessment_name","item_no","answerscale_value","therapist_no","therapist_sex","therapist_dateofbirth"),
+                        skip = 1)
+
+#how many patients are there for each assessment type?
+dass_master |>
+  summarise(
+    n_patients = n_distinct(case_nr),
+    .by = assessment_type
+  ) |> 
+  arrange(desc(n_patients))
+
+dass_erw <- dass_master |> 
+  filter(assessment_type == "DU-Prä" | assessment_type == "KZT1-DU4" | assessment_type == "KZT1-DUPost" | assessment_type == "KZT2-DUPost" | assessment_type == "LZT1-DUPost" | assessment_type == "LZT2-DUPost" | assessment_type == "DU-Kat6")
+
+library(dplyr)
+
+dass_erw_score <- dass_erw |>
+  summarise(
+    patient_chiffre = first(patient_chiffre),
+    dass_total_score = sum(answerscale_value, na.rm = TRUE),
+    dass_dep_score = sum(
+      answerscale_value[item_no %in% c(3, 5, 10, 13, 16, 17, 21, 24, 26, 31, 34, 37, 38, 42)],
+      na.rm = TRUE
+    ),
+    dass_anx_score = sum(
+      answerscale_value[item_no %in% c(2, 4, 7, 9, 15, 19, 20, 23, 25, 28, 30, 36, 40, 41)],
+      na.rm = TRUE
+    ),
+    dass_str_score = sum(
+      answerscale_value[item_no %in% c(1, 6, 8, 11, 12, 14, 18, 22, 27, 29, 32, 33, 35, 39)],
+      na.rm = TRUE
+    ),
+    assessment_date = first(assessment_date),
+    .by = c(case_nr, assessment_type)
+  ) |>
+  select(
+    case_nr, assessment_type, dass_total_score, dass_dep_score, dass_anx_score, dass_str_score, assessment_date
+    )
+
+dass_wider <- dass_erw_score |> 
+  pivot_wider(id_cols = c(case_nr), names_from = assessment_type, values_from = c(dass_total_score, dass_dep_score, dass_anx_score, dass_str_score, assessment_date)) |> 
+  select(case_nr, `dass_total_score_DU-Prä`, `dass_dep_score_DU-Prä`, `dass_anx_score_DU-Prä`, `dass_str_score_DU-Prä`, `dass_total_score_KZT1-DU4`, `dass_dep_score_KZT1-DU4`, `dass_anx_score_KZT1-DU4`, `dass_str_score_KZT1-DU4`, `dass_total_score_KZT1-DUPost`, `dass_dep_score_KZT1-DUPost`, `dass_anx_score_KZT1-DUPost`, `dass_str_score_KZT1-DUPost`, `dass_total_score_KZT2-DUPost`, `dass_dep_score_KZT2-DUPost`, `dass_anx_score_KZT2-DUPost`, `dass_str_score_KZT2-DUPost`, `dass_total_score_LZT1-DUPost`, `dass_dep_score_LZT1-DUPost`, `dass_anx_score_LZT1-DUPost`, `dass_str_score_LZT1-DUPost`, `dass_total_score_LZT2-DUPost`, `dass_dep_score_LZT2-DUPost`, `dass_anx_score_LZT2-DUPost`, `dass_str_score_LZT2-DUPost`, `dass_total_score_DU-Kat6`, `dass_dep_score_DU-Kat6`, `dass_anx_score_DU-Kat6`, `dass_str_score_DU-Kat6`)
+```
+
+
+## prepare text data
+
+```{r}
+library(stringr)
+
+text_dat_raw_1 <- read_csv("/Volumes/meta_data/processed/processed_transcriptions/Transcriptions.csv",
+                     col_names = c("path_audiofile","patient_chiffre","txt1_problem_development","txt2_extra_stressors","txt3_pre_onset_changes","txt4_event_connection","txt5_physical_symptoms","txt6_problem_causes","txt7_expected_improvements","txt8_environment_response","txt9_no_change_requested","txt_psychosis", "txt10_problem_description","txt11_impacted_life_areas","txt12_therapy_goals"),
+                     skip = 1)
+
+text_dat_raw_2 <- read_xlsx("/Volumes/meta_data/processed/processed_transcriptions/Transcriptions_Hattingen_2017-2019.xlsx",
+                     col_names = c("path_audiofile","patient_chiffre","txt1_problem_development","txt2_extra_stressors","txt3_pre_onset_changes","txt4_event_connection","txt5_physical_symptoms","txt6_problem_causes","txt7_expected_improvements","txt8_environment_response","txt9_no_change_requested","txt_psychosis", "txt10_problem_description","txt11_impacted_life_areas","txt12_therapy_goals"),
+                     skip = 1)
+
+text_dat_raw_3 <- read_csv("/Volumes/meta_data/processed/processed_transcriptions/Transcriptions_Hattingen_2020-2021.csv",
+                     col_names = c("path_audiofile","patient_chiffre","txt1_problem_development","txt2_extra_stressors","txt3_pre_onset_changes","txt4_event_connection","txt5_physical_symptoms","txt6_problem_causes","txt7_expected_improvements","txt8_environment_response","txt9_no_change_requested","txt_psychosis", "txt10_problem_description","txt11_impacted_life_areas","txt12_therapy_goals"),
+                     skip = 1)
+
+text_dat_1 <- text_dat_raw_1 |>
+  mutate( # extract treatment_center, year of the treatment end from audiofile path
+    treatment_center       = str_match(path_audiofile, "raw_audio/([^/]+)/")[, 2],
+    treatment_end_year_text = str_match(path_audiofile, "raw_audio/[^/]+/(\\d{4})")[, 2],
+    folder                 = dirname(path_audiofile),
+    zoom_nr                = str_extract(path_audiofile, "(?<=ZOOM)\\d+"),
+    zoom_nr                = as.integer(zoom_nr)
+  ) |>
+  group_by(patient_chiffre, folder) |>
+  slice_max(zoom_nr, n = 1, with_ties = FALSE) |> # remove the older zoom_nr for each group of patient and folder
+  ungroup() |>
+  select( # remove irrelevant variables (e.g. q40 [bc of too little responses], folder, zoom_nr, etc.)
+    patient_chiffre,
+    treatment_center,
+    treatment_end_year_text,
+    txt1_problem_development,
+    txt2_extra_stressors,
+    txt3_pre_onset_changes,
+    txt4_event_connection,
+    txt5_physical_symptoms,
+    txt6_problem_causes,
+    txt7_expected_improvements,
+    txt8_environment_response,
+    txt9_no_change_requested,
+    txt10_problem_description,
+    txt11_impacted_life_areas,
+    txt12_therapy_goals
+  )
+
+
+text_dat_2 <- text_dat_raw_2 |>
+  mutate( # extract treatment_center, year of the treatment end from audiofile path
+    treatment_center       = str_match(path_audiofile, "raw_audio/([^/]+)/")[, 2],
+    treatment_end_year_text = str_match(path_audiofile, "raw_audio/[^/]+/(\\d{4})")[, 2],
+    folder                 = dirname(path_audiofile),
+    zoom_nr                = str_extract(path_audiofile, "(?<=ZOOM)\\d+"),
+    zoom_nr                = as.integer(zoom_nr)
+  ) |>
+  group_by(patient_chiffre, folder) |>
+  slice_max(zoom_nr, n = 1, with_ties = FALSE) |> # remove the older zoom_nr for each group of patient and folder
+  ungroup() |>
+  select( # remove irrelevant variables (e.g. q40 [bc of too little responses], folder, zoom_nr, etc.)
+    patient_chiffre,
+    treatment_center,
+    treatment_end_year_text,
+    txt1_problem_development,
+    txt2_extra_stressors,
+    txt3_pre_onset_changes,
+    txt4_event_connection,
+    txt5_physical_symptoms,
+    txt6_problem_causes,
+    txt7_expected_improvements,
+    txt8_environment_response,
+    txt9_no_change_requested,
+    txt10_problem_description,
+    txt11_impacted_life_areas,
+    txt12_therapy_goals
+  )
+
+text_dat_3 <- text_dat_raw_3 |>
+  mutate( # extract treatment_center, year of the treatment end from audiofile path
+    treatment_center       = str_match(path_audiofile, "raw_audio/([^/]+)/")[, 2],
+    treatment_end_year_text = str_match(path_audiofile, "raw_audio/[^/]+/(\\d{4})")[, 2],
+    folder                 = dirname(path_audiofile),
+    zoom_nr                = str_extract(path_audiofile, "(?<=ZOOM)\\d+"),
+    zoom_nr                = as.integer(zoom_nr)
+  ) |>
+  group_by(patient_chiffre, folder) |>
+  slice_max(zoom_nr, n = 1, with_ties = FALSE) |> # remove the older zoom_nr for each group of patient and folder
+  ungroup() |>
+  select( # remove irrelevant variables (e.g. q40 [bc of too little responses], folder, zoom_nr, etc.)
+    patient_chiffre,
+    treatment_center,
+    treatment_end_year_text,
+    txt1_problem_development,
+    txt2_extra_stressors,
+    txt3_pre_onset_changes,
+    txt4_event_connection,
+    txt5_physical_symptoms,
+    txt6_problem_causes,
+    txt7_expected_improvements,
+    txt8_environment_response,
+    txt9_no_change_requested,
+    txt10_problem_description,
+    txt11_impacted_life_areas,
+    txt12_therapy_goals
+  )
+                   
+merged_text <- bind_rows(text_dat_1, text_dat_2, text_dat_3)
+```
+
+## merge text and self-rating scales
+
+```{r}
+df_merged_self_rating <- dsmv_filtered_wider_labeled |>
+  left_join(bdi_wider_complete, by = "case_nr") |> 
+  left_join(patient_kodap_pre_demographics_wider, by = "case_nr") |> 
+  left_join(therapist_kodap_pre_context_wider, by = "case_nr") |> 
+  left_join(bsi_wider, by = "case_nr") |> 
+  left_join(dass_wider, by = "case_nr")
+
+df_merged <- merged_text |>
+  left_join(df_merged_self_rating, by = "patient_chiffre") |> 
+  select(patient_chiffre, case_nr, patient_dateofbirth, patient_age_therapy_start, patient_sex, marital_status, in_relationship, general_education, vocational_qualification, work_ability_status, previous_psychotherapy, assessment_date_DI, icd10_code, CGI_severity, therapist_dateofbirth, therapist_age_therapy_start, therapist_sex, everything())
+```

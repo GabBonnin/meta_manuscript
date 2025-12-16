@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.26">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Gabriel Bonnin">
+
+<title>Mental Health Evaluation through Text Analysis (META)</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a74871fe4945b66d259aafc266475145.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+
+
+<meta name="citation_title" content="Mental Health Evaluation through Text Analysis (META)">
+<meta name="citation_author" content="Gabriel Bonnin">
+<meta name="citation_language" content="en">
+<meta name="citation_reference" content="citation_title=Regression shrinkage and selection via the lasso;,citation_abstract=We propose a new method for estimation in linear models. The “lasso” minimizes the residual sum of squares subject to the sum of the absolute value of the coefficients being less than a constant. Because of the nature of this constraint it tends to produce some coefficients that are exactly 0 and hence gives interpretable models. Our simulation studies suggest that the lasso enjoys some of the favourable properties of both subset selection and ridge regression. It produces interpretable models like subset selection and exhibits the stability of ridge regression. There is also an interesting relationship with recent work in adaptive function estimation by Donoho and Johnstone. The lasso idea is quite general and can be applied in a variety of statistical models: extensions to generalized regression models and tree-based models are briefly described.;,citation_author=Robert Tibshirani;,citation_publication_date=1996;,citation_cover_date=1996;,citation_year=1996;,citation_issue=1;,citation_doi=10.1111/j.2517-6161.1996.tb02080.x;,citation_issn=0035-9246;,citation_volume=58;,citation_journal_title=Journal of the Royal Statistical Society: Series B (Methodological);">
+<meta name="citation_reference" content="citation_title=Latent dirichlet allocation;,citation_abstract=We describe latent Dirichlet allocation (LDA), a generative probabilistic model for collections of discrete data such as text corpora. LDA is a three-level hierarchical Bayesian model, in which each item of a collection is modeled as a finite mixture over an underlying set of topics. Each topic is, in turn, modeled as an infinite mixture over an underlying set of topic probabilities. In the context of text modeling, the topic probabilities provide an explicit representation of a document. We present efficient approximate inference techniques based on variational methods and an EM algorithm for empirical Bayes parameter estimation. We report results in document modeling, text classification, and collaborative filtering, comparing to a mixture of unigrams model and the probabilistic LSI model.;,citation_author=David M. Blei;,citation_author=Andrew Y. Ng;,citation_author=Michael I. Jordan;,citation_publication_date=2003-03;,citation_cover_date=2003-03;,citation_year=2003;,citation_issue=null;,citation_issn=1532-4435;,citation_volume=3;,citation_journal_title=Journal of Machine Learning Research;,citation_publisher=JMLR.org;">
+<meta name="citation_reference" content="citation_title=Random decision forests;,citation_author=Tin Kam Ho;,citation_publication_date=1995;,citation_cover_date=1995;,citation_year=1995;,citation_doi=10.1109/ICDAR.1995.598994;,citation_volume=1;,citation_conference_title=Proceedings of 3rd international conference on document analysis and recognition;">
+<meta name="citation_reference" content="citation_title=BDI-II: Beck Depression Inventory manual;,citation_author=A. T. Beck;,citation_author=R. A. Steer;,citation_author=G. K. Brown;,citation_publication_date=1996;,citation_cover_date=1996;,citation_year=1996;">
+<meta name="citation_reference" content="citation_title=How Happy Is Happy Enough? A Cross-Cultural Comparison of Optimal Cut Points for the Positive Mental Health Scale;,citation_author=Gabriel Bonnin;,citation_author=Gerrit Hirschfeld;,citation_author=Ruth Brachel;,citation_author=Jürgen Margraf;,citation_publication_date=2024;,citation_cover_date=2024;,citation_year=2024;,citation_issue=0;,citation_volume=0;,citation_journal_title=European Journal of Psychological Assessment;">
+<meta name="citation_reference" content="citation_title=Die Klassifikation psychischer Störungen mit diagnostischen Interviews;,citation_author=Gabriel Bonnin;,citation_author=Svea Kröber;,citation_author=Ruth Brachel;,citation_editor=Tobias Teismann;,citation_editor=Patrizia Thoma;,citation_editor=S. Taubner;,citation_editor=Andre Wannemüller;,citation_editor=K. Sydow;,citation_publication_date=2024;,citation_cover_date=2024;,citation_year=2024;,citation_inbook_title=Klinische Psychologie und Psychotherapie: Ein verfahrensübergreifendes Lehr- und Lernbuch;">
+<meta name="citation_reference" content="citation_title=Evidence-based treatments for children and adolescents: An updated review of indicators of efficacy and effectiveness;,citation_author=Bruce F Chorpita;,citation_author=Eric L Daleiden;,citation_author=Chad Ebesutani;,citation_author=John Young;,citation_author=Kimberly D Becker;,citation_author=Brad J Nakamura;,citation_author=Lisa Phillips;,citation_author=Alyssa Ward;,citation_author=Roxanna Lynch;,citation_author=Lindsay Trent;,citation_author=others;,citation_publication_date=2011;,citation_cover_date=2011;,citation_year=2011;,citation_issue=2;,citation_volume=18;,citation_journal_title=Clinical Psychology: Science and Practice;,citation_publisher=Wiley Online Library;">
+<meta name="citation_reference" content="citation_title=BERT: Pre-training of deep bidirectional transformers for language understanding;,citation_abstract=We introduce a new language representation model called BERT, which stands for Bidirectional Encoder Representations from Transformers. Unlike recent language representation models (Peters et al., 2018a; Radford et al., 2018), BERT is designed to pre-train deep bidirectional representations from unlabeled text by jointly conditioning on both left and right context in all layers. As a result, the pre-trained BERT model can be fine-tuned with just one additional output layer to create state-of-the-art models for a wide range of tasks, such as question answering and language inference, without substantial task-specific architecture modifications. BERT is conceptually simple and empirically powerful. It obtains new state-of-the-art results on eleven natural language processing tasks, including pushing the GLUE score to 80.5 (7.7 point absolute improvement), MultiNLI accuracy to 86.7% (4.6% absolute improvement), SQuAD v1.1 question answering Test F1 to 93.2 (1.5 point absolute improvement) and SQuAD v2.0 Test F1 to 83.1 (5.1 point absolute improvement).;,citation_author=Jacob Devlin;,citation_author=Ming-Wei Chang;,citation_author=Kenton Lee;,citation_author=Kristina Toutanova;,citation_editor=Jill Burstein;,citation_editor=Christy Doran;,citation_editor=Thamar Solorio;,citation_publication_date=2019-06;,citation_cover_date=2019-06;,citation_year=2019;,citation_doi=10.18653/v1/N19-1423;,citation_conference_title=Proceedings of the 2019 conference of the north American chapter of the association for computational linguistics: Human language technologies, volume 1 (long and short papers);,citation_conference=Association for Computational Linguistics;">
+<meta name="citation_reference" content="citation_title=BERTopic: Neural topic modeling with a class-based TF-IDF procedure;,citation_author=Maarten Grootendorst;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_fulltext_html_url=https://arxiv.org/abs/2203.05794;">
+<meta name="citation_reference" content="citation_title=Natural language response formats for assessing depression and worry with large language models: A sequential evaluation with model pre-registration;,citation_author=Zhuojun Gu;,citation_author=Katarina Kjell;,citation_author=H. A Schwartz;,citation_author=Oscar N E Kjell;,citation_publication_date=2024-07;,citation_cover_date=2024-07;,citation_year=2024;,citation_doi=10.31234/osf.io/p67db;,citation_publisher=PsyArXiv;">
+<meta name="citation_reference" content="citation_title=Natural Language Response Formats for Assessing Depression and Worry with Large Language Models: A Sequential Evaluation with Model Pre-registration;,citation_abstract=Large Language Models can transform individuals’ mental health descriptions into scores that correlate with rating scales approaching theoretical upper limits. However, such analyses have combined word- and text-responses with little known about their differences. We develop response formats ranging from closed-ended to open-ended: 1) select words from lists, write 2) descriptive words, 3) phrases, or 4) texts. Participants answered questions about their depression/worry using the response formats and related rating scales. Language responses were transformed into word embeddings and trained to rating scales. We compare the validity (concurrent, incremental, face, discriminant, and external validity) and reliability (prospective sample and test-retest reliability) of the response formats. Using the Sequential Evaluation with Model Pre-registration design, machine-learning models were trained on a development dataset (N=963), and then pre-registered before tested on a prospective sample (N=145). The pre-registered models demonstrate strong validity and reliability, yielding high accuracy in the prospective sample (r=.60–.79). Additionally, the models demonstrated external validity to self-reported sick-leave/healthcare visits, where the text-format yielded the strongest correlations (being higher/equal to rating scales for 9 of 12 cases). The overall high validity and reliability across formats suggest the possibility of choosing formats according to clinical needs.;,citation_author=Zhuojun Gu;,citation_author=Katarina Kjell;,citation_author=H. Andrew Schwartz;,citation_author=Oscar Nils Erik Kjell;,citation_publication_date=2024-07;,citation_cover_date=2024-07;,citation_year=2024;,citation_doi=10.31234/osf.io/p67db;,citation_language=en-US;">
+<meta name="citation_reference" content="citation_title=Ridge Regression: Biased Estimation for Nonorthogonal Problems;,citation_author=A. E. Hoerl;,citation_author=R. W. Kennard;,citation_publication_date=1970;,citation_cover_date=1970;,citation_year=1970;,citation_issue=1;,citation_doi=10.1080/00401706.1970.10488634;,citation_volume=12;,citation_journal_title=Technometrics;">
+<meta name="citation_reference" content="citation_title=A blended learning course on the diagnostics of mental disorders: Multicenter cluster randomized noninferiority trial;,citation_abstract=Background: Clinical diagnoses determine if and how therapists treat their patients. As misdiagnoses can have severe adverse effects, disseminating evidence-based diagnostic skills into clinical practice is highly important. Objective: This study aimed to develop and evaluate a blended learning course in a multicenter cluster randomized controlled trial. Methods: Undergraduate psychology students (N=350) enrolled in 18 university courses at 3 universities. The courses were randomly assigned to blended learning or traditional synchronous teaching. The primary outcome was the participants’ performances in a clinical diagnostic interview after the courses. The secondary outcomes were diagnostic knowledge and participants’ reactions to the courses. All outcomes were analyzed on the individual participant level using noninferiority testing. Results: Compared with the synchronous course (74.6% pass rate), participation in the blended learning course (89% pass rate) increased the likelihood of successfully passing the behavioral test (odds ratio 2.77, 95% CI 1.55-5.13), indicating not only noninferiority but superiority of the blended learning course. Furthermore, superiority of the blended learning over the synchronous course could be found regarding diagnostic knowledge ($\beta$=.13, 95% CI 0.01-0.26), course clarity ($\beta$=.40, 95% CI 0.27-0.53), course structure ($\beta$=.18, 95% CI 0.04-0.32), and informativeness ($\beta$=.19, 95% CI 0.06-0.32). Conclusions: Blended learning can help to improve the diagnostic skills and knowledge of (future) clinicians and thus make an important contribution to improving mental health care. Trial Registration: ClinicalTrials.gov NCT05294094; https://clinicaltrials.gov/study/NCT05294094;,citation_author=Gabriel Bonnin;,citation_author=Svea Kröber;,citation_author=Silvia Schneider;,citation_author=Jürgen Margraf;,citation_author=Verena Pflug;,citation_author=Alexander L Gerlach;,citation_author=Timo Slotta;,citation_author=Hanna Christiansen;,citation_author=Björn Albrecht;,citation_author=Mira-Lynn Chavanon;,citation_author=Gerrit Hirschfeld;,citation_author=Tina In-Albon;,citation_author=Meinald T Thielsch;,citation_author=Ruth Brachel;,citation_publication_date=2024-11;,citation_cover_date=2024-11;,citation_year=2024;,citation_doi=10.2196/54176;,citation_issn=1438-8871;,citation_volume=26;,citation_journal_title=Journal of medical Internet research;">
+<meta name="citation_reference" content="citation_title=Diagnostic agreement predicts treatment process and outcomes in youth mental health clinics;,citation_abstract=Several studies have documented low rates of agreement between clinician- and researcher-generated diagnoses. However, little is known about whether this lack of agreement has implications for the processes and outcomes of subsequent treatment. To study this possibility, the authors used diagnostic agreement to predict therapy engagement and outcomes for 197 youths treated in 5 community mental health clinics. Diagnostic agreement predicted better therapy engagement, with the agree group having fewer therapy no-shows and cancellations and a decreased likelihood of therapy dropout. Additionally, support for a link between agreement and treatment outcomes was found, as the agree group obtained larger reductions in parent-reported internalizing problems during treatment. These findings suggest that diagnostic accuracy may be an important precursor to successful treatment and highlight the importance of future research to find ways to incorporate standardized diagnostic procedures into clinical care settings. (PsycInfo Database Record (c) 2021 APA, all rights reserved);,citation_author=Amanda Jensen-Doss;,citation_author=John R. Weisz;,citation_publication_date=2008;,citation_cover_date=2008;,citation_year=2008;,citation_issue=5;,citation_doi=10.1037/0022-006X.76.5.711;,citation_issn=1939-2117;,citation_volume=76;,citation_journal_title=Journal of Consulting and Clinical Psychology;,citation_publisher=American Psychological Association;">
+<meta name="citation_reference" content="citation_title=The global landscape of AI ethics guidelines;,citation_author=Anna Jobin;,citation_author=Marcello Ienca;,citation_author=Effy Vayena;,citation_publication_date=2019-09;,citation_cover_date=2019-09;,citation_year=2019;,citation_issue=9;,citation_doi=10.1038/s42256-019-0088-2;,citation_issn=2522-5839;,citation_volume=1;,citation_language=en-US;,citation_journal_title=Nature Machine Intelligence;">
+<meta name="citation_reference" content="citation_title=Demonstrating high validity of a new AI-language assessment of PTSD: A sequential evaluation with model pre-registration;,citation_author=Oscar N E Kjell;,citation_author=Adithya V Ganesan;,citation_author=Ryan Boyd;,citation_author=Joshua R Oltmanns;,citation_author=Alfredo Rivero;,citation_author=Scott Feltman;,citation_author=Melissa A Carr;,citation_author=Benjamin J Luft;,citation_author=Roman Kotov;,citation_author=H. A Schwartz;,citation_publication_date=2024-10;,citation_cover_date=2024-10;,citation_year=2024;,citation_doi=10.31234/osf.io/xw24e;,citation_publisher=PsyArXiv;">
+<meta name="citation_reference" content="citation_title=Semantic measures: Using natural language processing to measure, differentiate, and describe psychological constructs.;,citation_author=Oscar N. E. Kjell;,citation_author=Katarina Kjell;,citation_author=Danilo Garcia;,citation_author=Sverker Sikström;,citation_publication_date=2019;,citation_cover_date=2019;,citation_year=2019;,citation_issue=1;,citation_doi=10.1037/met0000191;,citation_volume=24;,citation_journal_title=Psychological Methods;,citation_publisher=American Psychological Association;">
+<meta name="citation_reference" content="citation_title=Natural language analyzed with AI-based transformers predict traditional subjective well-being measures approaching the theoretical upper limits in accuracy;,citation_abstract=Abstract We show that using a recent break-through in artificial intelligence – transformers– , psychological assessments from text-responses can approach theoretical upper limits in accuracy, converging with standard psychological rating scales. Text-responses use people’s primary form of communication – natural language – and have been suggested as a more ecologically-valid response format than closed-ended rating scales that dominate social science. However, previous language analysis techniques left a gap between how accurately they converged with standard rating scales and how well ratings scales converge with themselves – a theoretical upper-limit in accuracy. Most recently, AI-based language analysis has gone through a transformation as nearly all of its applications, from Web search to personalized assistants (e.g., Alexa and Siri), have shown unprecedented improvement by using transformers. We evaluate transformers for estimating psychological well-being from questionnaire text- and descriptive word-responses, and find accuracies converging with rating scales that approach the theoretical upper limits (Pearson r  =&nbsp;0.85, p  $&amp;amp;amp;lt;$ 0.001, N  = 608; in line with most metrics of rating scale reliability). These findings suggest an avenue for modernizing the ubiquitous questionnaire and ultimately opening doors to a greater understanding of the human condition.;,citation_author=Oscar N. E. Kjell;,citation_author=Sverker Sikström;,citation_author=Katarina Kjell;,citation_author=H. Andrew Schwartz;,citation_publication_date=2022-03;,citation_cover_date=2022-03;,citation_year=2022;,citation_issue=1;,citation_doi=10.1038/s41598-022-07520-w;,citation_issn=2045-2322;,citation_volume=12;,citation_language=en-US;,citation_journal_title=Scientific Reports;">
+<meta name="citation_reference" content="citation_title=The text-package: An R-package for analyzing and visualizing human language using natural language processing and transformers.;,citation_abstract=The language that individuals use for expressing themselves contains rich psychological information. Recent significant advances in Natural Language Processing (NLP) and Deep Learning (DL), namely transformers, have resulted in large performance gains in tasks related to understanding natural language. However, these state-of-the-art methods have not yet been made easily accessible for psychology researchers, nor designed to be optimal for human-level analyses. This tutorial introduces text (https://r-text.org/), a new R-package for analyzing and visualizing human language using transformers, the latest techniques from NLP and DL. The text-package is both a modular solution for accessing state-of-the-art language models and an end-to-end solution catered for human-level analyses. Hence, text provides user-friendly functions tailored to test hypotheses in social sciences for both relatively small and large data sets. The tutorial describes methods for analyzing text, providing functions with reliable defaults that can be used off-the-shelf as well as providing a framework for the advanced users to build on for novel pipelines. The reader learns about three core methods: (1) textEmbed(): to transform text to modern transformer-based word embeddings; (2) textTrain() and textPredict(): to train predictive models with embeddings as input, and use the models to predict from; (3) textSimilarity() and textDistance(): to compute semantic similarity/distance scores between texts. The reader also learns about two extended methods: (1) textProjection()/textProjectionPlot() and (2) textCentrality()/ textCentralityPlot(): to examine and visualize text within the embedding space.;,citation_author=Oscar Kjell;,citation_author=Salvatore Giorgi;,citation_author=H. Andrew Schwartz;,citation_publication_date=2023-12;,citation_cover_date=2023-12;,citation_year=2023;,citation_issue=6;,citation_doi=10.1037/met0000542;,citation_issn=1939-1463, 1082-989X;,citation_volume=28;,citation_language=en-US;,citation_journal_title=Psychological Methods;">
+<meta name="citation_reference" content="citation_title=Beyond rating scales: With targeted evaluation, large language models are poised for psychological assessment;,citation_abstract=In this narrative review, we survey recent empirical evaluations of AI-based language assessments and present a case for the technology of large language models to be poised for changing standardized psychological assess ment. Artificial intelligence has been undergoing a purported “paradigm shift” initiated by new machine learning models, large language models (e.g., BERT, LAMMA, and that behind ChatGPT). These models have led to un precedented accuracy over most computerized language processing tasks, from web searches to automatic ma chine translation and question answering, while their dialogue-based forms, like ChatGPT have captured the interest of over a million users. The success of the large language model is mostly attributed to its capability to numerically represent words in their context, long a weakness of previous attempts to automate psychological assessment from language. While potential applications for automated therapy are beginning to be studied on the heels of chatGPT’s success, here we present evidence that suggests, with thorough validation of targeted deployment scenarios, that AI’s newest technology can move mental health assessment away from rating scales and to instead use how people naturally communicate, in language.;,citation_author=Oscar N. E. Kjell;,citation_author=Katarina Kjell;,citation_author=H. Andrew Schwartz;,citation_publication_date=2024-03;,citation_cover_date=2024-03;,citation_year=2024;,citation_doi=10.1016/j.psychres.2023.115667;,citation_issn=01651781;,citation_volume=333;,citation_language=en-US;,citation_journal_title=Psychiatry Research;">
+<meta name="citation_reference" content="citation_title=Client-identified outcomes of individual psychotherapy: A qualitative meta-analysis;,citation_abstract=Background Psychotherapy outcomes are typically measured in terms of symptom relief. However, this method might overlook important changes from clients’ perspectives when they are asked to report on them. A more client-centred approach might bring a deeper understanding of psychotherapy outcomes. We aimed to evaluate the outcomes identified by clients within qualitative psychotherapy research.;,citation_author=Michaela Ladmanová;,citation_author=Tomáš Řiháček;,citation_author=Ladislav Timulak;,citation_author=Klára Jonášová;,citation_author=Barbora Kubantová;,citation_author=Petr Mikoška;,citation_author=Lucia Polakovská;,citation_author=Robert Elliott;,citation_publication_date=2025-01;,citation_cover_date=2025-01;,citation_year=2025;,citation_issue=1;,citation_doi=10.1016/S2215-0366(24)00356-0;,citation_issn=22150366;,citation_volume=12;,citation_language=en-US;,citation_journal_title=The Lancet Psychiatry;">
+<meta name="citation_reference" content="citation_title=TrOCR: Transformer-based optical character recognition with pre-trained models;,citation_author=Minghao Li;,citation_author=Tengchao Lv;,citation_author=Jingye Chen;,citation_author=Lei Cui;,citation_author=Yijuan Lu;,citation_author=Dinei Florencio;,citation_author=Cha Zhang;,citation_author=Zhoujun Li;,citation_author=Furu Wei;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_fulltext_html_url=https://arxiv.org/abs/2109.10282;">
+<meta name="citation_reference" content="citation_title=A technique for the measurement of attitudes;,citation_author=R. Likert;,citation_publication_date=1932;,citation_cover_date=1932;,citation_year=1932;,citation_issue=55;,citation_volume=140;,citation_journal_title=Arch. Psychol.;,citation_series_title=22th series;">
+<meta name="citation_reference" content="citation_title=Measurement-Based and Data-Informed Psychological Therapy;,citation_abstract=Outcome measurement in the field of psychotherapy has developed considerably in the last decade. This review discusses key issues related to outcome measurement, modeling, and implementation of data-informed and measurement-based psychological therapy. First, an overview is provided, covering the rationale of outcome measurement by acknowledging some of the limitations of clinical judgment. Second, different models of outcome measurement are discussed, including pre–post, session-by-session, and higher-resolution intensive outcome assessments. Third, important concepts related to modeling patterns of change are addressed, including early response, dose–response, and nonlinear change. Furthermore, rational and empirical decision tools are discussed as the foundation for measurementbased therapy. Fourth, examples of clinical applications are presented, which show great promise to support the personalization of therapy and to prevent treatment failure. Finally, we build on continuous outcome measurement as the basis for a broader understanding of clinical concepts and data-driven clinical practice in the future.;,citation_author=Wolfgang Lutz;,citation_author=Brian Schwartz;,citation_author=Jaime Delgadillo;,citation_publication_date=2022-05;,citation_cover_date=2022-05;,citation_year=2022;,citation_issue=1;,citation_doi=10.1146/annurev-clinpsy-071720-014821;,citation_issn=1548-5943, 1548-5951;,citation_volume=18;,citation_language=en-US;,citation_journal_title=Annual Review of Clinical Psychology;">
+<meta name="citation_reference" content="citation_title=Suicide risk assessment with multi-level dual-context language and BERT;,citation_abstract=Mental health predictive systems typically model language as if from a single context (e.g. Twitter posts, status updates, or forum posts) and often limited to a single level of analysis (e.g. either the message-level or user-level). Here, we bring these pieces together to explore the use of open-vocabulary (BERT embeddings, topics) and theoretical features (emotional expression lexica, personality) for the task of suicide risk assessment on support forums (the CLPsych-2019 Shared Task). We used dual context based approaches (modeling content from suicide forums separate from other content), built over both traditional ML models as well as a novel dual RNN architecture with user-factor adaptation. We find that while affect from the suicide context distinguishes with no-risk from those with “any-risk”, personality factors from the non-suicide contexts provide distinction of the levels of risk: low, medium, and high risk. Within the shared task, our dual-context approach (listed as SBU-HLAB in the official results) achieved state-of-the-art performance predicting suicide risk using a combination of suicide-context and non-suicide posts (Task B), achieving an F1 score of 0.50 over hidden test set labels.;,citation_author=Matthew Matero;,citation_author=Akash Idnani;,citation_author=Youngseo Son;,citation_author=Salvatore Giorgi;,citation_author=Huy Vu;,citation_author=Mohammad Zamani;,citation_author=Parth Limbachiya;,citation_author=Sharath Chandra Guntuku;,citation_author=H. Andrew Schwartz;,citation_editor=Kate Niederhoffer;,citation_editor=Kristy Hollingshead;,citation_editor=Philip Resnik;,citation_editor=Rebecca Resnik;,citation_editor=Kate Loveys;,citation_publication_date=2019-06;,citation_cover_date=2019-06;,citation_year=2019;,citation_doi=10.18653/v1/W19-3005;,citation_conference_title=Proceedings of the sixth workshop on computational linguistics and clinical psychology;,citation_conference=Association for Computational Linguistics;">
+<meta name="citation_reference" content="citation_title=CLaC at CLPsych 2019: Fusion of neural features and predicted class probabilities for suicide risk assessment based on online posts;,citation_abstract=This paper summarizes our participation to the CLPsych 2019 shared task, under the name CLaC. The goal of the shared task was to detect and assess suicide risk based on a collection of online posts. For our participation, we used an ensemble method which utilizes 8 neural sub-models to extract neural features and predict class probabilities, which are then used by an SVM classifier. Our team ranked first in 2 out of the 3 tasks (tasks A and C).;,citation_author=Elham Mohammadi;,citation_author=Hessam Amini;,citation_author=Leila Kosseim;,citation_editor=Kate Niederhoffer;,citation_editor=Kristy Hollingshead;,citation_editor=Philip Resnik;,citation_editor=Rebecca Resnik;,citation_editor=Kate Loveys;,citation_publication_date=2019-06;,citation_cover_date=2019-06;,citation_year=2019;,citation_doi=10.18653/v1/W19-3004;,citation_conference_title=Proceedings of the sixth workshop on computational linguistics and clinical psychology;,citation_conference=Association for Computational Linguistics;">
+<meta name="citation_reference" content="citation_title=Robust Speech Recognition via Large-Scale Weak Supervision;,citation_abstract=We study the capabilities of speech processing systems trained simply to predict large amounts of transcripts of audio on the internet. When scaled to 680,000 hours of multilingual and multitask supervision, the resulting models generalize well to standard benchmarks and are often competitive with prior fully supervised results without the need for any dataset specific fine-tuning. When compared to humans, the models approach their accuracy and robustness. We are releasing models and inference code to serve as a foundation for further work on robust speech processing.;,citation_author=Alec Radford;,citation_author=Jong Wook Kim;,citation_author=Tao Xu;,citation_author=Greg Brockman;,citation_author=Christine McLeavey;,citation_author=Ilya Sutskever;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;,citation_fulltext_html_url=https://arxiv.org/abs/2212.04356;,citation_language=en-US;,citation_journal_title=arXiv preprint arXiv: 2212.04356;">
+<meta name="citation_reference" content="citation_title=Sentence-BERT: Sentence embeddings using siamese BERT-networks;,citation_author=Nils Reimers;,citation_author=Iryna Gurevych;,citation_publication_date=2019;,citation_cover_date=2019;,citation_year=2019;,citation_fulltext_html_url=https://arxiv.org/abs/1908.10084;">
+<meta name="citation_reference" content="citation_title=Attention is All you Need;,citation_abstract=The dominant sequence transduction models are based on complex recurrent orconvolutional neural networks in an encoder and decoder configuration. The best performing such models also connect the encoder and decoder through an attentionm echanisms. We propose a novel, simple network architecture based solely onan attention mechanism, dispensing with recurrence and convolutions entirely.Experiments on two machine translation tasks show these models to be superiorin quality while being more parallelizable and requiring significantly less timeto train. Our single model with 165 million parameters, achieves 27.5 BLEU onEnglish-to-German translation, improving over the existing best ensemble result by over 1 BLEU. On English-to-French translation, we outperform the previoussingle state-of-the-art with model by 0.7 BLEU, achieving a BLEU score of 41.1.;,citation_author=Ashish Vaswani;,citation_author=Noam Shazeer;,citation_author=Niki Parmar;,citation_author=Jakob Uszkoreit;,citation_author=Llion Jones;,citation_author=Aidan N Gomez;,citation_author=L. Kaiser;,citation_author=Illia Polosukhin;,citation_publication_date=2017;,citation_cover_date=2017;,citation_year=2017;,citation_volume=30;,citation_conference_title=Advances in Neural Information Processing Systems;,citation_conference=Curran Associates, Inc.;">
+<meta name="citation_reference" content="citation_title=The great psychotherapy debate: The evidence for what makes psychotherapy work;,citation_author=Bruce E Wampold;,citation_author=Zac E Imel;,citation_publication_date=2015;,citation_cover_date=2015;,citation_year=2015;">
+<meta name="citation_reference" content="citation_title=Smarter, better, faster, longer: A modern bidirectional encoder for fast, memory efficient, and long context finetuning and inference;,citation_author=Benjamin Warner;,citation_author=Antoine Chaffin;,citation_author=Benjamin Clavié;,citation_author=Orion Weller;,citation_author=Oskar Hallström;,citation_author=Said Taghadouini;,citation_author=Alexis Gallagher;,citation_author=Raja Biswas;,citation_author=Faisal Ladhak;,citation_author=Tom Aarsen;,citation_author=Nathan Cooper;,citation_author=Griffin Adams;,citation_author=Jeremy Howard;,citation_author=Iacopo Poli;,citation_publication_date=2024;,citation_cover_date=2024;,citation_year=2024;,citation_fulltext_html_url=https://arxiv.org/abs/2412.13663;">
+<meta name="citation_reference" content="citation_title=Depression and other common mental disorders: Global health estimates;,citation_author=World Health Organization;,citation_publication_date=2017;,citation_cover_date=2017;,citation_year=2017;">
+<meta name="citation_reference" content="citation_title=International Classification of Diseases, Eleventh Revision (ICD-11);,citation_author=World Health Organization;,citation_publication_date=2022;,citation_cover_date=2022;,citation_year=2022;">
+<meta name="citation_reference" content="citation_title=CLPsych 2019 shared task: Predicting the degree of suicide risk in Reddit posts;,citation_abstract=The shared task for the 2019 Workshop on Computational Linguistics and Clinical Psychology (CLPsych‘19) introduced an assessment of suicide risk based on social media postings, using data from Reddit to identify users at no, low, moderate, or severe risk. Two variations of the task focused on users whose posts to the r/SuicideWatch subreddit indicated they might be at risk; a third task looked at screening users based only on their more everyday (non-SuicideWatch) posts. We received submissions from 15 different teams, and the results provide progress and insight into the value of language signal in helping to predict risk level.;,citation_author=Ayah Zirikly;,citation_author=Philip Resnik;,citation_author=Özlem Uzuner;,citation_author=Kristy Hollingshead;,citation_editor=Kate Niederhoffer;,citation_editor=Kristy Hollingshead;,citation_editor=Philip Resnik;,citation_editor=Rebecca Resnik;,citation_editor=Kate Loveys;,citation_publication_date=2019-06;,citation_cover_date=2019-06;,citation_year=2019;,citation_doi=10.18653/v1/W19-3003;,citation_conference_title=Proceedings of the sixth workshop on computational linguistics and clinical psychology;,citation_conference=Association for Computational Linguistics;">
+<meta name="citation_reference" content="citation_title=DIPS open access 1.2: Diagnostisches interview bei psychischen störungen;,citation_author=Jürgen Margraf;,citation_author=Jan Christopher Cwik;,citation_author=Ruth Brachel;,citation_author=Andrea Suppiger;,citation_author=Silvia Schneider;,citation_publication_date=2021;,citation_cover_date=2021;,citation_year=2021;,citation_fulltext_html_url=http://dx.doi.org/10.46586/rub.172.149;,citation_doi=10.46586/rub.172.149;">
+</head>
+
+<body class="quarto-light">
+
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Mental Health Evaluation through Text Analysis (META)</h1>
+          </div>
+
+    
+    <div class="quarto-title-meta-container">
+      <div class="quarto-title-meta-column-start">
+            <div class="quarto-title-meta-author">
+          <div class="quarto-title-meta-heading">Author</div>
+          <div class="quarto-title-meta-heading">Affiliation</div>
+          
+                <div class="quarto-title-meta-contents">
+            <p class="author">Gabriel Bonnin <a href="mailto:gabriel.bonnin@ruhr-uni-bochum.de" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+          </div>
+                <div class="quarto-title-meta-contents">
+                    <p class="affiliation">
+                        Ruhr University Bochum, Germany
+                      </p>
+                  </div>
+                    </div>
+        
+        <div class="quarto-title-meta">
+
+                      
+          
+                
+              </div>
+      </div>
+      <div class="quarto-title-meta-column-end quarto-other-formats-target">
+      <div class="quarto-alternate-formats"><div class="quarto-title-meta-heading">Other Formats</div><div class="quarto-title-meta-contents"><p><a href="meta_adult_manuscript.pdf"><i class="bi bi-file-pdf"></i>PDF (apaquarto)</a></p></div><div class="quarto-title-meta-contents"><p><a href="meta_adult_manuscript.docx"><i class="bi bi-file-word"></i>MS Word (apaquarto)</a></p></div><div class="quarto-title-meta-contents"><p><a href="meta_adult_manuscript-meca.zip" data-meca-link="true"><i class="bi bi-archive"></i>MECA Bundle</a></p></div></div></div>
+    </div>
+
+
+
+    <div class="quarto-other-links-text-target">
+    </div>  </div>
+</header><div id="quarto-content" class="page-columns page-rows-contents page-layout-article toc-left">
+<div id="quarto-sidebar-toc-left" class="sidebar toc-left">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract">Abstract</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
+  <ul class="collapse">
+  <li><a href="#preprocessing" id="toc-preprocessing" class="nav-link" data-scroll-target="#preprocessing">Preprocessing</a></li>
+  <li><a href="#measures" id="toc-measures" class="nav-link" data-scroll-target="#measures">Measures</a>
+  <ul class="collapse">
+  <li><a href="#sociodemographic-and-context-measures" id="toc-sociodemographic-and-context-measures" class="nav-link" data-scroll-target="#sociodemographic-and-context-measures">Sociodemographic and context measures</a></li>
+  <li><a href="#responses-from-open-ended-questions-before-therapy" id="toc-responses-from-open-ended-questions-before-therapy" class="nav-link" data-scroll-target="#responses-from-open-ended-questions-before-therapy">Responses from open-ended questions before therapy</a></li>
+  <li><a href="#psychometric-measures" id="toc-psychometric-measures" class="nav-link" data-scroll-target="#psychometric-measures">Psychometric measures</a></li>
+  <li><a href="#global-improvement" id="toc-global-improvement" class="nav-link" data-scroll-target="#global-improvement">Global Improvement</a></li>
+  <li><a href="#goal-attainment-scale" id="toc-goal-attainment-scale" class="nav-link" data-scroll-target="#goal-attainment-scale">Goal Attainment Scale</a></li>
+  <li><a href="#measurement-time-points" id="toc-measurement-time-points" class="nav-link" data-scroll-target="#measurement-time-points">Measurement time points</a></li>
+  </ul></li>
+  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a></li>
+  </ul></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
+  </ul>
+<div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="scripts/2_meta_adult_preprocessing/meta_adult_preprocessing-preview.html"><i class="bi bi-journal-code"></i>META preprocessing</a></li><li><a href="scripts/1_meta_adult_transcription/meta_adult_transcription-preview.html"><i class="bi bi-journal-code"></i>META transcription</a></li></ul></div></nav>
+</div>
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+  
+
+
+<section id="abstract" class="level1">
+<h1>Abstract</h1>
+<p>Psychotherapy is one of the most effective treatments for mental health problems, but its success depends on accurate diagnostic assessments. Current diagnostic tools often use standardized closed-ended scales that, while reliable, may fail to capture the complexity and individuality of mental states. In collaboration with Dr.&nbsp;Oscar Kjell at Lund University, this project leverages advances in artificial intelligence (AI) and natural language processing (NLP) to transform the way mental health is assessed.</p>
+<p>This project is based on a unique longitudinal dataset collected over 10 years at the Mental Health Research and Treatment Center (FBZ) at Ruhr University Bochum. It consists of written self-reports in which patients describe their mental health problems, functional impairment, and therapy goals in their own words. These texts are linked to key clinical outcomes such as diagnoses, symptom severity, functional impairment, and treatment success, providing a rich, ecologically valid resource for understanding patient progress in psychotherapy.</p>
+<p>While previous NLP-based mental health studies have focused on social media posts, limiting their clinical applicability, this project applies state-of-the-art large language models (LLMs) to real-world clinical data. By analyzing patients’ open-ended responses, we aim to uncover patterns in how they articulate mental health, emotions, and treatment trajectories. These insights will inform the development of AI-powered tools that offer more personalized and clinically relevant assessments, surpassing traditional methods in accuracy and depth. Ultimately, this research aims to support clinicians in making more informed treatment decisions, enhance personalized care, and contribute to the modernization of mental health assessment.</p>
+<div class="{pagebreak}">
+
+</div>
+</section>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Mental health problems pose a significant global challenge, accounting for a considerable proportion of deaths and disability-adjusted life years <span class="citation" data-cites="WorldHealthOrganization2017">(<a href="#ref-WorldHealthOrganization2017" role="doc-biblioref">World Health Organization, 2017</a>)</span>. Psychotherapy is an effective and sustainable intervention for reducing symptoms and improving quality of life <span class="citation" data-cites="wampold2015great chorpita2011evidence">(<a href="#ref-chorpita2011evidence" role="doc-biblioref">Chorpita et al., 2011</a>; <a href="#ref-wampold2015great" role="doc-biblioref">Wampold &amp; Imel, 2015</a>)</span>, but it’s success critically depends on accurate assessments <span class="citation" data-cites="Lutz2022 Jensen-Doss2008">(<a href="#ref-Jensen-Doss2008" role="doc-biblioref">Jensen-Doss &amp; Weisz, 2008</a>; <a href="#ref-Lutz2022" role="doc-biblioref">Lutz et al., 2022</a>)</span>.</p>
+<p>Current assessment practices typically combine subjective self-reports with clinical observations <span class="citation" data-cites="Bonnin2024a">(<a href="#ref-Bonnin2024a" role="doc-biblioref">Bonnin et al., 2024</a>)</span>. Standardized closed-ended tools such as the Beck Depression Inventory-II <span class="citation" data-cites="Beck1996">(<a href="#ref-Beck1996" role="doc-biblioref">Beck et al., 1996</a>)</span> rely on numerical scales <span class="citation" data-cites="Likert1932">(<a href="#ref-Likert1932" role="doc-biblioref">Likert, 1932</a>)</span> to structure and standardize assessments and are widely used in clinical research and practice. While these methods have advanced replicability and reliability in psychological assessment, they can miss important individual differences by restricting responses to pre-defined categories, limiting the ability to capture the complexity of mental states <span class="citation" data-cites="Kjell2024">(<a href="#ref-Kjell2024" role="doc-biblioref">Kjell, Kjell, et al., 2024</a>)</span>.</p>
+<p>Recent advances in AI, particularly transformer-based LLMs <span class="citation" data-cites="Vaswani2017">(<a href="#ref-Vaswani2017" role="doc-biblioref">Vaswani et al., 2017</a>)</span>, present promising solutions to these limitations <span class="citation" data-cites="Kjell2024">(<a href="#ref-Kjell2024" role="doc-biblioref">Kjell, Kjell, et al., 2024</a>)</span>. LLMs excel in analyzing context-rich natural language with remarkable accuracy across diverse tasks <span class="citation" data-cites="devlin-etal-2019-bert">(<a href="#ref-devlin-etal-2019-bert" role="doc-biblioref">Devlin et al., 2019</a>)</span>. Open-ended response formats, where patients describe their experiences in their own words, provide high-dimensional, context-rich information that remains underutilized in current assessment practices. Empirical studies highlight the potential of NLP-based analysis of open-ended responses, achieving moderate convergence with closed-ended rating scales using traditional NLP methods <span class="citation" data-cites="kjell2019semantic">(<a href="#ref-kjell2019semantic" role="doc-biblioref">Kjell et al., 2019</a>)</span> and nearing theoretical upper limits of accuracy with LLMs <span class="citation" data-cites="Kjell2022">(<a href="#ref-Kjell2022" role="doc-biblioref">Kjell et al., 2022</a>)</span>. Preliminary research also highlights their potential for predicting clinically significant outcomes, including suicide risk <span class="citation" data-cites="zirikly-etal-2019-clpsych mohammadi-etal-2019-clac-clpsych matero-etal-2019-suicide">(<a href="#ref-matero-etal-2019-suicide" role="doc-biblioref">Matero et al., 2019</a>; <a href="#ref-mohammadi-etal-2019-clac-clpsych" role="doc-biblioref">Mohammadi et al., 2019</a>; <a href="#ref-zirikly-etal-2019-clpsych" role="doc-biblioref">Zirikly et al., 2019</a>)</span>.</p>
+<p>At the FBZ at Ruhr University Bochum, open-ended patient responses have been routinely collected from approximately 3,000 patients across pre-, post-, and follow-up therapy sessions. While previous studies have explored the use of NLP for mental health assessment, they have largely relied on social media language, limiting their clinical applicability. My project moves beyond the current state-of-the-art by applying LLMs to analyze this unique, large-scale, and longitudinal clinical dataset, assessing the relationship between patients’ probed mental health responses and clinically relevant constructs such as diagnosis, symptom severity, and functional impairment. Additionally, it will predict key clinical outcomes such as treatment response and therapy goal attainment. Furthermore, the project seeks to generate clinically meaningful, data-driven insights that go beyond traditional diagnostic categories, offering a more nuanced and patient-centered understanding of mental health trajectories.</p>
+<p>Building on the expertise of the HRG at Lund University, a pioneer in the development of probed language-based assessments, I will adapt and refine existing methods and previously validated NLP models at HRG to analyze these data, while also training state-of-the-art NLP models tailored to this unprecedented dataset. The Gateway Fellowship provides a unique opportunity to extend my PhD research on evidence-based diagnostic practices by integrating AI-driven approaches into clinical assessment. This project represents a critical step toward modernizing assessment methods by leveraging open-ended natural language formats. By addressing limitations in current practices and emphasizing a patient-centered approach, this research aims to contribute to improved outcomes for individuals receiving mental health care.</p>
+</section>
+<section id="methods" class="level1">
+<h1>Methods</h1>
+<section id="preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="preprocessing">Preprocessing</h2>
+<p>To streamline data collection, an automated transcription pipeline was implemented: The handwritten text data is first recorded by trained employees of the FBZ adult outpatient clinic using a mobile audio recording device. Identifying features (e.g.&nbsp;names, dates of birth, location details) are replaced by placeholders during recording (anonymisation). The transcription is then carried out on local hardware using the open source tool Whisper Large v2 (<a href="https://github.com/openai/whisper" class="uri">https://github.com/openai/whisper</a>), a state-of-the-art speech-to-text model <span class="citation" data-cites="Radford2022">(<a href="#ref-Radford2022" role="doc-biblioref">Radford et al., 2022</a>)</span>. Each recording begins with a structured introduction, including a patient identification code, followed by responses to predefined questions. The transcription pipeline automatically processes all audio recordings, extracts the patient codes, and identifies responses to key questions. The data is then cleaned and structured into a tabular format for further analysis.</p>
+</section>
+<section id="measures" class="level2">
+<h2 class="anchored" data-anchor-id="measures">Measures</h2>
+<section id="sociodemographic-and-context-measures" class="level3">
+<h3 class="anchored" data-anchor-id="sociodemographic-and-context-measures">Sociodemographic and context measures</h3>
+<p>demographics include age, sex, marital status, relationship status, general education, vocational qualification, work ability</p>
+<p>context factors include: Vorbehandlung, how therapy ended.</p>
+</section>
+<section id="responses-from-open-ended-questions-before-therapy" class="level3">
+<h3 class="anchored" data-anchor-id="responses-from-open-ended-questions-before-therapy">Responses from open-ended questions before therapy</h3>
+<p>At the start of therapy, patients complete two separate questionnaires designed to assess key aspects of their mental health concerns, functional impairments, and expectations for treatment. Questions 1–9 come from the first questionnaire (<em>Fragebogen zur Lebensgeschichte</em>), and questions 10–13 come from the second (<em>Eingangsfragebogen</em>). The questions include:</p>
+<ol type="1">
+<li><strong>Problem development:</strong> ‘Briefly describe how the problems for which you are seeking treatment have developed over time.’ (geman original question: „Beschreiben Sie kurz, wie sich Ihre Probleme, wegen derer Sie eine Behandlung aufsuchen, im Laufe der Zeit entwickelt haben.”)</li>
+<li><strong>Extra stressors:</strong> ‘What causes you stress in addition to your everyday problems (e.g.&nbsp;finances, housing situation)?’ (geman original question: „Was macht Ihnen zusätzlich zu Ihren Problemen im Alltag Stress (z. B. Finanzen, Wohnsituation)?“)</li>
+<li><strong>Pre-onset changes:</strong> ‘Did something special change in your life before the onset of your symptoms? (e.g.&nbsp;death of an important person, divorce or separation, change in work situation or income, addition to the family)’ (geman original question: „Hat sich vor dem Beginn Ihrer Beschwerden etwas Besonderes in Ihrem Leben verändert? (z. B. Tod einer wichtigen Bezugsperson, Scheidung oder Trennung, Veränderung der Arbeitssituation oder des Einkommens, Familienzuwachs)“)</li>
+<li><strong>Event connection:</strong> ‘Do you see a connection between the event(s) and the development of your problems?’ (geman original question: „Sehen Sie einen Zusammenhang zwischen dem Ereignis/den Ereignissen und der Entwicklung Ihrer Probleme?“)</li>
+<li><strong>Physical symptoms:</strong> ‘Are there any physical side effects when your problems occur?’ (geman original question: „Gibt es körperliche Begleiterscheinungen, wenn Ihre Probleme auftreten?“)</li>
+<li><strong>Problem causes:</strong> ‘What do you think are the causes of your problems?’ (geman original question: „Welche Ursachen sehen Sie für Ihre Probleme?“)</li>
+<li><strong>Expected improvements:</strong> ‘What would improve in your life if you no longer had your problems?’ (geman original question: „Was würde sich in Ihrem Leben verbessern, wenn Sie ihre Probleme nicht mehr hätten?“)</li>
+<li><strong>Environment response:</strong> ‘How does your environment (partner, family, friends, work colleagues) react to your problems?’ (geman original question: „Wie reagiert Ihre Umwelt (Partner:in, Familie, Freund:innen, Arbeitskolleg:innen) auf die Probleme?“)</li>
+<li><strong>No change required:</strong> ‘What should not change under any circumstances as a result of the therapy?’ (geman original question: „Was sollte sich durch die Therapie auf keinen Fall verändern?“)</li>
+<li><strong>Problem description:</strong> ‘Finally, please describe in your own words the problems for which you would like treatment.’ (geman original question: „Beschreiben Sie zum Abschluss bitte noch einmal in eigenen Worten Ihre Probleme, deretwegen Sie eine Behandlung wünschen.“)</li>
+<li><strong>Impacted life areas:</strong> ‘In which areas of your life do these problems limit you (e.g.&nbsp;job, relationship)?’ (geman original question: „In welchen Lebensbereichen schränken Sie diese Probleme ein (z. B. Beruf, Partnerschaft)?“)</li>
+<li><strong>Therapy goals:</strong> ‘What would you like to achieve for yourself in therapy?’ (geman original question: „Was möchten Sie in der Therapie für sich erreichen?“)</li>
+</ol>
+</section>
+<section id="psychometric-measures" class="level3">
+<h3 class="anchored" data-anchor-id="psychometric-measures">Psychometric measures</h3>
+<p>Clinical variables retrieved from the FBZ database include DSM-5 and ICD-10 diagnosis, symptom severity scores, therapist rated improvement scores, positive mental health measure, and therapeutic process variables.</p>
+<section id="diagnosis" class="level4">
+<h4 class="anchored" data-anchor-id="diagnosis">Diagnosis</h4>
+<p>Diagnosis at the outpatient clinic is conducted using structured clinical interviews. These typically take place before therapy begins, usually at the fourth therapist–patient contact. The interview used is the Diagnostic Interview for Mental Disorders <span class="citation" data-cites="margraf2021">(<a href="#ref-margraf2021" role="doc-biblioref">Margraf et al., 2021</a>)</span>, which covers the most frequent DSM-5 disorders encountered in outpatient therapy settings.</p>
+</section>
+<section id="beck-depression-inventory-ii" class="level4">
+<h4 class="anchored" data-anchor-id="beck-depression-inventory-ii">Beck-Depression-Inventory II</h4>
+</section>
+<section id="depression-anxiety-stress-scale-42" class="level4">
+<h4 class="anchored" data-anchor-id="depression-anxiety-stress-scale-42">Depression Anxiety Stress Scale 42</h4>
+</section>
+<section id="brief-symptom-inventory" class="level4">
+<h4 class="anchored" data-anchor-id="brief-symptom-inventory">Brief Symptom Inventory</h4>
+</section>
+<section id="symptom-checklist" class="level4">
+<h4 class="anchored" data-anchor-id="symptom-checklist">Symptom Checklist</h4>
+</section>
+<section id="childhood-trauma-questionnaire" class="level4">
+<h4 class="anchored" data-anchor-id="childhood-trauma-questionnaire">Childhood Trauma Questionnaire</h4>
+</section>
+<section id="clinical-global-impression" class="level4">
+<h4 class="anchored" data-anchor-id="clinical-global-impression">Clinical Global Impression</h4>
+<section id="severity-scale" class="level5">
+<h5 class="anchored" data-anchor-id="severity-scale">Severity Scale</h5>
+<p><em>Ziehen Sie Ihren gesamten Erfahrungsschatz an dieser Art von Kranken in Betracht, und geben Sie an, wie hoch Sie den jetzigen Grad der seelischen Erkrankung des Patienten einschätzen.</em></p>
+</section>
+<section id="improvement-scale" class="level5">
+<h5 class="anchored" data-anchor-id="improvement-scale">Improvement Scale</h5>
+<p>Patient: <em>Beurteilen Sie dabei Ihre Zustandsänderung insgesamt, also nicht nur das Ergebnis der Behandlung. Bitte vergleichen Sie Ihren jetzigen Zustand mit dem zu Beginn der Behandlung, und geben Sie an, inwieweit sich Ihr Krankheitsbild geändert hat.</em></p>
+<p>Therapist: <em>Beurteilen Sie dabei die Zustandsänderung insgesamt, also nicht nur das Ergebnis der Behandlung. Bitte vergleichen Sie den jetzigen Zustand des Patienten mit dem zu Beginn der Behandlung, und geben Sie an, inwieweit sich das Krankheitsbild des Patienten geändert hat.</em></p>
+</section>
+</section>
+</section>
+<section id="global-improvement" class="level3">
+<h3 class="anchored" data-anchor-id="global-improvement">Global Improvement</h3>
+<ol type="1">
+<li><em>Sind Ihre Erwartungen an diese Therapie (bislang) in Erfüllung gegangen?</em></li>
+<li><em>Wie sehr hat Ihnen die Therapie insgesamt (bislang) genützt?</em></li>
+</ol>
+</section>
+<section id="goal-attainment-scale" class="level3">
+<h3 class="anchored" data-anchor-id="goal-attainment-scale">Goal Attainment Scale</h3>
+<p><em>Bitte geben Sie an, in wieweit Sie das folgende Ziel bislang erreicht haben? [1-10]</em></p>
+</section>
+<section id="measurement-time-points" class="level3">
+<h3 class="anchored" data-anchor-id="measurement-time-points">Measurement time points</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Timepoint</th>
+<th>DU-DI</th>
+<th>DU-Prä</th>
+<th>KZT1-DU4</th>
+<th>KZT1-DUPost</th>
+<th>KZT2-DUPost</th>
+<th>LZT1-DUPost</th>
+<th>LZT2-DUPost</th>
+<th>Kat6</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Explanation</strong></td>
+<td>Pre-therapy, 4th contact</td>
+<td>Pre-therapy, 6th contact</td>
+<td>4th therapy session</td>
+<td>12th therapy session</td>
+<td>24th therapy session</td>
+<td>45th therapy session</td>
+<td>60th therapy session</td>
+<td>6 month after therapy</td>
+</tr>
+<tr class="even">
+<td><strong>Diagnosis</strong></td>
+<td>X</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Demographics</strong></td>
+<td></td>
+<td>X</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>BSI</strong></td>
+<td>X</td>
+<td></td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+</tr>
+<tr class="odd">
+<td><strong>BDI-II</strong></td>
+<td></td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+</tr>
+<tr class="even">
+<td><strong>DASS-42</strong></td>
+<td></td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+</tr>
+<tr class="odd">
+<td><strong>SCL-9K</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>CTQ</strong></td>
+<td></td>
+<td>X</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>CGI-S</strong></td>
+<td></td>
+<td>X</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>CGI-I</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="odd">
+<td><strong>Glob-Pt</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><strong>GAS</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="analysis" class="level2">
+<h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
+<p>The Sequential Evaluation with Model Pre-registration <span class="citation" data-cites="kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024">(<a href="#ref-kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024" role="doc-biblioref">Kjell, Ganesan, et al., 2024</a>)</span> framework will be implemented to ensure robust model development, mitigating overfitting and enabling unbiased performance evaluation. Additionally, evaluating models on prospective data will simulate real-world clinical deployment by assessing performance on new, unseen patient data.</p>
+<p>During the model development phase, preprocessing pipelines will be finalized, and exploratory models developed using advanced cross-validation techniques. Contextual embeddings derived from pretrained LLMs will be linked to clinical outcomes using state-of-the-art prediction models, including ridge regression <span class="citation" data-cites="Hoerl1970">(<a href="#ref-Hoerl1970" role="doc-biblioref">Hoerl &amp; Kennard, 1970</a>)</span>, lasso regression <span class="citation" data-cites="10.1111/j.2517-6161.1996.tb02080.x">(<a href="#ref-10.1111/j.2517-6161.1996.tb02080.x" role="doc-biblioref">Tibshirani, 1996</a>)</span>, and random forests <span class="citation" data-cites="598994">(<a href="#ref-598994" role="doc-biblioref">Ho, 1995</a>)</span>. The final pipelines will be pre-registered for evaluation (e.g., <a href="https://aspredicted.org/" class="uri">https://aspredicted.org/</a>).</p>
+<p>In the evaluation phase, pre-registered models will be tested on held-out datasets, enabling unbiased performance assessments. This phase will include detailed error analysis to identify potential biases and limitations, as well as comparative analyses to benchmark model performance against the HRG’s models.</p>
+<p>Furthermore, topic modeling techniques (e.g., Latent Dirichlet Allocation; <span class="citation" data-cites="10.5555/944919.944937">(<a href="#ref-10.5555/944919.944937" role="doc-biblioref">Blei et al., 2003</a>)</span>, or BERTopic; <span class="citation" data-cites="grootendorst2022bertopicneuraltopicmodeling">(<a href="#ref-grootendorst2022bertopicneuraltopicmodeling" role="doc-biblioref">Grootendorst, 2022</a>)</span>) will be employed to explore themes in patient-generated text. These analyses will provide valuable clinical insights into patients’ subjective experiences, including their perceived problems, impairments, and goals. By analyzing these insights, I aim to highlight commonalities and differences in patient narratives across diverse populations or conditions. This process may also reveal nuanced linguistic cues that correlate with clinical outcomes, offering a richer understanding of patient perspectives and informing personalized care strategies.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="reports/Abbildung_Gabriel_eng.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="The step-by-step process of patient narrative analysis, from preprocessing to data evaluation."><img src="reports/Abbildung_Gabriel_eng.png" class="img-fluid figure-img" style="width:100.0%" alt="The step-by-step process of patient narrative analysis, from preprocessing to data evaluation."></a></p>
+<figcaption>The step-by-step process of patient narrative analysis, from preprocessing to data evaluation.</figcaption>
+</figure>
+</div>
+<div class="{pagebreak}">
+
+</div>
+</section>
+</section>
+<section id="results" class="level1 unnumbered">
+
+
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">Results</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
+<div id="ref-Beck1996" class="csl-entry" role="listitem">
+Beck, A. T., Steer, R. A., &amp; Brown, G. K. (1996). <em><span>BDI-II</span>: <span>Beck Depression Inventory</span> manual</em> (2nd ed.). Psychological Corporation.
+</div>
+<div id="ref-10.5555/944919.944937" class="csl-entry" role="listitem">
+Blei, D. M., Ng, A. Y., &amp; Jordan, M. I. (2003). Latent dirichlet allocation. <em>Journal of Machine Learning Research</em>, <em>3</em>(null), 993–1022.
+</div>
+<div id="ref-Bonnin2024a" class="csl-entry" role="listitem">
+Bonnin, G., Kröber, S., &amp; Brachel, R. von. (2024). Die <span>Klassifikation</span> psychischer <span class="nocase">St<span class="nocase">ö</span>rungen</span> mit diagnostischen <span>Interviews</span>. In T. Teismann, P. Thoma, S. Taubner, A. Wannemüller, &amp; K. von Sydow (Eds.), <em>Klinische <span>Psychologie</span> und <span>Psychotherapie</span>: <span>Ein</span> verfahrens<span>ü</span>bergreifendes <span>Lehr-</span> und <span>Lernbuch</span></em>. Hogrefe.
+</div>
+<div id="ref-chorpita2011evidence" class="csl-entry" role="listitem">
+Chorpita, B. F., Daleiden, E. L., Ebesutani, C., Young, J., Becker, K. D., Nakamura, B. J., Phillips, L., Ward, A., Lynch, R., Trent, L., et al. (2011). Evidence-based treatments for children and adolescents: <span>An</span> updated review of indicators of efficacy and effectiveness. <em>Clinical Psychology: Science and Practice</em>, <em>18</em>(2), 154–172.
+</div>
+<div id="ref-devlin-etal-2019-bert" class="csl-entry" role="listitem">
+Devlin, J., Chang, M.-W., Lee, K., &amp; Toutanova, K. (2019). <span>BERT</span>: <span class="nocase">Pre-training</span> of deep bidirectional transformers for language understanding. In J. Burstein, C. Doran, &amp; T. Solorio (Eds.), <em>Proceedings of the 2019 conference of the north <span>American</span> chapter of the association for computational linguistics: <span>Human</span> language technologies, volume 1 (long and short papers)</em> (pp. 4171–4186). Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/N19-1423">https://doi.org/10.18653/v1/N19-1423</a>
+</div>
+<div id="ref-grootendorst2022bertopicneuraltopicmodeling" class="csl-entry" role="listitem">
+Grootendorst, M. (2022). <em><span>BERTopic</span>: <span>Neural</span> topic modeling with a class-based <span>TF-IDF</span> procedure</em>. <a href="https://arxiv.org/abs/2203.05794">https://arxiv.org/abs/2203.05794</a>
+</div>
+<div id="ref-598994" class="csl-entry" role="listitem">
+Ho, T. K. (1995). Random decision forests. <em>Proceedings of 3rd International Conference on Document Analysis and Recognition</em>, <em>1</em>, 278–282 vol.1. <a href="https://doi.org/10.1109/ICDAR.1995.598994">https://doi.org/10.1109/ICDAR.1995.598994</a>
+</div>
+<div id="ref-Hoerl1970" class="csl-entry" role="listitem">
+Hoerl, A. E., &amp; Kennard, R. W. (1970). Ridge <span>Regression</span>: <span>Biased Estimation</span> for <span>Nonorthogonal Problems</span>. <em>Technometrics</em>, <em>12</em>(1), 55–67. <a href="https://doi.org/10.1080/00401706.1970.10488634">https://doi.org/10.1080/00401706.1970.10488634</a>
+</div>
+<div id="ref-Jensen-Doss2008" class="csl-entry" role="listitem">
+Jensen-Doss, A., &amp; Weisz, J. R. (2008). Diagnostic agreement predicts treatment process and outcomes in youth mental health clinics. <em>Journal of Consulting and Clinical Psychology</em>, <em>76</em>(5), 711–722. <a href="https://doi.org/10.1037/0022-006X.76.5.711">https://doi.org/10.1037/0022-006X.76.5.711</a>
+</div>
+<div id="ref-kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024" class="csl-entry" role="listitem">
+Kjell, O. N. E., Ganesan, A. V., Boyd, R., Oltmanns, J. R., Rivero, A., Feltman, S., Carr, M. A., Luft, B. J., Kotov, R., &amp; Schwartz, H. A. (2024). <em>Demonstrating high validity of a new <span class="nocase">AI-language</span> assessment of <span>PTSD</span>: A sequential evaluation with model pre-registration</em>. PsyArXiv. <a href="https://doi.org/10.31234/osf.io/xw24e">https://doi.org/10.31234/osf.io/xw24e</a>
+</div>
+<div id="ref-kjell2019semantic" class="csl-entry" role="listitem">
+Kjell, O. N. E., Kjell, K., Garcia, D., &amp; Sikström, S. (2019). Semantic measures: <span>Using</span> natural language processing to measure, differentiate, and describe psychological constructs. <em>Psychological Methods</em>, <em>24</em>(1), 92–115. <a href="https://doi.org/10.1037/met0000191">https://doi.org/10.1037/met0000191</a>
+</div>
+<div id="ref-Kjell2024" class="csl-entry" role="listitem">
+Kjell, O. N. E., Kjell, K., &amp; Schwartz, H. A. (2024). Beyond rating scales: <span>With</span> targeted evaluation, large language models are poised for psychological assessment. <em>Psychiatry Research</em>, <em>333</em>, 115667. <a href="https://doi.org/10.1016/j.psychres.2023.115667">https://doi.org/10.1016/j.psychres.2023.115667</a>
+</div>
+<div id="ref-Kjell2022" class="csl-entry" role="listitem">
+Kjell, O. N. E., Sikström, S., Kjell, K., &amp; Schwartz, H. A. (2022). Natural language analyzed with <span class="nocase">AI-based</span> transformers predict traditional subjective well-being measures approaching the theoretical upper limits in accuracy. <em>Scientific Reports</em>, <em>12</em>(1), 3918. <a href="https://doi.org/10.1038/s41598-022-07520-w">https://doi.org/10.1038/s41598-022-07520-w</a>
+</div>
+<div id="ref-Likert1932" class="csl-entry" role="listitem">
+Likert, R. (1932). A technique for the measurement of attitudes. <em>Arch. Psychol.</em>, <em>140</em>(55).
+</div>
+<div id="ref-Lutz2022" class="csl-entry" role="listitem">
+Lutz, W., Schwartz, B., &amp; Delgadillo, J. (2022). Measurement-<span>Based</span> and <span>Data-Informed Psychological Therapy</span>. <em>Annual Review of Clinical Psychology</em>, <em>18</em>(1), 71–98. <a href="https://doi.org/10.1146/annurev-clinpsy-071720-014821">https://doi.org/10.1146/annurev-clinpsy-071720-014821</a>
+</div>
+<div id="ref-margraf2021" class="csl-entry" role="listitem">
+Margraf, J., Cwik, J. C., Brachel, R. von, Suppiger, A., &amp; Schneider, S. (2021). <em>DIPS open access 1.2: Diagnostisches interview bei psychischen störungen</em>. <a href="https://doi.org/10.46586/rub.172.149">https://doi.org/10.46586/rub.172.149</a>
+</div>
+<div id="ref-matero-etal-2019-suicide" class="csl-entry" role="listitem">
+Matero, M., Idnani, A., Son, Y., Giorgi, S., Vu, H., Zamani, M., Limbachiya, P., Guntuku, S. C., &amp; Schwartz, H. A. (2019). Suicide risk assessment with multi-level dual-context language and <span>BERT</span>. In K. Niederhoffer, K. Hollingshead, P. Resnik, R. Resnik, &amp; K. Loveys (Eds.), <em>Proceedings of the sixth workshop on computational linguistics and clinical psychology</em> (pp. 39–44). Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/W19-3005">https://doi.org/10.18653/v1/W19-3005</a>
+</div>
+<div id="ref-mohammadi-etal-2019-clac-clpsych" class="csl-entry" role="listitem">
+Mohammadi, E., Amini, H., &amp; Kosseim, L. (2019). <span>CLaC</span> at <span>CLPsych</span> 2019: <span>Fusion</span> of neural features and predicted class probabilities for suicide risk assessment based on online posts. In K. Niederhoffer, K. Hollingshead, P. Resnik, R. Resnik, &amp; K. Loveys (Eds.), <em>Proceedings of the sixth workshop on computational linguistics and clinical psychology</em> (pp. 34–38). Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/W19-3004">https://doi.org/10.18653/v1/W19-3004</a>
+</div>
+<div id="ref-Radford2022" class="csl-entry" role="listitem">
+Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., &amp; Sutskever, I. (2022). Robust <span>Speech Recognition</span> via <span>Large-Scale Weak Supervision</span>. <em>arXiv Preprint arXiv: 2212.04356</em>. <a href="https://arxiv.org/abs/2212.04356">https://arxiv.org/abs/2212.04356</a>
+</div>
+<div id="ref-10.1111/j.2517-6161.1996.tb02080.x" class="csl-entry" role="listitem">
+Tibshirani, R. (1996). Regression shrinkage and selection via the lasso. <em>Journal of the Royal Statistical Society: Series B (Methodological)</em>, <em>58</em>(1), 267–288. <a href="https://doi.org/10.1111/j.2517-6161.1996.tb02080.x">https://doi.org/10.1111/j.2517-6161.1996.tb02080.x</a>
+</div>
+<div id="ref-Vaswani2017" class="csl-entry" role="listitem">
+Vaswani, A., Shazeer, N., Parmar, N., Uszkoreit, J., Jones, L., Gomez, A. N., Kaiser, L., &amp; Polosukhin, I. (2017). Attention is <span>All</span> you <span>Need</span>. <em>Advances in <span>Neural Information Processing Systems</span></em>, <em>30</em>.
+</div>
+<div id="ref-wampold2015great" class="csl-entry" role="listitem">
+Wampold, B. E., &amp; Imel, Z. E. (2015). <em>The great psychotherapy debate: <span>The</span> evidence for what makes psychotherapy work</em>. Routledge.
+</div>
+<div id="ref-WorldHealthOrganization2017" class="csl-entry" role="listitem">
+World Health Organization. (2017). <em>Depression and other common mental disorders: <span>Global</span> health estimates</em>.
+</div>
+<div id="ref-zirikly-etal-2019-clpsych" class="csl-entry" role="listitem">
+Zirikly, A., Resnik, P., Uzuner, Ö., &amp; Hollingshead, K. (2019). <span>CLPsych</span> 2019 shared task: <span>Predicting</span> the degree of suicide risk in <span>Reddit</span> posts. In K. Niederhoffer, K. Hollingshead, P. Resnik, R. Resnik, &amp; K. Loveys (Eds.), <em>Proceedings of the sixth workshop on computational linguistics and clinical psychology</em> (pp. 24–33). Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/W19-3003">https://doi.org/10.18653/v1/W19-3003</a>
+</div>
+</div></section></div></main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
+
+
+
+
+</body></html>
