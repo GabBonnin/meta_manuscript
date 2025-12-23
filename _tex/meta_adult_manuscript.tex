@@ -383,8 +383,8 @@ To streamline data collection, an automated transcription pipeline was
 implemented: The handwritten text data is first recorded by trained
 employees of the FBZ adult outpatient clinic using a mobile audio
 recording device. Identifying features (e.g.~names, dates of birth,
-location details) are replaced by placeholders during recording
-(anonymisation). The transcription is then carried out on local hardware
+location details) were replaced by placeholders during recording
+(anonymisation). The transcription was carried out on local hardware
 using the open source tool Whisper Large v2
 (\url{https://github.com/openai/whisper}), a state-of-the-art
 speech-to-text model (\citeproc{ref-Radford2022}{Radford et al., 2022}).
@@ -392,18 +392,25 @@ Each recording begins with a structured introduction, including a
 patient identification code, followed by responses to predefined
 questions. The transcription pipeline automatically processes all audio
 recordings, extracts the patient codes, and identifies responses to key
-questions. The data is then cleaned and structured into a tabular format
-for further analysis.
+questions.
+
+As an additional data correction step, the exported transcription table
+was screened for incomplete entries. Records with missing patient
+identification codes or without any extracted text were automatically
+flagged, exported for manual correction, and subsequently re-imported
+and merged back into the original dataset. The corrected dataset was
+then used for downstream analyses.
 
 \subsection{Measures}\label{measures}
 
 \subsubsection{Sociodemographic and context
 measures}\label{sociodemographic-and-context-measures}
 
-demographics include age, sex, marital status, relationship status,
-general education, vocational qualification, work ability
-
-context factors include: Vorbehandlung, how therapy ended.
+Sociodemographic information included age, sex, marital and relationship
+status, general educational attainment, vocational qualification, and
+current work ability. Contextual variables captured prior psychological
+or psychiatric treatment and the manner in which therapy ended (e.g.,
+regular completion, dropout).
 
 \subsubsection{Responses from open-ended questions before
 therapy}\label{responses-from-open-ended-questions-before-therapy}
@@ -551,11 +558,15 @@ populations (\citeproc{ref-lukat2016}{Lukat et al., 2016}).
 Questionnaire.}\label{childhood-trauma-questionnaire}
 
 Early adverse experiences were assessed using the \emph{Childhood Trauma
-Questionnaire} (CTQ), a self-report measure of childhood maltreatment.
-The CTQ consists of items assessing emotional, physical, and sexual
-abuse, as well as emotional and physical neglect. Items are rated on a
-5-point Likert scale ranging from 1 (``not at all'') to 5 (``very
-often'').
+Questionnaire} (CTQ), a widely used self-report instrument for the
+retrospective assessment of childhood maltreatment. The CTQ measures
+five domains of adverse experiences: emotional abuse, physical abuse,
+sexual abuse, emotional neglect, and physical neglect. Items are rated
+on a 5-point Likert scale ranging from 1 (``not at all'') to 5 (``very
+often''), with higher scores indicating greater exposure to
+maltreatment. The German version of the CTQ has demonstrated good
+psychometric properties, including satisfactory reliability and validity
+in clinical samples
 
 Wingenfeld, Katja \& Spitzer, Carsten \& Mensebach, Christoph \& Grabe,
 Hans \& Hill, Andreas \& Gast, Ursula \& Schlosser, Nicole \& Höpp,
