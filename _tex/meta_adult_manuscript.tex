@@ -361,33 +361,19 @@ outcomes, including suicide risk
 \citeproc{ref-zirikly-etal-2019-clpsych}{Zirikly et al., 2019}).
 
 At the FBZ at Ruhr University Bochum, open-ended patient responses have
-been routinely collected from approximately 3,000 patients across pre-,
-post-, and follow-up therapy sessions. While previous studies have
-explored the use of NLP for mental health assessment, they have largely
-relied on social media language, limiting their clinical applicability.
-My project moves beyond the current state-of-the-art by applying LLMs to
-analyze this unique, large-scale, and longitudinal clinical dataset,
-assessing the relationship between patients' probed mental health
-responses and clinically relevant constructs such as diagnosis, symptom
-severity, and functional impairment. Additionally, it will predict key
-clinical outcomes such as treatment response and therapy goal
-attainment. Furthermore, the project seeks to generate clinically
-meaningful, data-driven insights that go beyond traditional diagnostic
-categories, offering a more nuanced and patient-centered understanding
-of mental health trajectories.
-
-Building on the expertise of the HRG at Lund University, a pioneer in
-the development of probed language-based assessments, I will adapt and
-refine existing methods and previously validated NLP models at HRG to
-analyze these data, while also training state-of-the-art NLP models
-tailored to this unprecedented dataset. The Gateway Fellowship provides
-a unique opportunity to extend my PhD research on evidence-based
-diagnostic practices by integrating AI-driven approaches into clinical
-assessment. This project represents a critical step toward modernizing
-assessment methods by leveraging open-ended natural language formats. By
-addressing limitations in current practices and emphasizing a
-patient-centered approach, this research aims to contribute to improved
-outcomes for individuals receiving mental health care.
+been routinely collected from approximately 3,000 patients pre-therapy.
+While previous studies have explored the use of NLP for mental health
+assessment, they have largely relied on social media language, limiting
+their clinical applicability. My project moves beyond the current
+state-of-the-art by applying LLMs to analyze this unique, large-scale,
+and longitudinal clinical dataset, assessing the relationship between
+patients' probed mental health responses and clinically relevant
+constructs such as diagnosis, symptom severity, and functional
+impairment. Additionally, it will predict key clinical outcomes such as
+treatment response and therapy goal attainment. Furthermore, the project
+seeks to generate clinically meaningful, data-driven insights that go
+beyond traditional diagnostic categories, offering a more nuanced and
+patient-centered understanding of mental health trajectories.
 
 \section{Methods}\label{methods}
 
@@ -497,10 +483,14 @@ Lebensgeschichte}), and questions 10--13 come from the second
 
 \subsubsection{Psychometric measures}\label{psychometric-measures}
 
-Clinical variables retrieved from the FBZ database include DSM-5 and
-ICD-10 diagnosis, symptom severity scores, therapist rated improvement
-scores, positive mental health measure, and therapeutic process
-variables.
+Clinical and psychometric variables were retrieved from the FBZ database
+and included diagnostic information, self-report symptom measures,
+therapist- and patient-rated outcome measures, positive mental health
+indicators, and therapeutic process variables. Diagnoses were coded
+according to DSM-5 and ICD-10 criteria. Symptom severity and treatment
+outcomes were assessed using a combination of standardized self-report
+questionnaires and clinician-rated instruments administered at different
+points during treatment.
 
 \paragraph{Diagnosis.}\label{diagnosis}
 
@@ -515,54 +505,119 @@ settings.
 \paragraph{Beck-Depression-Inventory
 II.}\label{beck-depression-inventory-ii}
 
+Depressive symptoms were assessed using the~\emph{Beck Depression
+Inventory--II}~(BDI-II; (\citeproc{ref-Beck1996}{Beck et al., 1996})), a
+widely used self-report questionnaire measuring the severity of
+depressive symptomatology over the past two weeks.
+
 \paragraph{Depression Anxiety Stress Scale
 42.}\label{depression-anxiety-stress-scale-42}
 
+General psychological distress was assessed using the \emph{Depression
+Anxiety Stress Scales--42} (DASS-42(\citeproc{ref-Lovibond1995}{Lovibond
+\& Lovibond, 1995})), which consists of 42 items measuring symptoms of
+depression, anxiety, and stress on a XXX scale.
+
 \paragraph{Brief Symptom Inventory.}\label{brief-symptom-inventory}
 
-\paragraph{Symptom Checklist.}\label{symptom-checklist}
+Overall psychopathological symptom burden was measured using the
+\emph{Brief Symptom Inventory} (BSI; (\citeproc{ref-book}{Franke,
+2002})), the short form of the Symptom Checklist-90-Revised (SCL-90-R;
+Derogatis). The BSI consists of 53 items rated on a 5-point Likert scale
+ranging from 0 (``not at all'') to 4 (``extremely''). Responses to 49
+items are assigned to nine primary symptom dimensions, while four items
+are evaluated separately. These symptom dimensions are summarized into
+three global indices: the \emph{Global Severity Index} (GSI), reflecting
+overall psychological distress; the \emph{Positive Symptom Distress
+Index} (PSDI), indicating symptom intensity; and the \emph{Positive
+Symptom Total} (PST), representing the number of reported symptoms.
+
+\paragraph{Positive Mental Health
+Scale.}\label{positive-mental-health-scale}
+
+Positive mental health (PMH) was assessed with the nine-item PMH scale
+(\citeproc{ref-lukat2016}{Lukat et al., 2016}). Responses are given on a
+4-point Likert scale from 0 (disagree) to 3 (agree). Item scores are
+summed to yield a total score ranging from 0 to 27, with higher scores
+reflecting greater PMH. The scale has been validated as a unidimensional
+measure with excellent internal consistency (Cronbach's α = .93), good
+test--retest reliability (Pearson r = .74--.81), and evidence of scalar
+invariance across samples and over time (\citeproc{ref-lukat2016}{Lukat
+et al., 2016}). Furthermore, it shows strong convergent and discriminant
+validity and is sensitive to therapeutic change across diverse
+populations (\citeproc{ref-lukat2016}{Lukat et al., 2016}).
 
 \paragraph{Childhood Trauma
 Questionnaire.}\label{childhood-trauma-questionnaire}
+
+Early adverse experiences were assessed using the \emph{Childhood Trauma
+Questionnaire} (CTQ), a self-report measure of childhood maltreatment.
+The CTQ consists of items assessing emotional, physical, and sexual
+abuse, as well as emotional and physical neglect. Items are rated on a
+5-point Likert scale ranging from 1 (``not at all'') to 5 (``very
+often'').
+
+Wingenfeld, Katja \& Spitzer, Carsten \& Mensebach, Christoph \& Grabe,
+Hans \& Hill, Andreas \& Gast, Ursula \& Schlosser, Nicole \& Höpp,
+Hella \& Beblo, Thomas \& Driessen, Martin. (2010). The German Version
+of the Childhood Trauma Questionnaire (CTQ): Preliminary Psychometric
+Properties. Psychotherapie, Psychosomatik, medizinische Psychologie. 60.
+10.1055/s-0030-1253494.
 
 \paragraph{Clinical Global
 Impression.}\label{clinical-global-impression}
 
 \subparagraph{Severity Scale.}\label{severity-scale}
 
-\emph{Ziehen Sie Ihren gesamten Erfahrungsschatz an dieser Art von
-Kranken in Betracht, und geben Sie an, wie hoch Sie den jetzigen Grad
-der seelischen Erkrankung des Patienten einschätzen.}
+Clinician-rated symptom severity and improvement were assessed using
+the~\emph{Clinical Global Impression}~(CGI) scales.
+The~\emph{CGI-Severity}~scale evaluates the clinician's global
+impression of the patient's current level of mental illness, based on
+their total clinical experience with this population. The item asks:
+``Considering your total clinical experience with this particular
+population, how mentally ill is the patient at this time?''
 
 \subparagraph{Improvement Scale.}\label{improvement-scale}
 
-Patient: \emph{Beurteilen Sie dabei Ihre Zustandsänderung insgesamt,
-also nicht nur das Ergebnis der Behandlung. Bitte vergleichen Sie Ihren
-jetzigen Zustand mit dem zu Beginn der Behandlung, und geben Sie an,
-inwieweit sich Ihr Krankheitsbild geändert hat.}
-
-Therapist: \emph{Beurteilen Sie dabei die Zustandsänderung insgesamt,
-also nicht nur das Ergebnis der Behandlung. Bitte vergleichen Sie den
-jetzigen Zustand des Patienten mit dem zu Beginn der Behandlung, und
-geben Sie an, inwieweit sich das Krankheitsbild des Patienten geändert
-hat.}
+Treatment-related change was assessed using
+the~\emph{CGI-Improvement}~scale. Both patients and therapists rated
+overall improvement relative to the beginning of therapy, regardless of
+whether the change was attributed entirely to treatment. Patient and
+therapist versions differ only in perspective but use equivalent
+response formats.
 
 \subsubsection{Global Improvement}\label{global-improvement}
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \emph{Sind Ihre Erwartungen an diese Therapie (bislang) in Erfüllung
-  gegangen?}
-\item
-  \emph{Wie sehr hat Ihnen die Therapie insgesamt (bislang) genützt?}
-\end{enumerate}
+Global therapy outcome was assessed using a six-point global success
+rating based on two items measuring perceived benefit and satisfaction
+with therapy (\citeproc{ref-michalak2003}{Michalak et al., 2003}). These
+items were completed by both patients and therapists and capture a
+retrospective evaluation of treatment success. The items assess (1) the
+extent to which expectations toward therapy have been fulfilled and (2)
+the overall perceived benefit of therapy. Responses are given on a
+6-point Likert scale ranging from 1 (``on the contrary / rather
+harmful'') to 6 (``completely / very helpful'').
 
 \subsubsection{Goal Attainment Scale}\label{goal-attainment-scale}
 
-\emph{Bitte geben Sie an, in wieweit Sie das folgende Ziel bislang
-erreicht haben? {[}1-10{]}}
+Individualized treatment outcomes were assessed using a goal attainment
+measure inspired by the Goal Attainment Scaling approach
+(\citeproc{ref-kiresuk1968}{Kiresuk \& Sherman, 1968}). At the beginning
+of therapy, patients and therapists collaboratively define
+individualized treatment goals. During the course and at the end of
+therapy, patients and therapists retrospectively evaluated the extent to
+which each of the predefined goals had been achieved.
+
+Goal attainment was rated on a standardized six-point numerical scale
+ranging from deterioration relative to the initial goal state (-1 =
+moved away from the goal) to full goal attainment (4 = goal achieved).
+The scale reflects patients' subjective assessment of goal progress,
+with intermediate categories indicating partial progress toward the
+respective goal.
+
+For each patient, an overall goal attainment score was computed as the
+mean rating across all individually defined goals, representing the
+average subjective level of goal progress at the end of therapy.
 
 \subsubsection{Measurement time points}\label{measurement-time-points}
 
@@ -609,12 +664,12 @@ therapy \\
 \textbf{BSI} & X & & X & X & X & X & X & X \\
 \textbf{BDI-II} & & X & X & X & X & X & X & X \\
 \textbf{DASS-42} & & X & X & X & X & X & X & X \\
-\textbf{SCL-9K} & & & & & & & & \\
+\textbf{PMH} & & & & & & & & \\
 \textbf{CTQ} & & X & & & & & & \\
 \textbf{CGI-S} & & X & & & & & & \\
 \textbf{CGI-I} & & & & & & & & \\
 \textbf{Glob-Pt} & & & & & & & & \\
-\textbf{GAS} & & & & & & & & \\
+\textbf{GAS} & & & & X & X & X & X & X \\
 \end{longtable}
 
 \subsection{Analysis}\label{analysis}
@@ -708,6 +763,10 @@ technologies, volume 1 (long and short papers)} (pp. 4171--4186).
 Association for Computational Linguistics.
 \url{https://doi.org/10.18653/v1/N19-1423}
 
+\bibitem[\citeproctext]{ref-book}
+Franke, G. (2002). \emph{Franke, g.h. (2000). BSI. Brief symptom
+inventory - deutsche version. Manual. Göttingen: beltz.}
+
 \bibitem[\citeproctext]{ref-grootendorst2022bertopicneuraltopicmodeling}
 Grootendorst, M. (2022). \emph{{BERTopic}: {Neural} topic modeling with
 a class-based {TF-IDF} procedure}.
@@ -730,6 +789,12 @@ Jensen-Doss, A., \& Weisz, J. R. (2008). Diagnostic agreement predicts
 treatment process and outcomes in youth mental health clinics.
 \emph{Journal of Consulting and Clinical Psychology}, \emph{76}(5),
 711--722. \url{https://doi.org/10.1037/0022-006X.76.5.711}
+
+\bibitem[\citeproctext]{ref-kiresuk1968}
+Kiresuk, T. J., \& Sherman, R. E. (1968). Goal attainment scaling: A
+general method for evaluating comprehensive community mental health
+programs. \emph{Community Mental Health Journal}, \emph{4}(6), 443--453.
+\url{https://doi.org/10.1007/BF01530764}
 
 \bibitem[\citeproctext]{ref-kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024}
 Kjell, O. N. E., Ganesan, A. V., Boyd, R., Oltmanns, J. R., Rivero, A.,
@@ -761,6 +826,19 @@ upper limits in accuracy. \emph{Scientific Reports}, \emph{12}(1), 3918.
 Likert, R. (1932). A technique for the measurement of attitudes.
 \emph{Arch. Psychol.}, \emph{140}(55).
 
+\bibitem[\citeproctext]{ref-Lovibond1995}
+Lovibond, P. F., \& Lovibond, S. H. (1995). The structure of negative
+emotional states: Comparison of the Depression Anxiety Stress Scales
+(DASS) with the Beck Depression and Anxiety Inventories. \emph{Behaviour
+Research and Therapy}, \emph{33}(3), 335--343.
+\url{https://doi.org/10.1016/0005-7967(94)00075-u}
+
+\bibitem[\citeproctext]{ref-lukat2016}
+Lukat, J., Margraf, J., Lutz, R., Veld, W. M. van der, \& Becker, E. S.
+(2016). Psychometric properties of the positive mental health scale
+(PMH-scale). \emph{BMC Psychology}, \emph{4}(1), 8.
+\url{https://doi.org/10.1186/s40359-016-0111-x}
+
 \bibitem[\citeproctext]{ref-Lutz2022}
 Lutz, W., Schwartz, B., \& Delgadillo, J. (2022). Measurement-{Based}
 and {Data-Informed Psychological Therapy}. \emph{Annual Review of
@@ -780,6 +858,12 @@ Niederhoffer, K. Hollingshead, P. Resnik, R. Resnik, \& K. Loveys
 (Eds.), \emph{Proceedings of the sixth workshop on computational
 linguistics and clinical psychology} (pp. 39--44). Association for
 Computational Linguistics. \url{https://doi.org/10.18653/v1/W19-3005}
+
+\bibitem[\citeproctext]{ref-michalak2003}
+Michalak, J., Kosfelder, J., Meyer, F., \& Schulte, D. (2003). Messung
+des Therapieerfolgs. \emph{Zeitschrift für Klinische Psychologie und
+Psychotherapie}, \emph{32}(2), 94--103.
+\url{https://doi.org/10.1026/0084-5345.32.2.94}
 
 \bibitem[\citeproctext]{ref-mohammadi-etal-2019-clac-clpsych}
 Mohammadi, E., Amini, H., \& Kosseim, L. (2019). {CLaC} at {CLPsych}
