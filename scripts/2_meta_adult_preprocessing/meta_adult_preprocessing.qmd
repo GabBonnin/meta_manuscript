@@ -237,7 +237,12 @@ bdi_master |>
 bdi_erw <- bdi_master |> 
   filter(!str_detect(assessment_type, "KiJu|Krisen|DU-POST2|Gruppe|Einzeltherapiesitzung|Weitere|DU-4|DU-8|DU-12|DU-24|Erwachsene|Du-Post-KZT1|DU-Kat12|DU-Kat24|Interview|Abrechnung|außerplanmäßig|LZT-DU12|LZT-DU24|LZT-DU4|DU-Post"))
 
-unique(bdi_erw$assessment_type)
+bdi_erw |>
+  group_by(case_nr, assessment_type) |>
+  filter(n_distinct(assessment_date, na.rm = TRUE) > 1) |>
+  ungroup() |>
+  distinct(patient_chiffre, assessment_type, assessment_date) |>
+  arrange(patient_chiffre, assessment_type, assessment_date)
 
 # Check if one single chiffre is related to several case_nrs? 
 
@@ -305,6 +310,13 @@ bsi_master |>
 bsi_erw <- bsi_master |> 
   filter(assessment_type == "Diagnostisches Interview ab 01.04.2017" | assessment_type == "KZT1-DU4" | assessment_type == "KZT1-DUPost" | assessment_type == "KZT2-DUPost" | assessment_type == "LZT1-DUPost" | assessment_type == "LZT2-DUPost" | assessment_type == "DU-Kat6")
 
+bsi_erw |>
+  group_by(case_nr, assessment_type) |>
+  filter(n_distinct(assessment_date, na.rm = TRUE) > 1) |>
+  ungroup() |>
+  distinct(patient_chiffre, assessment_type, assessment_date) |>
+  arrange(patient_chiffre, assessment_type, assessment_date)
+
 bsi_erw_gsi <- bsi_erw |> 
   filter(item_no != "54" & item_no != "55" & item_no != "11", item_no != "25", item_no != "39", item_no != "52") |>  #items 54 and 55 don't belong to the bsi and 11, 25, 39 and 52 are not used for calculating the GSI
   summarise(
@@ -341,9 +353,7 @@ dass_master |>
   arrange(desc(n_patients))
 
 dass_erw <- dass_master |> 
-  filter(assessment_type == "DU-Prä" | assessment_type == "KZT1-DU4" | assessment_type == "KZT1-DUPost" | assessment_type == "KZT2-DUPost" | assessment_type == "LZT1-DUPost" | assessment_type == "LZT2-DUPost" | assessment_type == "DU-Kat6")
-
-library(dplyr)
+  filter(assessment_name == "DASS-42-G" & (assessment_type == "DU-Prä" | assessment_type == "KZT1-DU4" | assessment_type == "KZT1-DUPost" | assessment_type == "KZT2-DUPost" | assessment_type == "LZT1-DUPost" | assessment_type == "LZT2-DUPost" | assessment_type == "DU-Kat6"))
 
 dass_erw_score <- dass_erw |>
   summarise(
@@ -373,25 +383,166 @@ dass_wider <- dass_erw_score |>
   select(case_nr, `dass_total_score_DU-Prä`, `dass_dep_score_DU-Prä`, `dass_anx_score_DU-Prä`, `dass_str_score_DU-Prä`, `dass_total_score_KZT1-DU4`, `dass_dep_score_KZT1-DU4`, `dass_anx_score_KZT1-DU4`, `dass_str_score_KZT1-DU4`, `dass_total_score_KZT1-DUPost`, `dass_dep_score_KZT1-DUPost`, `dass_anx_score_KZT1-DUPost`, `dass_str_score_KZT1-DUPost`, `dass_total_score_KZT2-DUPost`, `dass_dep_score_KZT2-DUPost`, `dass_anx_score_KZT2-DUPost`, `dass_str_score_KZT2-DUPost`, `dass_total_score_LZT1-DUPost`, `dass_dep_score_LZT1-DUPost`, `dass_anx_score_LZT1-DUPost`, `dass_str_score_LZT1-DUPost`, `dass_total_score_LZT2-DUPost`, `dass_dep_score_LZT2-DUPost`, `dass_anx_score_LZT2-DUPost`, `dass_str_score_LZT2-DUPost`, `dass_total_score_DU-Kat6`, `dass_dep_score_DU-Kat6`, `dass_anx_score_DU-Kat6`, `dass_str_score_DU-Kat6`)
 ```
 
+### GAS
+
+```{r}
+gas_master <- read_xlsx("/Volumes/meta_data/raw/raw_selfreport/GAS_ab2017.xlsx",
+                        col_names = c("case_nr", "patient_chiffre","patient_sex","patient_dateofbirth","assessment_date","assessment_type","assessment_id","assessment_name","item_no","answerscale_value","therapist_no","therapist_sex","therapist_dateofbirth"),
+                        skip = 1)
+
+#how many patients are there for each assessment type?
+gas_master |>
+  summarise(
+    n_patients = n_distinct(case_nr),
+    .by = assessment_type
+  ) |> 
+  arrange(desc(n_patients))
+
+gas_pt <- gas_master |> 
+  filter(assessment_name == "GAS-PT" & (assessment_type == "KZT1-DUPost" | assessment_type == "KZT2-DUPost" | assessment_type == "LZT1-DUPost" | assessment_type == "LZT2-DUPost" | assessment_type == "DU-Kat6"))
+
+gas_pt_mean <- gas_pt |> 
+  mutate(answerscale_value = answerscale_value - 2) |> #recoding patient scaling (1-6) to be consistent with patient scaling (-1-4)
+  summarise(
+    gas_pt_mean = mean(answerscale_value, na.rm = TRUE),
+    assessment_date = first(assessment_date),
+    .by = c(case_nr,assessment_type)
+  )  |> 
+  select(case_nr, assessment_type, gas_pt_mean, assessment_date)
+
+gas_th <- gas_master |> 
+  filter(assessment_name == "GAS-TH" & (assessment_type == "KZT1-DUPost" | assessment_type == "KZT2-DUPost" | assessment_type == "LZT1-DUPost" | assessment_type == "LZT2-DUPost" | assessment_type == "DU-Kat6"))
+
+gas_th_mean <- gas_th |> 
+  summarise(
+    gas_th_mean = mean(answerscale_value, na.rm = TRUE),
+    assessment_date = first(assessment_date),
+    .by = c(case_nr,assessment_type)
+  )  |> 
+  select(case_nr, assessment_type, gas_th_mean, assessment_date)
+
+gas_mean <- gas_pt_mean |> 
+  left_join(gas_th_mean, by = c("case_nr", "assessment_type", "assessment_date")) |> 
+  select(case_nr, assessment_date, assessment_type, gas_pt_mean, gas_th_mean)
+
+gas_wider <- gas_mean |> 
+  pivot_wider(id_cols = c(case_nr), names_from = assessment_type, values_from = c(gas_pt_mean, gas_th_mean, assessment_date)) |> 
+  select(case_nr, "gas_pt_mean_KZT1-DUPost", "gas_pt_mean_KZT2-DUPost", "gas_pt_mean_LZT1-DUPost", "gas_pt_mean_LZT2-DUPost", "gas_pt_mean_DU-Kat6", "gas_th_mean_KZT1-DUPost", "gas_th_mean_KZT2-DUPost", "gas_th_mean_LZT1-DUPost", "gas_th_mean_LZT2-DUPost", "gas_th_mean_DU-Kat6")
+```
+
+### PMH
+
+```{r}
+pmh_master <- read_xlsx("/Volumes/meta_data/raw/raw_selfreport/Seelische_Gesundheit_ab2017.xlsx",
+                        col_names = c("case_nr", "patient_chiffre","patient_sex","patient_dateofbirth","assessment_date","assessment_type","assessment_id","assessment_name","item_no","answerscale_value","therapist_no","therapist_sex","therapist_dateofbirth"),
+                        skip = 1)
+
+#how many patients are there for each assessment type?
+pmh_master |>
+  summarise(
+    n_patients = n_distinct(case_nr),
+    .by = assessment_type
+  ) |> 
+  arrange(desc(n_patients))
+
+pmh_erw <- pmh_master |> 
+  filter(assessment_type == "DU-Prä" | assessment_type == "KZT1-DU4" | assessment_type == "KZT1-DUPost" | assessment_type == "KZT2-DUPost" | assessment_type == "LZT1-DUPost" | assessment_type == "LZT2-DUPost" | assessment_type == "DU-Kat6")
+
+
+# PMH-Summenscore berechnen (Summe der Itemwerte je Fall und Assessment-Typ)
+pmh_erw_sum <- pmh_erw |> 
+  summarise(
+    assessment_date = first(assessment_date),
+    pmh_sum = sum(answerscale_value, na.rm = TRUE),
+    .by = c(case_nr, assessment_type)
+  )
+
+# pivot df to have one case_nr in each row
+pmh_wider <- pmh_erw_sum |> 
+  pivot_wider(id_cols = c(case_nr), names_from = assessment_type, values_from = c(pmh_sum, assessment_date)) |> 
+  select(case_nr, "pmh_sum_DU-Prä", "pmh_sum_KZT1-DU4", "pmh_sum_KZT1-DUPost", "pmh_sum_KZT2-DUPost", "pmh_sum_LZT1-DUPost", "pmh_sum_LZT2-DUPost", "pmh_sum_DU-Kat6")
+```
+
+## Plausibility Checks of Assessment Time Points
+
+During the calculation of sum scores, it became apparent that in some cases identical assessment time points (e.g., LZT 2) were documented more than once. This results in implausible sum scores (e.g., values \> 27 for the PMH). This issue is not limited to the PMH, but occurs across multiple instruments (e.g., BDI, BSI, DASS, GAS), suggesting a dataset-wide problem rather than an instrument-specific one. The purpose of the following plausibility check is to identify cases in which multiple different assessment dates (assessment_date) exist within the same combination of case number (case_nr) and assessment type (assessment_type).
+
+```{r}
+# Identification of cases with inconsistent assessment time points
+# (multiple assessment_dates within the same case_nr × assessment_type)
+
+# 1) Collect instrument-specific datasets
+instrument_dfs <- list(
+  pmh = pmh_erw,
+  bdi = bdi_erw,
+  bsi = bsi_erw,
+  dass = dass_erw,
+  gas_th = gas_th,
+  gas_pt = gas_pt)
+  
+# 2) Extract inconsistent cases per instrument
+inconsistent_cases <- imap_dfr(instrument_dfs, ~ .x |>
+  group_by(case_nr, assessment_type) |>
+  filter(n_distinct(assessment_date, na.rm = TRUE) > 1) |>
+  ungroup() |>
+  distinct(case_nr, assessment_type, assessment_date) |>
+  mutate(instrument = .y)
+) |>
+  arrange(case_nr, instrument, assessment_type, assessment_date)
+
+# 3) Unique list of affected patients
+affected_cases <- inconsistent_cases |>
+  distinct(case_nr) |>
+  arrange(case_nr)
+
+# Output
+inconsistent_cases
+```
+
+**Results of the Plausibility Check**
+
+At present, 11 patients (chiffres) are affected by this issue.
+
+```{r}
+affected_cases
+```
+
+*Possible Explanations*
+
+-   An identical assessment time point was entered more than once.
+
+-   An incorrect assessment type was assigned because another measurement is missing and an existing one was duplicated instead.
+
+-   After a follow-up assessment (e.g., Kat6), a time point from an ongoing therapy (e.g., LZT 2) appears again, followed by another follow-up assessment. This may indicate that a therapy was terminated and later resumed, while continuing under the same case number.
+
+-   A pre-treatment assessment (Du-Prä) was conducted without subsequent therapy; several years later, the same patient re-entered treatment and was registered under the same case number, including a new pre-treatment assessment and follow-up measurements.
+
+*Further Procedure*
+
+Determine which of the affected patient chiffres are included in the final dataset containing text data. For these cases, conduct a manual review of the original records to decide which assessment should be considered the “correct” one for analysis (likely requiring case-by-case decisions based on chronological order and documentation).
 
 ## prepare text data
 
 ```{r}
 library(stringr)
 
-text_dat_raw_1 <- read_csv("/Volumes/meta_data/processed/processed_transcriptions/Transcriptions.csv",
-                     col_names = c("path_audiofile","patient_chiffre","txt1_problem_development","txt2_extra_stressors","txt3_pre_onset_changes","txt4_event_connection","txt5_physical_symptoms","txt6_problem_causes","txt7_expected_improvements","txt8_environment_response","txt9_no_change_requested","txt_psychosis", "txt10_problem_description","txt11_impacted_life_areas","txt12_therapy_goals"),
+transcription_hattingen_2017_2018_2019_corrected <- read_xlsx("/Volumes/meta_data/processed/processed_transcriptions/corrected/transcription_hattingen_2017_2018_2019_corrected.xlsx",
+                     col_names = c("path_audiofile","patient_chiffre","txt1_problem_development","txt2_extra_stressors","txt3_pre_onset_changes","txt4_event_connection","txt5_physical_symptoms","txt6_problem_causes","txt7_expected_improvements","txt8_environment_response","txt9_no_change_requested", "txt10_problem_description","txt11_impacted_life_areas","txt12_therapy_goals"),
                      skip = 1)
 
-text_dat_raw_2 <- read_xlsx("/Volumes/meta_data/processed/processed_transcriptions/Transcriptions_Hattingen_2017-2019.xlsx",
-                     col_names = c("path_audiofile","patient_chiffre","txt1_problem_development","txt2_extra_stressors","txt3_pre_onset_changes","txt4_event_connection","txt5_physical_symptoms","txt6_problem_causes","txt7_expected_improvements","txt8_environment_response","txt9_no_change_requested","txt_psychosis", "txt10_problem_description","txt11_impacted_life_areas","txt12_therapy_goals"),
+transcription_hattingen_2020_2021_corrected <- read_delim("/Volumes/meta_data/processed/processed_transcriptions/corrected/transcription_hattingen_2020_2021_corrected.csv",
+                     delim = ";",
+                     col_names = c("path_audiofile","patient_chiffre","txt1_problem_development","txt2_extra_stressors","txt3_pre_onset_changes","txt4_event_connection","txt5_physical_symptoms","txt6_problem_causes","txt7_expected_improvements","txt8_environment_response","txt9_no_change_requested", "txt10_problem_description","txt11_impacted_life_areas","txt12_therapy_goals"),
                      skip = 1)
 
-text_dat_raw_3 <- read_csv("/Volumes/meta_data/processed/processed_transcriptions/Transcriptions_Hattingen_2020-2021.csv",
-                     col_names = c("path_audiofile","patient_chiffre","txt1_problem_development","txt2_extra_stressors","txt3_pre_onset_changes","txt4_event_connection","txt5_physical_symptoms","txt6_problem_causes","txt7_expected_improvements","txt8_environment_response","txt9_no_change_requested","txt_psychosis", "txt10_problem_description","txt11_impacted_life_areas","txt12_therapy_goals"),
+transcription_hattingen_2022_corrected <- read_delim("/Volumes/meta_data/processed/processed_transcriptions/corrected/transcription_hattingen_2022_corrected.csv",
+                                                     delim = ";",
+                   col_names = c("path_audiofile","patient_chiffre","txt1_problem_development","txt2_extra_stressors","txt3_pre_onset_changes","txt4_event_connection","txt5_physical_symptoms","txt6_problem_causes","txt7_expected_improvements","txt8_environment_response","txt9_no_change_requested", "txt10_problem_description","txt11_impacted_life_areas","txt12_therapy_goals"),
                      skip = 1)
 
-text_dat_1 <- text_dat_raw_1 |>
+merged_text_raw <- bind_rows(transcription_hattingen_2017_2018_2019_corrected, transcription_hattingen_2020_2021_corrected, transcription_hattingen_2022_corrected)
+
+merged_text <- merged_text_raw |>
   mutate( # extract treatment_center, year of the treatment end from audiofile path
     treatment_center       = str_match(path_audiofile, "raw_audio/([^/]+)/")[, 2],
     treatment_end_year_text = str_match(path_audiofile, "raw_audio/[^/]+/(\\d{4})")[, 2],
@@ -402,7 +553,7 @@ text_dat_1 <- text_dat_raw_1 |>
   group_by(patient_chiffre, folder) |>
   slice_max(zoom_nr, n = 1, with_ties = FALSE) |> # remove the older zoom_nr for each group of patient and folder
   ungroup() |>
-  select( # remove irrelevant variables (e.g. q40 [bc of too little responses], folder, zoom_nr, etc.)
+  select(
     patient_chiffre,
     treatment_center,
     treatment_end_year_text,
@@ -420,66 +571,12 @@ text_dat_1 <- text_dat_raw_1 |>
     txt12_therapy_goals
   )
 
+merged_text_clean <- merged_text |>
+  filter(!(
+    is.na(patient_chiffre) |
+    if_all(contains("txt"), is.na)
+  ))
 
-text_dat_2 <- text_dat_raw_2 |>
-  mutate( # extract treatment_center, year of the treatment end from audiofile path
-    treatment_center       = str_match(path_audiofile, "raw_audio/([^/]+)/")[, 2],
-    treatment_end_year_text = str_match(path_audiofile, "raw_audio/[^/]+/(\\d{4})")[, 2],
-    folder                 = dirname(path_audiofile),
-    zoom_nr                = str_extract(path_audiofile, "(?<=ZOOM)\\d+"),
-    zoom_nr                = as.integer(zoom_nr)
-  ) |>
-  group_by(patient_chiffre, folder) |>
-  slice_max(zoom_nr, n = 1, with_ties = FALSE) |> # remove the older zoom_nr for each group of patient and folder
-  ungroup() |>
-  select( # remove irrelevant variables (e.g. q40 [bc of too little responses], folder, zoom_nr, etc.)
-    patient_chiffre,
-    treatment_center,
-    treatment_end_year_text,
-    txt1_problem_development,
-    txt2_extra_stressors,
-    txt3_pre_onset_changes,
-    txt4_event_connection,
-    txt5_physical_symptoms,
-    txt6_problem_causes,
-    txt7_expected_improvements,
-    txt8_environment_response,
-    txt9_no_change_requested,
-    txt10_problem_description,
-    txt11_impacted_life_areas,
-    txt12_therapy_goals
-  )
-
-text_dat_3 <- text_dat_raw_3 |>
-  mutate( # extract treatment_center, year of the treatment end from audiofile path
-    treatment_center       = str_match(path_audiofile, "raw_audio/([^/]+)/")[, 2],
-    treatment_end_year_text = str_match(path_audiofile, "raw_audio/[^/]+/(\\d{4})")[, 2],
-    folder                 = dirname(path_audiofile),
-    zoom_nr                = str_extract(path_audiofile, "(?<=ZOOM)\\d+"),
-    zoom_nr                = as.integer(zoom_nr)
-  ) |>
-  group_by(patient_chiffre, folder) |>
-  slice_max(zoom_nr, n = 1, with_ties = FALSE) |> # remove the older zoom_nr for each group of patient and folder
-  ungroup() |>
-  select( # remove irrelevant variables (e.g. q40 [bc of too little responses], folder, zoom_nr, etc.)
-    patient_chiffre,
-    treatment_center,
-    treatment_end_year_text,
-    txt1_problem_development,
-    txt2_extra_stressors,
-    txt3_pre_onset_changes,
-    txt4_event_connection,
-    txt5_physical_symptoms,
-    txt6_problem_causes,
-    txt7_expected_improvements,
-    txt8_environment_response,
-    txt9_no_change_requested,
-    txt10_problem_description,
-    txt11_impacted_life_areas,
-    txt12_therapy_goals
-  )
-                   
-merged_text <- bind_rows(text_dat_1, text_dat_2, text_dat_3)
 ```
 
 ## merge text and self-rating scales
@@ -490,9 +587,12 @@ df_merged_self_rating <- dsmv_filtered_wider_labeled |>
   left_join(patient_kodap_pre_demographics_wider, by = "case_nr") |> 
   left_join(therapist_kodap_pre_context_wider, by = "case_nr") |> 
   left_join(bsi_wider, by = "case_nr") |> 
-  left_join(dass_wider, by = "case_nr")
+  left_join(dass_wider, by = "case_nr") |> 
+  left_join(gas_wider, by = "case_nr") |> 
+  left_join(pmh_wider, by = "case_nr") 
 
-df_merged <- merged_text |>
+
+df_merged <- merged_text_clean |>
   left_join(df_merged_self_rating, by = "patient_chiffre") |> 
   select(patient_chiffre, case_nr, patient_dateofbirth, patient_age_therapy_start, patient_sex, marital_status, in_relationship, general_education, vocational_qualification, work_ability_status, previous_psychotherapy, assessment_date_DI, icd10_code, CGI_severity, therapist_dateofbirth, therapist_age_therapy_start, therapist_sex, everything())
 ```

@@ -219,7 +219,9 @@
   <li><a href="#bsi" id="toc-bsi" class="nav-link" data-scroll-target="#bsi">BSI</a></li>
   <li><a href="#dass-42" id="toc-dass-42" class="nav-link" data-scroll-target="#dass-42">DASS-42</a></li>
   <li><a href="#gas" id="toc-gas" class="nav-link" data-scroll-target="#gas">GAS</a></li>
+  <li><a href="#pmh" id="toc-pmh" class="nav-link" data-scroll-target="#pmh">PMH</a></li>
   </ul></li>
+  <li><a href="#plausibility-checks-of-assessment-time-points" id="toc-plausibility-checks-of-assessment-time-points" class="nav-link" data-scroll-target="#plausibility-checks-of-assessment-time-points">Plausibility Checks of Assessment Time Points</a></li>
   <li><a href="#prepare-text-data" id="toc-prepare-text-data" class="nav-link" data-scroll-target="#prepare-text-data">prepare text data</a></li>
   <li><a href="#merge-text-and-self-rating-scales" id="toc-merge-text-and-self-rating-scales" class="nav-link" data-scroll-target="#merge-text-and-self-rating-scales">merge text and self-rating scales</a></li>
   </ul></li>
@@ -616,10 +618,36 @@ output will contain list-cols.
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>bdi_erw <span class="ot">&lt;-</span> bdi_master <span class="sc">|&gt;</span> </span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(assessment_type, <span class="st">"KiJu|Krisen|DU-POST2|Gruppe|Einzeltherapiesitzung|Weitere|DU-4|DU-8|DU-12|DU-24|Erwachsene|Du-Post-KZT1|DU-Kat12|DU-Kat24|Interview|Abrechnung|außerplanmäßig|LZT-DU12|LZT-DU24|LZT-DU4|DU-Post"</span>))</span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(bdi_erw<span class="sc">$</span>assessment_type)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>bdi_erw <span class="sc">|&gt;</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(case_nr, assessment_type) <span class="sc">|&gt;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n_distinct</span>(assessment_date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(patient_chiffre, assessment_type, assessment_date) <span class="sc">|&gt;</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(patient_chiffre, assessment_type, assessment_date)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] "KZT2-DUPost" "KZT1-DU4"    "LZT1-DUPost" "DU-Prä"      "KZT1-DUPost"
-[6] "DU-Kat6"     "LZT2-DUPost"</code></pre>
+<pre><code># A tibble: 20 × 3
+   patient_chiffre assessment_type assessment_date    
+   &lt;chr&gt;           &lt;chr&gt;           &lt;dttm&gt;             
+ 1 A160698         LZT2-DUPost     2023-01-19 00:00:00
+ 2 A160698         LZT2-DUPost     2023-09-26 00:00:00
+ 3 B300985         KZT1-DU4        2017-06-27 00:00:00
+ 4 B300985         KZT1-DU4        2017-08-01 00:00:00
+ 5 H281139         DU-Prä          2017-10-13 00:00:00
+ 6 H281139         DU-Prä          2019-05-21 00:00:00
+ 7 L240293         DU-Prä          2021-11-03 00:00:00
+ 8 L240293         DU-Prä          2023-06-07 00:00:00
+ 9 N221187         DU-Prä          2022-10-26 00:00:00
+10 N221187         DU-Prä          2024-05-02 00:00:00
+11 R200472         DU-Prä          2019-05-10 00:00:00
+12 R200472         DU-Prä          2021-03-09 00:00:00
+13 S150380         DU-Kat6         2021-10-01 00:00:00
+14 S150380         DU-Kat6         2023-10-16 00:00:00
+15 S190600         DU-Prä          2022-05-19 00:00:00
+16 S190600         DU-Prä          2023-12-19 00:00:00
+17 S260891         DU-Prä          2017-05-16 00:00:00
+18 S260891         DU-Prä          2019-05-08 00:00:00
+19 S281197         DU-Kat6         2022-06-20 00:00:00
+20 S281197         DU-Kat6         2024-03-18 00:00:00</code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if one single chiffre is related to several case_nrs? </span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -722,20 +750,41 @@ output will contain list-cols.
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>bsi_erw <span class="ot">&lt;-</span> bsi_master <span class="sc">|&gt;</span> </span>
 <span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(assessment_type <span class="sc">==</span> <span class="st">"Diagnostisches Interview ab 01.04.2017"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT1-DU4"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"DU-Kat6"</span>)</span>
 <span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>bsi_erw_gsi <span class="ot">&lt;-</span> bsi_erw <span class="sc">|&gt;</span> </span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(item_no <span class="sc">!=</span> <span class="st">"54"</span> <span class="sc">&amp;</span> item_no <span class="sc">!=</span> <span class="st">"55"</span> <span class="sc">&amp;</span> item_no <span class="sc">!=</span> <span class="st">"11"</span>, item_no <span class="sc">!=</span> <span class="st">"25"</span>, item_no <span class="sc">!=</span> <span class="st">"39"</span>, item_no <span class="sc">!=</span> <span class="st">"52"</span>) <span class="sc">|&gt;</span>  <span class="co">#items 54 and 55 don't belong to the bsi and 11, 25, 39 and 52 are not used for calculating the GSI</span></span>
-<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">bsi_gsi =</span> <span class="fu">mean</span>(answerscale_value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">assessment_date =</span> <span class="fu">first</span>(assessment_date),</span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(case_nr,assessment_type)</span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>  )  <span class="sc">|&gt;</span> </span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, assessment_type, bsi_gsi, assessment_date)</span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="co"># pivot df to have one case_nr in each row</span></span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a>bsi_wider <span class="ot">&lt;-</span> bsi_erw_gsi <span class="sc">|&gt;</span> </span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(case_nr), <span class="at">names_from =</span> assessment_type, <span class="at">values_from =</span> <span class="fu">c</span>(bsi_gsi, assessment_date)) <span class="sc">|&gt;</span> </span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">assessment_date_DI =</span> <span class="st">"assessment_date_Diagnostisches Interview ab 01.04.2017"</span>, <span class="at">bsi_gsi_DI =</span> <span class="st">"bsi_gsi_Diagnostisches Interview ab 01.04.2017"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, bsi_gsi_DI, <span class="st">`</span><span class="at">bsi_gsi_KZT1-DU4</span><span class="st">`</span>, <span class="st">`</span><span class="at">bsi_gsi_KZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">bsi_gsi_KZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">bsi_gsi_LZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">bsi_gsi_LZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">bsi_gsi_DU-Kat6</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>bsi_erw <span class="sc">|&gt;</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(case_nr, assessment_type) <span class="sc">|&gt;</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n_distinct</span>(assessment_date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(patient_chiffre, assessment_type, assessment_date) <span class="sc">|&gt;</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(patient_chiffre, assessment_type, assessment_date)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 3
+   patient_chiffre assessment_type                        assessment_date    
+   &lt;chr&gt;           &lt;chr&gt;                                  &lt;dttm&gt;             
+ 1 A160698         LZT2-DUPost                            2023-01-19 00:00:00
+ 2 A160698         LZT2-DUPost                            2023-09-26 00:00:00
+ 3 B300985         KZT1-DU4                               2017-06-27 00:00:00
+ 4 B300985         KZT1-DU4                               2017-08-01 00:00:00
+ 5 S150380         DU-Kat6                                2021-10-01 00:00:00
+ 6 S150380         DU-Kat6                                2023-10-16 00:00:00
+ 7 S281197         DU-Kat6                                2022-06-20 00:00:00
+ 8 S281197         DU-Kat6                                2024-03-18 00:00:00
+ 9 W210465         Diagnostisches Interview ab 01.04.2017 2017-06-23 00:00:00
+10 W210465         Diagnostisches Interview ab 01.04.2017 2019-04-02 00:00:00</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>bsi_erw_gsi <span class="ot">&lt;-</span> bsi_erw <span class="sc">|&gt;</span> </span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(item_no <span class="sc">!=</span> <span class="st">"54"</span> <span class="sc">&amp;</span> item_no <span class="sc">!=</span> <span class="st">"55"</span> <span class="sc">&amp;</span> item_no <span class="sc">!=</span> <span class="st">"11"</span>, item_no <span class="sc">!=</span> <span class="st">"25"</span>, item_no <span class="sc">!=</span> <span class="st">"39"</span>, item_no <span class="sc">!=</span> <span class="st">"52"</span>) <span class="sc">|&gt;</span>  <span class="co">#items 54 and 55 don't belong to the bsi and 11, 25, 39 and 52 are not used for calculating the GSI</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">bsi_gsi =</span> <span class="fu">mean</span>(answerscale_value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">assessment_date =</span> <span class="fu">first</span>(assessment_date),</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(case_nr,assessment_type)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a>  )  <span class="sc">|&gt;</span> </span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, assessment_type, bsi_gsi, assessment_date)</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a><span class="co"># pivot df to have one case_nr in each row</span></span>
+<span id="cb37-11"><a href="#cb37-11" aria-hidden="true" tabindex="-1"></a>bsi_wider <span class="ot">&lt;-</span> bsi_erw_gsi <span class="sc">|&gt;</span> </span>
+<span id="cb37-12"><a href="#cb37-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(case_nr), <span class="at">names_from =</span> assessment_type, <span class="at">values_from =</span> <span class="fu">c</span>(bsi_gsi, assessment_date)) <span class="sc">|&gt;</span> </span>
+<span id="cb37-13"><a href="#cb37-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">assessment_date_DI =</span> <span class="st">"assessment_date_Diagnostisches Interview ab 01.04.2017"</span>, <span class="at">bsi_gsi_DI =</span> <span class="st">"bsi_gsi_Diagnostisches Interview ab 01.04.2017"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb37-14"><a href="#cb37-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, bsi_gsi_DI, <span class="st">`</span><span class="at">bsi_gsi_KZT1-DU4</span><span class="st">`</span>, <span class="st">`</span><span class="at">bsi_gsi_KZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">bsi_gsi_KZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">bsi_gsi_LZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">bsi_gsi_LZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">bsi_gsi_DU-Kat6</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <p>55 Itemversion –&gt; item 54 und 55 gehören nicht zum BSI</p>
 <p>GSI: Mittelwert über alle Items, außer 11, 25, 39, 52</p>
@@ -743,17 +792,17 @@ output will contain list-cols.
 <section id="dass-42" class="level3">
 <h3 class="anchored" data-anchor-id="dass-42">DASS-42</h3>
 <div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>dass_master <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"/Volumes/meta_data/raw/raw_selfreport/DASS_ab2017.xlsx"</span>,</span>
-<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"case_nr"</span>, <span class="st">"patient_chiffre"</span>,<span class="st">"patient_sex"</span>,<span class="st">"patient_dateofbirth"</span>,<span class="st">"assessment_date"</span>,<span class="st">"assessment_type"</span>,<span class="st">"assessment_id"</span>,<span class="st">"assessment_name"</span>,<span class="st">"item_no"</span>,<span class="st">"answerscale_value"</span>,<span class="st">"therapist_no"</span>,<span class="st">"therapist_sex"</span>,<span class="st">"therapist_dateofbirth"</span>),</span>
-<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">skip =</span> <span class="dv">1</span>)</span>
-<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="co">#how many patients are there for each assessment type?</span></span>
-<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>dass_master <span class="sc">|&gt;</span></span>
-<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_patients =</span> <span class="fu">n_distinct</span>(case_nr),</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> assessment_type</span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n_patients))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>dass_master <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"/Volumes/meta_data/raw/raw_selfreport/DASS_ab2017.xlsx"</span>,</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"case_nr"</span>, <span class="st">"patient_chiffre"</span>,<span class="st">"patient_sex"</span>,<span class="st">"patient_dateofbirth"</span>,<span class="st">"assessment_date"</span>,<span class="st">"assessment_type"</span>,<span class="st">"assessment_id"</span>,<span class="st">"assessment_name"</span>,<span class="st">"item_no"</span>,<span class="st">"answerscale_value"</span>,<span class="st">"therapist_no"</span>,<span class="st">"therapist_sex"</span>,<span class="st">"therapist_dateofbirth"</span>),</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">skip =</span> <span class="dv">1</span>)</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="co">#how many patients are there for each assessment type?</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>dass_master <span class="sc">|&gt;</span></span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_patients =</span> <span class="fu">n_distinct</span>(case_nr),</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> assessment_type</span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n_patients))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 32 × 2
    assessment_type n_patients
@@ -770,53 +819,51 @@ output will contain list-cols.
 10 DU-Post                263
 # ℹ 22 more rows</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>dass_erw <span class="ot">&lt;-</span> dass_master <span class="sc">|&gt;</span> </span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(assessment_type <span class="sc">==</span> <span class="st">"DU-Prä"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT1-DU4"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"DU-Kat6"</span>)</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>dass_erw_score <span class="ot">&lt;-</span> dass_erw <span class="sc">|&gt;</span></span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">patient_chiffre =</span> <span class="fu">first</span>(patient_chiffre),</span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">dass_total_score =</span> <span class="fu">sum</span>(answerscale_value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">dass_dep_score =</span> <span class="fu">sum</span>(</span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>      answerscale_value[item_no <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">13</span>, <span class="dv">16</span>, <span class="dv">17</span>, <span class="dv">21</span>, <span class="dv">24</span>, <span class="dv">26</span>, <span class="dv">31</span>, <span class="dv">34</span>, <span class="dv">37</span>, <span class="dv">38</span>, <span class="dv">42</span>)],</span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">dass_anx_score =</span> <span class="fu">sum</span>(</span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>      answerscale_value[item_no <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">9</span>, <span class="dv">15</span>, <span class="dv">19</span>, <span class="dv">20</span>, <span class="dv">23</span>, <span class="dv">25</span>, <span class="dv">28</span>, <span class="dv">30</span>, <span class="dv">36</span>, <span class="dv">40</span>, <span class="dv">41</span>)],</span>
-<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">dass_str_score =</span> <span class="fu">sum</span>(</span>
-<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>      answerscale_value[item_no <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">14</span>, <span class="dv">18</span>, <span class="dv">22</span>, <span class="dv">27</span>, <span class="dv">29</span>, <span class="dv">32</span>, <span class="dv">33</span>, <span class="dv">35</span>, <span class="dv">39</span>)],</span>
-<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
-<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a>    ),</span>
-<span id="cb38-22"><a href="#cb38-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">assessment_date =</span> <span class="fu">first</span>(assessment_date),</span>
-<span id="cb38-23"><a href="#cb38-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(case_nr, assessment_type)</span>
-<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a>    case_nr, assessment_type, dass_total_score, dass_dep_score, dass_anx_score, dass_str_score, assessment_date</span>
-<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a>dass_wider <span class="ot">&lt;-</span> dass_erw_score <span class="sc">|&gt;</span> </span>
-<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(case_nr), <span class="at">names_from =</span> assessment_type, <span class="at">values_from =</span> <span class="fu">c</span>(dass_total_score, dass_dep_score, dass_anx_score, dass_str_score, assessment_date)) <span class="sc">|&gt;</span> </span>
-<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, <span class="st">`</span><span class="at">dass_total_score_DU-Prä</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_DU-Prä</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_DU-Prä</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_DU-Prä</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_KZT1-DU4</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_KZT1-DU4</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_KZT1-DU4</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_KZT1-DU4</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_KZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_KZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_KZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_KZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_KZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_KZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_KZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_KZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_LZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_LZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_LZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_LZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_LZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_LZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_LZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_LZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_DU-Kat6</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_DU-Kat6</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_DU-Kat6</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_DU-Kat6</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>dass_erw <span class="ot">&lt;-</span> dass_master <span class="sc">|&gt;</span> </span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(assessment_name <span class="sc">==</span> <span class="st">"DASS-42-G"</span> <span class="sc">&amp;</span> (assessment_type <span class="sc">==</span> <span class="st">"DU-Prä"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT1-DU4"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"DU-Kat6"</span>))</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>dass_erw_score <span class="ot">&lt;-</span> dass_erw <span class="sc">|&gt;</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">patient_chiffre =</span> <span class="fu">first</span>(patient_chiffre),</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">dass_total_score =</span> <span class="fu">sum</span>(answerscale_value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">dass_dep_score =</span> <span class="fu">sum</span>(</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>      answerscale_value[item_no <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">5</span>, <span class="dv">10</span>, <span class="dv">13</span>, <span class="dv">16</span>, <span class="dv">17</span>, <span class="dv">21</span>, <span class="dv">24</span>, <span class="dv">26</span>, <span class="dv">31</span>, <span class="dv">34</span>, <span class="dv">37</span>, <span class="dv">38</span>, <span class="dv">42</span>)],</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">dass_anx_score =</span> <span class="fu">sum</span>(</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>      answerscale_value[item_no <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">9</span>, <span class="dv">15</span>, <span class="dv">19</span>, <span class="dv">20</span>, <span class="dv">23</span>, <span class="dv">25</span>, <span class="dv">28</span>, <span class="dv">30</span>, <span class="dv">36</span>, <span class="dv">40</span>, <span class="dv">41</span>)],</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">dass_str_score =</span> <span class="fu">sum</span>(</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>      answerscale_value[item_no <span class="sc">%in%</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">6</span>, <span class="dv">8</span>, <span class="dv">11</span>, <span class="dv">12</span>, <span class="dv">14</span>, <span class="dv">18</span>, <span class="dv">22</span>, <span class="dv">27</span>, <span class="dv">29</span>, <span class="dv">32</span>, <span class="dv">33</span>, <span class="dv">35</span>, <span class="dv">39</span>)],</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">na.rm =</span> <span class="cn">TRUE</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">assessment_date =</span> <span class="fu">first</span>(assessment_date),</span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(case_nr, assessment_type)</span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb40-23"><a href="#cb40-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>    case_nr, assessment_type, dass_total_score, dass_dep_score, dass_anx_score, dass_str_score, assessment_date</span>
+<span id="cb40-25"><a href="#cb40-25" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb40-26"><a href="#cb40-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-27"><a href="#cb40-27" aria-hidden="true" tabindex="-1"></a>dass_wider <span class="ot">&lt;-</span> dass_erw_score <span class="sc">|&gt;</span> </span>
+<span id="cb40-28"><a href="#cb40-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(case_nr), <span class="at">names_from =</span> assessment_type, <span class="at">values_from =</span> <span class="fu">c</span>(dass_total_score, dass_dep_score, dass_anx_score, dass_str_score, assessment_date)) <span class="sc">|&gt;</span> </span>
+<span id="cb40-29"><a href="#cb40-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, <span class="st">`</span><span class="at">dass_total_score_DU-Prä</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_DU-Prä</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_DU-Prä</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_DU-Prä</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_KZT1-DU4</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_KZT1-DU4</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_KZT1-DU4</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_KZT1-DU4</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_KZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_KZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_KZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_KZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_KZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_KZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_KZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_KZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_LZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_LZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_LZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_LZT1-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_LZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_LZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_LZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_LZT2-DUPost</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_total_score_DU-Kat6</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_dep_score_DU-Kat6</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_anx_score_DU-Kat6</span><span class="st">`</span>, <span class="st">`</span><span class="at">dass_str_score_DU-Kat6</span><span class="st">`</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 <section id="gas" class="level3">
 <h3 class="anchored" data-anchor-id="gas">GAS</h3>
 <div class="cell-container"><div class="cell-decorator"><pre>In [7]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>gas_master <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"/Volumes/meta_data/raw/raw_selfreport/GAS_ab2017.xlsx"</span>,</span>
-<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"case_nr"</span>, <span class="st">"patient_chiffre"</span>,<span class="st">"patient_sex"</span>,<span class="st">"patient_dateofbirth"</span>,<span class="st">"assessment_date"</span>,<span class="st">"assessment_type"</span>,<span class="st">"assessment_id"</span>,<span class="st">"assessment_name"</span>,<span class="st">"item_no"</span>,<span class="st">"answerscale_value"</span>,<span class="st">"therapist_no"</span>,<span class="st">"therapist_sex"</span>,<span class="st">"therapist_dateofbirth"</span>),</span>
-<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">skip =</span> <span class="dv">1</span>)</span>
-<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a><span class="co">#how many patients are there for each assessment type?</span></span>
-<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>gas_master <span class="sc">|&gt;</span></span>
-<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_patients =</span> <span class="fu">n_distinct</span>(case_nr),</span>
-<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> assessment_type</span>
-<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n_patients))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>gas_master <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"/Volumes/meta_data/raw/raw_selfreport/GAS_ab2017.xlsx"</span>,</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"case_nr"</span>, <span class="st">"patient_chiffre"</span>,<span class="st">"patient_sex"</span>,<span class="st">"patient_dateofbirth"</span>,<span class="st">"assessment_date"</span>,<span class="st">"assessment_type"</span>,<span class="st">"assessment_id"</span>,<span class="st">"assessment_name"</span>,<span class="st">"item_no"</span>,<span class="st">"answerscale_value"</span>,<span class="st">"therapist_no"</span>,<span class="st">"therapist_sex"</span>,<span class="st">"therapist_dateofbirth"</span>),</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">skip =</span> <span class="dv">1</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co">#how many patients are there for each assessment type?</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>gas_master <span class="sc">|&gt;</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_patients =</span> <span class="fu">n_distinct</span>(case_nr),</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> assessment_type</span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n_patients))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 31 × 2
    assessment_type n_patients
@@ -833,52 +880,181 @@ output will contain list-cols.
 10 DU20_Erwachsene        164
 # ℹ 21 more rows</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>gas_pt <span class="ot">&lt;-</span> gas_master <span class="sc">|&gt;</span> </span>
-<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(assessment_name <span class="sc">==</span> <span class="st">"GAS-PT"</span> <span class="sc">&amp;</span> (assessment_type <span class="sc">==</span> <span class="st">"KZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"DU-Kat6"</span>))</span>
-<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>gas_pt_mean <span class="ot">&lt;-</span> gas_pt <span class="sc">|&gt;</span> </span>
-<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">answerscale_value =</span> answerscale_value <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="co">#recoding patient scaling (1-6) to be consistent with patient scaling (-1-4)</span></span>
-<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">gas_pt_mean =</span> <span class="fu">mean</span>(answerscale_value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">assessment_date =</span> <span class="fu">first</span>(assessment_date),</span>
-<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(case_nr,assessment_type)</span>
-<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a>  )  <span class="sc">|&gt;</span> </span>
-<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, assessment_type, gas_pt_mean, assessment_date)</span>
-<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a>gas_th <span class="ot">&lt;-</span> gas_master <span class="sc">|&gt;</span> </span>
-<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(assessment_name <span class="sc">==</span> <span class="st">"GAS-TH"</span> <span class="sc">&amp;</span> (assessment_type <span class="sc">==</span> <span class="st">"KZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"DU-Kat6"</span>))</span>
-<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>gas_th_mean <span class="ot">&lt;-</span> gas_th <span class="sc">|&gt;</span> </span>
-<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">gas_th_mean =</span> <span class="fu">mean</span>(answerscale_value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">assessment_date =</span> <span class="fu">first</span>(assessment_date),</span>
-<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(case_nr,assessment_type)</span>
-<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a>  )  <span class="sc">|&gt;</span> </span>
-<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, assessment_type, gas_th_mean, assessment_date)</span>
-<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>gas_mean <span class="ot">&lt;-</span> gas_pt_mean <span class="sc">|&gt;</span> </span>
-<span id="cb41-25"><a href="#cb41-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gas_th_mean, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"case_nr"</span>, <span class="st">"assessment_type"</span>, <span class="st">"assessment_date"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb41-26"><a href="#cb41-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, assessment_date, assessment_type, gas_pt_mean, gas_th_mean)</span>
-<span id="cb41-27"><a href="#cb41-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb41-28"><a href="#cb41-28" aria-hidden="true" tabindex="-1"></a>gas_wider <span class="ot">&lt;-</span> gas_mean <span class="sc">|&gt;</span> </span>
-<span id="cb41-29"><a href="#cb41-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(case_nr), <span class="at">names_from =</span> assessment_type, <span class="at">values_from =</span> <span class="fu">c</span>(gas_pt_mean, gas_th_mean, assessment_date)) <span class="sc">|&gt;</span> </span>
-<span id="cb41-30"><a href="#cb41-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, <span class="st">"gas_pt_mean_KZT1-DUPost"</span>, <span class="st">"gas_pt_mean_KZT2-DUPost"</span>, <span class="st">"gas_pt_mean_LZT1-DUPost"</span>, <span class="st">"gas_pt_mean_LZT2-DUPost"</span>, <span class="st">"gas_pt_mean_DU-Kat6"</span>, <span class="st">"gas_th_mean_KZT1-DUPost"</span>, <span class="st">"gas_th_mean_KZT2-DUPost"</span>, <span class="st">"gas_th_mean_LZT1-DUPost"</span>, <span class="st">"gas_th_mean_LZT2-DUPost"</span>, <span class="st">"gas_th_mean_DU-Kat6"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>gas_pt <span class="ot">&lt;-</span> gas_master <span class="sc">|&gt;</span> </span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(assessment_name <span class="sc">==</span> <span class="st">"GAS-PT"</span> <span class="sc">&amp;</span> (assessment_type <span class="sc">==</span> <span class="st">"KZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"DU-Kat6"</span>))</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>gas_pt_mean <span class="ot">&lt;-</span> gas_pt <span class="sc">|&gt;</span> </span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">answerscale_value =</span> answerscale_value <span class="sc">-</span> <span class="dv">2</span>) <span class="sc">|&gt;</span> <span class="co">#recoding patient scaling (1-6) to be consistent with patient scaling (-1-4)</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">gas_pt_mean =</span> <span class="fu">mean</span>(answerscale_value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">assessment_date =</span> <span class="fu">first</span>(assessment_date),</span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(case_nr,assessment_type)</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  )  <span class="sc">|&gt;</span> </span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, assessment_type, gas_pt_mean, assessment_date)</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>gas_th <span class="ot">&lt;-</span> gas_master <span class="sc">|&gt;</span> </span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(assessment_name <span class="sc">==</span> <span class="st">"GAS-TH"</span> <span class="sc">&amp;</span> (assessment_type <span class="sc">==</span> <span class="st">"KZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"DU-Kat6"</span>))</span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>gas_th_mean <span class="ot">&lt;-</span> gas_th <span class="sc">|&gt;</span> </span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">gas_th_mean =</span> <span class="fu">mean</span>(answerscale_value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">assessment_date =</span> <span class="fu">first</span>(assessment_date),</span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(case_nr,assessment_type)</span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>  )  <span class="sc">|&gt;</span> </span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, assessment_type, gas_th_mean, assessment_date)</span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>gas_mean <span class="ot">&lt;-</span> gas_pt_mean <span class="sc">|&gt;</span> </span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gas_th_mean, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"case_nr"</span>, <span class="st">"assessment_type"</span>, <span class="st">"assessment_date"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, assessment_date, assessment_type, gas_pt_mean, gas_th_mean)</span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a>gas_wider <span class="ot">&lt;-</span> gas_mean <span class="sc">|&gt;</span> </span>
+<span id="cb43-29"><a href="#cb43-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(case_nr), <span class="at">names_from =</span> assessment_type, <span class="at">values_from =</span> <span class="fu">c</span>(gas_pt_mean, gas_th_mean, assessment_date)) <span class="sc">|&gt;</span> </span>
+<span id="cb43-30"><a href="#cb43-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, <span class="st">"gas_pt_mean_KZT1-DUPost"</span>, <span class="st">"gas_pt_mean_KZT2-DUPost"</span>, <span class="st">"gas_pt_mean_LZT1-DUPost"</span>, <span class="st">"gas_pt_mean_LZT2-DUPost"</span>, <span class="st">"gas_pt_mean_DU-Kat6"</span>, <span class="st">"gas_th_mean_KZT1-DUPost"</span>, <span class="st">"gas_th_mean_KZT2-DUPost"</span>, <span class="st">"gas_th_mean_LZT1-DUPost"</span>, <span class="st">"gas_th_mean_LZT2-DUPost"</span>, <span class="st">"gas_th_mean_DU-Kat6"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
+</section>
+<section id="pmh" class="level3">
+<h3 class="anchored" data-anchor-id="pmh">PMH</h3>
+<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>pmh_master <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"/Volumes/meta_data/raw/raw_selfreport/Seelische_Gesundheit_ab2017.xlsx"</span>,</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>                        <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"case_nr"</span>, <span class="st">"patient_chiffre"</span>,<span class="st">"patient_sex"</span>,<span class="st">"patient_dateofbirth"</span>,<span class="st">"assessment_date"</span>,<span class="st">"assessment_type"</span>,<span class="st">"assessment_id"</span>,<span class="st">"assessment_name"</span>,<span class="st">"item_no"</span>,<span class="st">"answerscale_value"</span>,<span class="st">"therapist_no"</span>,<span class="st">"therapist_sex"</span>,<span class="st">"therapist_dateofbirth"</span>),</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>                        <span class="at">skip =</span> <span class="dv">1</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co">#how many patients are there for each assessment type?</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>pmh_master <span class="sc">|&gt;</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_patients =</span> <span class="fu">n_distinct</span>(case_nr),</span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> assessment_type</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n_patients))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 33 × 2
+   assessment_type n_patients
+   &lt;chr&gt;                &lt;int&gt;
+ 1 DU-Prä                3017
+ 2 KZT1-DUPost           2116
+ 3 KZT2-DUPost           1658
+ 4 KZT1-DU4              1429
+ 5 DU-Kat6               1061
+ 6 DU-Kat12               854
+ 7 LZT1-DUPost            790
+ 8 DU-Kat24               667
+ 9 LZT-DU40               460
+10 DU-Post                258
+# ℹ 23 more rows</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>pmh_erw <span class="ot">&lt;-</span> pmh_master <span class="sc">|&gt;</span> </span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(assessment_type <span class="sc">==</span> <span class="st">"DU-Prä"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT1-DU4"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"KZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT1-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"LZT2-DUPost"</span> <span class="sc">|</span> assessment_type <span class="sc">==</span> <span class="st">"DU-Kat6"</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a><span class="co"># PMH-Summenscore berechnen (Summe der Itemwerte je Fall und Assessment-Typ)</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>pmh_erw_sum <span class="ot">&lt;-</span> pmh_erw <span class="sc">|&gt;</span> </span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">assessment_date =</span> <span class="fu">first</span>(assessment_date),</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">pmh_sum =</span> <span class="fu">sum</span>(answerscale_value, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">.by =</span> <span class="fu">c</span>(case_nr, assessment_type)</span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a><span class="co"># pivot df to have one case_nr in each row</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>pmh_wider <span class="ot">&lt;-</span> pmh_erw_sum <span class="sc">|&gt;</span> </span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">id_cols =</span> <span class="fu">c</span>(case_nr), <span class="at">names_from =</span> assessment_type, <span class="at">values_from =</span> <span class="fu">c</span>(pmh_sum, assessment_date)) <span class="sc">|&gt;</span> </span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, <span class="st">"pmh_sum_DU-Prä"</span>, <span class="st">"pmh_sum_KZT1-DU4"</span>, <span class="st">"pmh_sum_KZT1-DUPost"</span>, <span class="st">"pmh_sum_KZT2-DUPost"</span>, <span class="st">"pmh_sum_LZT1-DUPost"</span>, <span class="st">"pmh_sum_LZT2-DUPost"</span>, <span class="st">"pmh_sum_DU-Kat6"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 </section>
+<section id="plausibility-checks-of-assessment-time-points" class="level2">
+<h2 class="anchored" data-anchor-id="plausibility-checks-of-assessment-time-points">Plausibility Checks of Assessment Time Points</h2>
+<p>During the calculation of sum scores, it became apparent that in some cases identical assessment time points (e.g., LZT 2) were documented more than once. This results in implausible sum scores (e.g., values &gt; 27 for the PMH). This issue is not limited to the PMH, but occurs across multiple instruments (e.g., BDI, BSI, DASS, GAS), suggesting a dataset-wide problem rather than an instrument-specific one. The purpose of the following plausibility check is to identify cases in which multiple different assessment dates (assessment_date) exist within the same combination of case number (case_nr) and assessment type (assessment_type).</p>
+<div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identification of cases with inconsistent assessment time points</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (multiple assessment_dates within the same case_nr × assessment_type)</span></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 1) Collect instrument-specific datasets</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>instrument_dfs <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">pmh =</span> pmh_erw,</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">bdi =</span> bdi_erw,</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">bsi =</span> bsi_erw,</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">dass =</span> dass_erw,</span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">gas_th =</span> gas_th,</span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">gas_pt =</span> gas_pt)</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 2) Extract inconsistent cases per instrument</span></span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>inconsistent_cases <span class="ot">&lt;-</span> <span class="fu">imap_dfr</span>(instrument_dfs, <span class="sc">~</span> .x <span class="sc">|&gt;</span></span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(case_nr, assessment_type) <span class="sc">|&gt;</span></span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="fu">n_distinct</span>(assessment_date, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">&gt;</span> <span class="dv">1</span>) <span class="sc">|&gt;</span></span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(case_nr, assessment_type, assessment_date) <span class="sc">|&gt;</span></span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">instrument =</span> .y)</span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(case_nr, instrument, assessment_type, assessment_date)</span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 3) Unique list of affected patients</span></span>
+<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>affected_cases <span class="ot">&lt;-</span> inconsistent_cases <span class="sc">|&gt;</span></span>
+<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(case_nr) <span class="sc">|&gt;</span></span>
+<span id="cb47-26"><a href="#cb47-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(case_nr)</span>
+<span id="cb47-27"><a href="#cb47-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-28"><a href="#cb47-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Output</span></span>
+<span id="cb47-29"><a href="#cb47-29" aria-hidden="true" tabindex="-1"></a>inconsistent_cases</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 66 × 4
+      case_nr assessment_type                     assessment_date     instrument
+        &lt;dbl&gt; &lt;chr&gt;                               &lt;dttm&gt;              &lt;chr&gt;     
+ 1 2074101265 Diagnostisches Interview ab 01.04.… 2017-06-23 00:00:00 bsi       
+ 2 2074101265 Diagnostisches Interview ab 01.04.… 2019-04-02 00:00:00 bsi       
+ 3 2074101350 DU-Prä                              2017-05-16 00:00:00 bdi       
+ 4 2074101350 DU-Prä                              2019-05-08 00:00:00 bdi       
+ 5 2074101350 DU-Prä                              2017-05-16 00:00:00 pmh       
+ 6 2074101350 DU-Prä                              2019-05-08 00:00:00 pmh       
+ 7 2074101433 KZT1-DU4                            2017-06-27 00:00:00 bdi       
+ 8 2074101433 KZT1-DU4                            2017-08-01 00:00:00 bdi       
+ 9 2074101433 KZT1-DU4                            2017-06-27 00:00:00 bsi       
+10 2074101433 KZT1-DU4                            2017-08-01 00:00:00 bsi       
+# ℹ 56 more rows</code></pre>
+</div>
+</div></div>
+<p><strong>Results of the Plausibility Check</strong></p>
+<p>At present, 11 patients (chiffres) are affected by this issue.</p>
+<div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>affected_cases</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11 × 1
+      case_nr
+        &lt;dbl&gt;
+ 1 2074101265
+ 2 2074101350
+ 3 2074101433
+ 4 2074101719
+ 5 2074103245
+ 6 2074104002
+ 7 2074105661
+ 8 2074107741
+ 9 2074108277
+10 2074109151
+11 2074110626</code></pre>
+</div>
+</div></div>
+<p><em>Possible Explanations</em></p>
+<ul>
+<li><p>An identical assessment time point was entered more than once.</p></li>
+<li><p>An incorrect assessment type was assigned because another measurement is missing and an existing one was duplicated instead.</p></li>
+<li><p>After a follow-up assessment (e.g., Kat6), a time point from an ongoing therapy (e.g., LZT 2) appears again, followed by another follow-up assessment. This may indicate that a therapy was terminated and later resumed, while continuing under the same case number.</p></li>
+<li><p>A pre-treatment assessment (Du-Prä) was conducted without subsequent therapy; several years later, the same patient re-entered treatment and was registered under the same case number, including a new pre-treatment assessment and follow-up measurements.</p></li>
+</ul>
+<p><em>Further Procedure</em></p>
+<p>Determine which of the affected patient chiffres are included in the final dataset containing text data. For these cases, conduct a manual review of the original records to decide which assessment should be considered the “correct” one for analysis (likely requiring case-by-case decisions based on chronological order and documentation).</p>
+</section>
 <section id="prepare-text-data" class="level2">
 <h2 class="anchored" data-anchor-id="prepare-text-data">prepare text data</h2>
-<div class="cell-container"><div class="cell-decorator"><pre>In [8]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
-<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>transcription_hattingen_2017_2018_2019_corrected <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"/Volumes/meta_data/processed/processed_transcriptions/corrected/transcription_hattingen_2017_2018_2019_corrected.xlsx"</span>,</span>
-<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"path_audiofile"</span>,<span class="st">"patient_chiffre"</span>,<span class="st">"txt1_problem_development"</span>,<span class="st">"txt2_extra_stressors"</span>,<span class="st">"txt3_pre_onset_changes"</span>,<span class="st">"txt4_event_connection"</span>,<span class="st">"txt5_physical_symptoms"</span>,<span class="st">"txt6_problem_causes"</span>,<span class="st">"txt7_expected_improvements"</span>,<span class="st">"txt8_environment_response"</span>,<span class="st">"txt9_no_change_requested"</span>, <span class="st">"txt10_problem_description"</span>,<span class="st">"txt11_impacted_life_areas"</span>,<span class="st">"txt12_therapy_goals"</span>),</span>
-<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">skip =</span> <span class="dv">1</span>)</span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>transcription_hattingen_2020_2021_corrected <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"/Volumes/meta_data/processed/processed_transcriptions/corrected/transcription_hattingen_2020_2021_corrected.csv"</span>,</span>
-<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">delim =</span> <span class="st">";"</span>,</span>
-<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"path_audiofile"</span>,<span class="st">"patient_chiffre"</span>,<span class="st">"txt1_problem_development"</span>,<span class="st">"txt2_extra_stressors"</span>,<span class="st">"txt3_pre_onset_changes"</span>,<span class="st">"txt4_event_connection"</span>,<span class="st">"txt5_physical_symptoms"</span>,<span class="st">"txt6_problem_causes"</span>,<span class="st">"txt7_expected_improvements"</span>,<span class="st">"txt8_environment_response"</span>,<span class="st">"txt9_no_change_requested"</span>, <span class="st">"txt10_problem_description"</span>,<span class="st">"txt11_impacted_life_areas"</span>,<span class="st">"txt12_therapy_goals"</span>),</span>
-<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">skip =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>transcription_hattingen_2017_2018_2019_corrected <span class="ot">&lt;-</span> <span class="fu">read_xlsx</span>(<span class="st">"/Volumes/meta_data/processed/processed_transcriptions/corrected/transcription_hattingen_2017_2018_2019_corrected.xlsx"</span>,</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"path_audiofile"</span>,<span class="st">"patient_chiffre"</span>,<span class="st">"txt1_problem_development"</span>,<span class="st">"txt2_extra_stressors"</span>,<span class="st">"txt3_pre_onset_changes"</span>,<span class="st">"txt4_event_connection"</span>,<span class="st">"txt5_physical_symptoms"</span>,<span class="st">"txt6_problem_causes"</span>,<span class="st">"txt7_expected_improvements"</span>,<span class="st">"txt8_environment_response"</span>,<span class="st">"txt9_no_change_requested"</span>, <span class="st">"txt10_problem_description"</span>,<span class="st">"txt11_impacted_life_areas"</span>,<span class="st">"txt12_therapy_goals"</span>),</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">skip =</span> <span class="dv">1</span>)</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>transcription_hattingen_2020_2021_corrected <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"/Volumes/meta_data/processed/processed_transcriptions/corrected/transcription_hattingen_2020_2021_corrected.csv"</span>,</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">delim =</span> <span class="st">";"</span>,</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"path_audiofile"</span>,<span class="st">"patient_chiffre"</span>,<span class="st">"txt1_problem_development"</span>,<span class="st">"txt2_extra_stressors"</span>,<span class="st">"txt3_pre_onset_changes"</span>,<span class="st">"txt4_event_connection"</span>,<span class="st">"txt5_physical_symptoms"</span>,<span class="st">"txt6_problem_causes"</span>,<span class="st">"txt7_expected_improvements"</span>,<span class="st">"txt8_environment_response"</span>,<span class="st">"txt9_no_change_requested"</span>, <span class="st">"txt10_problem_description"</span>,<span class="st">"txt11_impacted_life_areas"</span>,<span class="st">"txt12_therapy_goals"</span>),</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>                     <span class="at">skip =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 155 Columns: 14
 ── Column specification ────────────────────────────────────────────────────────
@@ -888,10 +1064,10 @@ chr (14): path_audiofile, patient_chiffre, txt1_problem_development, txt2_ex...
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>transcription_hattingen_2022_corrected <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"/Volumes/meta_data/processed/processed_transcriptions/corrected/transcription_hattingen_2022_corrected.csv"</span>,</span>
-<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">delim =</span> <span class="st">";"</span>,</span>
-<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"path_audiofile"</span>,<span class="st">"patient_chiffre"</span>,<span class="st">"txt1_problem_development"</span>,<span class="st">"txt2_extra_stressors"</span>,<span class="st">"txt3_pre_onset_changes"</span>,<span class="st">"txt4_event_connection"</span>,<span class="st">"txt5_physical_symptoms"</span>,<span class="st">"txt6_problem_causes"</span>,<span class="st">"txt7_expected_improvements"</span>,<span class="st">"txt8_environment_response"</span>,<span class="st">"txt9_no_change_requested"</span>, <span class="st">"txt10_problem_description"</span>,<span class="st">"txt11_impacted_life_areas"</span>,<span class="st">"txt12_therapy_goals"</span>),</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">skip =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>transcription_hattingen_2022_corrected <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"/Volumes/meta_data/processed/processed_transcriptions/corrected/transcription_hattingen_2022_corrected.csv"</span>,</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">delim =</span> <span class="st">";"</span>,</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"path_audiofile"</span>,<span class="st">"patient_chiffre"</span>,<span class="st">"txt1_problem_development"</span>,<span class="st">"txt2_extra_stressors"</span>,<span class="st">"txt3_pre_onset_changes"</span>,<span class="st">"txt4_event_connection"</span>,<span class="st">"txt5_physical_symptoms"</span>,<span class="st">"txt6_problem_causes"</span>,<span class="st">"txt7_expected_improvements"</span>,<span class="st">"txt8_environment_response"</span>,<span class="st">"txt9_no_change_requested"</span>, <span class="st">"txt10_problem_description"</span>,<span class="st">"txt11_impacted_life_areas"</span>,<span class="st">"txt12_therapy_goals"</span>),</span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">skip =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 88 Columns: 14
 ── Column specification ────────────────────────────────────────────────────────
@@ -901,58 +1077,60 @@ chr (14): path_audiofile, patient_chiffre, txt1_problem_development, txt2_ex...
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>merged_text_raw <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(transcription_hattingen_2017_2018_2019_corrected, transcription_hattingen_2020_2021_corrected, transcription_hattingen_2022_corrected)</span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>merged_text <span class="ot">&lt;-</span> merged_text_raw <span class="sc">|&gt;</span></span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="co"># extract treatment_center, year of the treatment end from audiofile path</span></span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_center       =</span> <span class="fu">str_match</span>(path_audiofile, <span class="st">"raw_audio/([^/]+)/"</span>)[, <span class="dv">2</span>],</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_end_year_text =</span> <span class="fu">str_match</span>(path_audiofile, <span class="st">"raw_audio/[^/]+/(</span><span class="sc">\\</span><span class="st">d{4})"</span>)[, <span class="dv">2</span>],</span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">folder                 =</span> <span class="fu">dirname</span>(path_audiofile),</span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">zoom_nr                =</span> <span class="fu">str_extract</span>(path_audiofile, <span class="st">"(?&lt;=ZOOM)</span><span class="sc">\\</span><span class="st">d+"</span>),</span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">zoom_nr                =</span> <span class="fu">as.integer</span>(zoom_nr)</span>
-<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(patient_chiffre, folder) <span class="sc">|&gt;</span></span>
-<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(zoom_nr, <span class="at">n =</span> <span class="dv">1</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> <span class="co"># remove the older zoom_nr for each group of patient and folder</span></span>
-<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>    patient_chiffre,</span>
-<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>    treatment_center,</span>
-<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>    treatment_end_year_text,</span>
-<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>    txt1_problem_development,</span>
-<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>    txt2_extra_stressors,</span>
-<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>    txt3_pre_onset_changes,</span>
-<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>    txt4_event_connection,</span>
-<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>    txt5_physical_symptoms,</span>
-<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>    txt6_problem_causes,</span>
-<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a>    txt7_expected_improvements,</span>
-<span id="cb46-25"><a href="#cb46-25" aria-hidden="true" tabindex="-1"></a>    txt8_environment_response,</span>
-<span id="cb46-26"><a href="#cb46-26" aria-hidden="true" tabindex="-1"></a>    txt9_no_change_requested,</span>
-<span id="cb46-27"><a href="#cb46-27" aria-hidden="true" tabindex="-1"></a>    txt10_problem_description,</span>
-<span id="cb46-28"><a href="#cb46-28" aria-hidden="true" tabindex="-1"></a>    txt11_impacted_life_areas,</span>
-<span id="cb46-29"><a href="#cb46-29" aria-hidden="true" tabindex="-1"></a>    txt12_therapy_goals</span>
-<span id="cb46-30"><a href="#cb46-30" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb46-31"><a href="#cb46-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb46-32"><a href="#cb46-32" aria-hidden="true" tabindex="-1"></a>merged_text_clean <span class="ot">&lt;-</span> merged_text <span class="sc">|&gt;</span></span>
-<span id="cb46-33"><a href="#cb46-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(</span>
-<span id="cb46-34"><a href="#cb46-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.na</span>(patient_chiffre) <span class="sc">|</span></span>
-<span id="cb46-35"><a href="#cb46-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">if_all</span>(<span class="fu">contains</span>(<span class="st">"txt"</span>), is.na)</span>
-<span id="cb46-36"><a href="#cb46-36" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>merged_text_raw <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(transcription_hattingen_2017_2018_2019_corrected, transcription_hattingen_2020_2021_corrected, transcription_hattingen_2022_corrected)</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>merged_text <span class="ot">&lt;-</span> merged_text_raw <span class="sc">|&gt;</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="co"># extract treatment_center, year of the treatment end from audiofile path</span></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_center       =</span> <span class="fu">str_match</span>(path_audiofile, <span class="st">"raw_audio/([^/]+)/"</span>)[, <span class="dv">2</span>],</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_end_year_text =</span> <span class="fu">str_match</span>(path_audiofile, <span class="st">"raw_audio/[^/]+/(</span><span class="sc">\\</span><span class="st">d{4})"</span>)[, <span class="dv">2</span>],</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">folder                 =</span> <span class="fu">dirname</span>(path_audiofile),</span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">zoom_nr                =</span> <span class="fu">str_extract</span>(path_audiofile, <span class="st">"(?&lt;=ZOOM)</span><span class="sc">\\</span><span class="st">d+"</span>),</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">zoom_nr                =</span> <span class="fu">as.integer</span>(zoom_nr)</span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(patient_chiffre, folder) <span class="sc">|&gt;</span></span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(zoom_nr, <span class="at">n =</span> <span class="dv">1</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> <span class="co"># remove the older zoom_nr for each group of patient and folder</span></span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>    patient_chiffre,</span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>    treatment_center,</span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a>    treatment_end_year_text,</span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a>    txt1_problem_development,</span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a>    txt2_extra_stressors,</span>
+<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>    txt3_pre_onset_changes,</span>
+<span id="cb55-21"><a href="#cb55-21" aria-hidden="true" tabindex="-1"></a>    txt4_event_connection,</span>
+<span id="cb55-22"><a href="#cb55-22" aria-hidden="true" tabindex="-1"></a>    txt5_physical_symptoms,</span>
+<span id="cb55-23"><a href="#cb55-23" aria-hidden="true" tabindex="-1"></a>    txt6_problem_causes,</span>
+<span id="cb55-24"><a href="#cb55-24" aria-hidden="true" tabindex="-1"></a>    txt7_expected_improvements,</span>
+<span id="cb55-25"><a href="#cb55-25" aria-hidden="true" tabindex="-1"></a>    txt8_environment_response,</span>
+<span id="cb55-26"><a href="#cb55-26" aria-hidden="true" tabindex="-1"></a>    txt9_no_change_requested,</span>
+<span id="cb55-27"><a href="#cb55-27" aria-hidden="true" tabindex="-1"></a>    txt10_problem_description,</span>
+<span id="cb55-28"><a href="#cb55-28" aria-hidden="true" tabindex="-1"></a>    txt11_impacted_life_areas,</span>
+<span id="cb55-29"><a href="#cb55-29" aria-hidden="true" tabindex="-1"></a>    txt12_therapy_goals</span>
+<span id="cb55-30"><a href="#cb55-30" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb55-31"><a href="#cb55-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-32"><a href="#cb55-32" aria-hidden="true" tabindex="-1"></a>merged_text_clean <span class="ot">&lt;-</span> merged_text <span class="sc">|&gt;</span></span>
+<span id="cb55-33"><a href="#cb55-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(</span>
+<span id="cb55-34"><a href="#cb55-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.na</span>(patient_chiffre) <span class="sc">|</span></span>
+<span id="cb55-35"><a href="#cb55-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">if_all</span>(<span class="fu">contains</span>(<span class="st">"txt"</span>), is.na)</span>
+<span id="cb55-36"><a href="#cb55-36" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 <section id="merge-text-and-self-rating-scales" class="level2">
 <h2 class="anchored" data-anchor-id="merge-text-and-self-rating-scales">merge text and self-rating scales</h2>
-<div class="cell-container"><div class="cell-decorator"><pre>In [9]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>df_merged_self_rating <span class="ot">&lt;-</span> dsmv_filtered_wider_labeled <span class="sc">|&gt;</span></span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bdi_wider_complete, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(patient_kodap_pre_demographics_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(therapist_kodap_pre_context_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bsi_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(dass_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gas_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>)</span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>df_merged <span class="ot">&lt;-</span> merged_text_clean <span class="sc">|&gt;</span></span>
-<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_merged_self_rating, <span class="at">by =</span> <span class="st">"patient_chiffre"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(patient_chiffre, case_nr, patient_dateofbirth, patient_age_therapy_start, patient_sex, marital_status, in_relationship, general_education, vocational_qualification, work_ability_status, previous_psychotherapy, assessment_date_DI, icd10_code, CGI_severity, therapist_dateofbirth, therapist_age_therapy_start, therapist_sex, <span class="fu">everything</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [12]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>df_merged_self_rating <span class="ot">&lt;-</span> dsmv_filtered_wider_labeled <span class="sc">|&gt;</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bdi_wider_complete, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(patient_kodap_pre_demographics_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(therapist_kodap_pre_context_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bsi_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(dass_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gas_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(pmh_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) </span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>df_merged <span class="ot">&lt;-</span> merged_text_clean <span class="sc">|&gt;</span></span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_merged_self_rating, <span class="at">by =</span> <span class="st">"patient_chiffre"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(patient_chiffre, case_nr, patient_dateofbirth, patient_age_therapy_start, patient_sex, marital_status, in_relationship, general_education, vocational_qualification, work_ability_status, previous_psychotherapy, assessment_date_DI, icd10_code, CGI_severity, therapist_dateofbirth, therapist_age_therapy_start, therapist_sex, <span class="fu">everything</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in left_join(merged_text_clean, df_merged_self_rating, by = "patient_chiffre"): Detected an unexpected many-to-many relationship between `x` and `y`.
 ℹ Row 10 of `x` matches multiple rows in `y`.
