@@ -200,6 +200,22 @@ Bonnin, Email: \href{mailto:gabriel.bonnin@ruhr-uni-bochum.de}{gabriel.bonnin@ru
 
 
 \makeatletter
+\@ifpackageloaded{tcolorbox}{}{\usepackage[skins,breakable]{tcolorbox}}
+\@ifpackageloaded{fontawesome5}{}{\usepackage{fontawesome5}}
+\definecolor{quarto-callout-color}{HTML}{909090}
+\definecolor{quarto-callout-note-color}{HTML}{0758E5}
+\definecolor{quarto-callout-important-color}{HTML}{CC1914}
+\definecolor{quarto-callout-warning-color}{HTML}{EB9113}
+\definecolor{quarto-callout-tip-color}{HTML}{00A047}
+\definecolor{quarto-callout-caution-color}{HTML}{FC5300}
+\definecolor{quarto-callout-color-frame}{HTML}{acacac}
+\definecolor{quarto-callout-note-color-frame}{HTML}{4582ec}
+\definecolor{quarto-callout-important-color-frame}{HTML}{d9534f}
+\definecolor{quarto-callout-warning-color-frame}{HTML}{f0ad4e}
+\definecolor{quarto-callout-tip-color-frame}{HTML}{02b875}
+\definecolor{quarto-callout-caution-color-frame}{HTML}{fd7e14}
+\makeatother
+\makeatletter
 \@ifpackageloaded{caption}{}{\usepackage{caption}}
 \AtBeginDocument{%
 \ifdefined\contentsname
@@ -283,37 +299,45 @@ Bonnin, Email: \href{mailto:gabriel.bonnin@ruhr-uni-bochum.de}{gabriel.bonnin@ru
 
 
 
+\begin{tcolorbox}[enhanced jigsaw, opacityback=0, bottomrule=.15mm, colbacktitle=quarto-callout-note-color!10!white, left=2mm, colback=white, coltitle=black, toprule=.15mm, bottomtitle=1mm, breakable, leftrule=.75mm, arc=.35mm, opacitybacktitle=0.6, rightrule=.15mm, toptitle=1mm, titlerule=0mm, title=\textcolor{quarto-callout-note-color}{\faInfo}\hspace{0.5em}{Note}, colframe=quarto-callout-note-color-frame]
+
+\textbf{Funding:} This project is supported by the Ruhr University
+Bochum Research School through a 9-Month Gateway Fellowship.
+
+\end{tcolorbox}
+
 \section{Abstract}\label{abstract}
 
 Psychotherapy is one of the most effective treatments for mental health
 problems, but its success depends on accurate diagnostic assessments.
 Current diagnostic tools often use standardized closed-ended scales
 that, while reliable, may fail to capture the complexity and
-individuality of mental states. In collaboration with Dr.~Oscar Kjell at
-Lund University, this project leverages advances in artificial
-intelligence (AI) and natural language processing (NLP) to transform the
-way mental health is assessed.
-
-This project is based on a unique longitudinal dataset collected over 10
-years at the Mental Health Research and Treatment Center (FBZ) at Ruhr
-University Bochum. It consists of written self-reports in which patients
-describe their mental health problems, functional impairment, and
-therapy goals in their own words. These texts are linked to key clinical
-outcomes such as diagnoses, symptom severity, functional impairment, and
-treatment success, providing a rich, ecologically valid resource for
-understanding patient progress in psychotherapy.
+individuality of mental states. Advances in artificial intelligence (AI)
+and natural language processing (NLP) enable the measurement of
+psychological constructs through natural language. This approach shows
+considerable promise in addressing the limitations of traditional
+assessment methods by offering a more nuanced and personalized
+understanding of mental states.
 
 While previous NLP-based mental health studies have focused on social
 media posts, limiting their clinical applicability, this project applies
-state-of-the-art large language models (LLMs) to real-world clinical
-data. By analyzing patients' open-ended responses, we aim to uncover
-patterns in how they articulate mental health, emotions, and treatment
-trajectories. These insights will inform the development of AI-powered
-tools that offer more personalized and clinically relevant assessments,
-surpassing traditional methods in accuracy and depth. Ultimately, this
-research aims to support clinicians in making more informed treatment
-decisions, enhance personalized care, and contribute to the
-modernization of mental health assessment.
+state-of-the-art large language models (LLMs) to data from a German
+outpatient psychotherapy clinic. Before therapy, patients describe their
+mental health problems, functional impairment, and therapy goals in
+their own words. These texts are linked to key clinical outcomes such as
+diagnoses, symptom severity, functional impairment, and treatment
+success, providing a rich, ecologically valid resource for exploring the
+potential of language based assessments in real-world, clinical
+settings.
+
+By analyzing this data, we aim to uncover patterns in how they
+articulate mental health, emotions, and therapy expectations. These
+insights will inform the development of AI-powered tools that offer more
+personalized and clinically relevant assessments, surpassing traditional
+methods in accuracy and depth. Ultimately, this research aims to support
+clinicians in making more informed treatment decisions, enhance
+personalized care, and contribute to the modernization of mental health
+assessment.
 
 \section{Introduction}\label{introduction}
 
@@ -360,20 +384,21 @@ outcomes, including suicide risk
 \citeproc{ref-mohammadi-etal-2019-clac-clpsych}{Mohammadi et al., 2019};
 \citeproc{ref-zirikly-etal-2019-clpsych}{Zirikly et al., 2019}).
 
-At the FBZ at Ruhr University Bochum, open-ended patient responses have
-been routinely collected from approximately 3,000 patients pre-therapy.
-While previous studies have explored the use of NLP for mental health
-assessment, they have largely relied on social media language, limiting
-their clinical applicability. My project moves beyond the current
-state-of-the-art by applying LLMs to analyze this unique, large-scale,
-and longitudinal clinical dataset, assessing the relationship between
-patients' probed mental health responses and clinically relevant
-constructs such as diagnosis, symptom severity, and functional
-impairment. Additionally, it will predict key clinical outcomes such as
-treatment response and therapy goal attainment. Furthermore, the project
-seeks to generate clinically meaningful, data-driven insights that go
-beyond traditional diagnostic categories, offering a more nuanced and
-patient-centered understanding of mental health trajectories.
+At the outpatient psychotherapy clinic at Ruhr University Bochum,
+open-ended patient responses have been routinely collected from patients
+pre-therapy. While previous studies have explored the use of NLP for
+mental health assessment, they have largely relied on social media
+language, limiting their clinical applicability. This project moves
+beyond the current state-of-the-art by applying LLMs to analyze this
+unique, large-scale, and longitudinal clinical dataset, assessing the
+relationship between patients' probed mental health responses and
+clinically relevant constructs such as diagnosis, symptom severity, and
+functional impairment. Additionally, it will predict key clinical
+outcomes such as treatment response and therapy goal attainment.
+Furthermore, the project seeks to generate clinically meaningful,
+data-driven insights that go beyond traditional diagnostic categories,
+offering a more nuanced and patient-centered understanding of mental
+health trajectories.
 
 \section{Methods}\label{methods}
 
@@ -427,64 +452,64 @@ Lebensgeschichte}), and questions 10--13 come from the second
 \tightlist
 \item
   \textbf{Problem development:} `Briefly describe how the problems for
-  which you are seeking treatment have developed over time.' (geman
+  which you are seeking treatment have developed over time.' (german
   original question: „Beschreiben Sie kurz, wie sich Ihre Probleme,
   wegen derer Sie eine Behandlung aufsuchen, im Laufe der Zeit
   entwickelt haben.'')
 \item
   \textbf{Extra stressors:} `What causes you stress in addition to your
-  everyday problems (e.g.~finances, housing situation)?' (geman original
-  question: „Was macht Ihnen zusätzlich zu Ihren Problemen im Alltag
-  Stress (z. B. Finanzen, Wohnsituation)?{}``)
+  everyday problems (e.g.~finances, housing situation)?' (german
+  original question: „Was macht Ihnen zusätzlich zu Ihren Problemen im
+  Alltag Stress (z. B. Finanzen, Wohnsituation)?{}``)
 \item
   \textbf{Pre-onset changes:} `Did something special change in your life
   before the onset of your symptoms? (e.g.~death of an important person,
   divorce or separation, change in work situation or income, addition to
-  the family)' (geman original question: „Hat sich vor dem Beginn Ihrer
+  the family)' (german original question: „Hat sich vor dem Beginn Ihrer
   Beschwerden etwas Besonderes in Ihrem Leben verändert? (z. B. Tod
   einer wichtigen Bezugsperson, Scheidung oder Trennung, Veränderung der
   Arbeitssituation oder des Einkommens, Familienzuwachs)``)
 \item
   \textbf{Event connection:} `Do you see a connection between the
-  event(s) and the development of your problems?' (geman original
+  event(s) and the development of your problems?' (german original
   question: „Sehen Sie einen Zusammenhang zwischen dem Ereignis/den
   Ereignissen und der Entwicklung Ihrer Probleme?{}``)
 \item
   \textbf{Physical symptoms:} `Are there any physical side effects when
-  your problems occur?' (geman original question: „Gibt es körperliche
+  your problems occur?' (german original question: „Gibt es körperliche
   Begleiterscheinungen, wenn Ihre Probleme auftreten?{}``)
 \item
   \textbf{Problem causes:} `What do you think are the causes of your
-  problems?' (geman original question: „Welche Ursachen sehen Sie für
+  problems?' (german original question: „Welche Ursachen sehen Sie für
   Ihre Probleme?{}``)
 \item
   \textbf{Expected improvements:} `What would improve in your life if
-  you no longer had your problems?' (geman original question: „Was würde
-  sich in Ihrem Leben verbessern, wenn Sie ihre Probleme nicht mehr
-  hätten?{}``)
+  you no longer had your problems?' (german original question: „Was
+  würde sich in Ihrem Leben verbessern, wenn Sie ihre Probleme nicht
+  mehr hätten?{}``)
 \item
   \textbf{Environment response:} `How does your environment (partner,
-  family, friends, work colleagues) react to your problems?' (geman
+  family, friends, work colleagues) react to your problems?' (german
   original question: „Wie reagiert Ihre Umwelt (Partner:in, Familie,
   Freund:innen, Arbeitskolleg:innen) auf die Probleme?{}``)
 \item
   \textbf{No change required:} `What should not change under any
-  circumstances as a result of the therapy?' (geman original question:
+  circumstances as a result of the therapy?' (german original question:
   „Was sollte sich durch die Therapie auf keinen Fall verändern?{}``)
 \item
   \textbf{Problem description:} `Finally, please describe in your own
-  words the problems for which you would like treatment.' (geman
+  words the problems for which you would like treatment.' (german
   original question: „Beschreiben Sie zum Abschluss bitte noch einmal in
   eigenen Worten Ihre Probleme, deretwegen Sie eine Behandlung
   wünschen.``)
 \item
   \textbf{Impacted life areas:} `In which areas of your life do these
-  problems limit you (e.g.~job, relationship)?' (geman original
+  problems limit you (e.g.~job, relationship)?' (german original
   question: „In welchen Lebensbereichen schränken Sie diese Probleme ein
   (z. B. Beruf, Partnerschaft)?{}``)
 \item
   \textbf{Therapy goals:} `What would you like to achieve for yourself
-  in therapy?' (geman original question: „Was möchten Sie in der
+  in therapy?' (german original question: „Was möchten Sie in der
   Therapie für sich erreichen?{}``)
 \end{enumerate}
 
@@ -513,7 +538,7 @@ settings.
 II.}\label{beck-depression-inventory-ii}
 
 Depressive symptoms were assessed using the~\emph{Beck Depression
-Inventory--II}~(BDI-II; (\citeproc{ref-Beck1996}{Beck et al., 1996})), a
+Inventory--II} (BDI-II; (\citeproc{ref-Beck1996}{Beck et al., 1996})), a
 widely used self-report questionnaire measuring the severity of
 depressive symptomatology over the past two weeks.
 
@@ -542,60 +567,54 @@ Symptom Total} (PST), representing the number of reported symptoms.
 \paragraph{Positive Mental Health
 Scale.}\label{positive-mental-health-scale}
 
-Positive mental health (PMH) was assessed with the nine-item PMH scale
-(\citeproc{ref-lukat2016}{Lukat et al., 2016}). Responses are given on a
-4-point Likert scale from 0 (disagree) to 3 (agree). Item scores are
-summed to yield a total score ranging from 0 to 27, with higher scores
-reflecting greater PMH. The scale has been validated as a unidimensional
-measure with excellent internal consistency (Cronbach's α = .93), good
-test--retest reliability (Pearson r = .74--.81), and evidence of scalar
-invariance across samples and over time (\citeproc{ref-lukat2016}{Lukat
-et al., 2016}). Furthermore, it shows strong convergent and discriminant
-validity and is sensitive to therapeutic change across diverse
-populations (\citeproc{ref-lukat2016}{Lukat et al., 2016}).
+Positive mental health (PMH) was assessed with the nine-item \emph{PMH
+scale} (\citeproc{ref-lukat2016}{Lukat et al., 2016}). Responses are
+given on a 4-point Likert scale from 0 (disagree) to 3 (agree). Item
+scores are summed to yield a total score ranging from 0 to 27, with
+higher scores reflecting greater PMH. The scale has been validated as a
+unidimensional measure with excellent internal consistency (Cronbach's α
+= .93), good test--retest reliability (Pearson r = .74--.81), and
+evidence of scalar invariance across samples and over time
+(\citeproc{ref-lukat2016}{Lukat et al., 2016}). Furthermore, it shows
+strong convergent and discriminant validity and is sensitive to
+therapeutic change across diverse populations
+(\citeproc{ref-lukat2016}{Lukat et al., 2016}).
 
 \paragraph{Childhood Trauma
 Questionnaire.}\label{childhood-trauma-questionnaire}
 
 Early adverse experiences were assessed using the \emph{Childhood Trauma
-Questionnaire} (CTQ), a widely used self-report instrument for the
-retrospective assessment of childhood maltreatment. The CTQ measures
-five domains of adverse experiences: emotional abuse, physical abuse,
-sexual abuse, emotional neglect, and physical neglect. Items are rated
-on a 5-point Likert scale ranging from 1 (``not at all'') to 5 (``very
-often''), with higher scores indicating greater exposure to
-maltreatment. The German version of the CTQ has demonstrated good
-psychometric properties, including satisfactory reliability and validity
-in clinical samples
-
-Wingenfeld, Katja \& Spitzer, Carsten \& Mensebach, Christoph \& Grabe,
-Hans \& Hill, Andreas \& Gast, Ursula \& Schlosser, Nicole \& Höpp,
-Hella \& Beblo, Thomas \& Driessen, Martin. (2010). The German Version
-of the Childhood Trauma Questionnaire (CTQ): Preliminary Psychometric
-Properties. Psychotherapie, Psychosomatik, medizinische Psychologie. 60.
-10.1055/s-0030-1253494.
+Questionnaire} (CTQ) (\citeproc{ref-bernstein2003}{Bernstein et al.,
+2003}), a widely used self-report instrument for the retrospective
+assessment of childhood maltreatment. The CTQ measures five domains of
+adverse experiences: emotional abuse, physical abuse, sexual abuse,
+emotional neglect, and physical neglect. Items are rated on a 5-point
+Likert scale ranging from 1 (``not at all'') to 5 (``very often''), with
+higher scores indicating greater exposure to maltreatment. The German
+version of the CTQ has demonstrated good psychometric properties,
+including satisfactory reliability and validity in clinical samples
+(\citeproc{ref-wingenfeld2010}{Wingenfeld et al., 2010}).
 
 \paragraph{Clinical Global
 Impression.}\label{clinical-global-impression}
 
 \subparagraph{Severity Scale.}\label{severity-scale}
 
-Clinician-rated symptom severity and improvement were assessed using
-the~\emph{Clinical Global Impression}~(CGI) scales.
-The~\emph{CGI-Severity}~scale evaluates the clinician's global
-impression of the patient's current level of mental illness, based on
-their total clinical experience with this population. The item asks:
-``Considering your total clinical experience with this particular
-population, how mentally ill is the patient at this time?''
+Clinician-rated symptom severity and improvement were assessed using the
+\emph{Clinical Global Impression} (CGI) scales. The \emph{CGI-Severity}
+scale evaluates the clinician's global impression of the patient's
+current level of mental illness, based on their total clinical
+experience with this population. The item asks: ``Considering your total
+clinical experience with this particular population, how mentally ill is
+the patient at this time?''
 
 \subparagraph{Improvement Scale.}\label{improvement-scale}
 
-Treatment-related change was assessed using
-the~\emph{CGI-Improvement}~scale. Both patients and therapists rated
-overall improvement relative to the beginning of therapy, regardless of
-whether the change was attributed entirely to treatment. Patient and
-therapist versions differ only in perspective but use equivalent
-response formats.
+Treatment-related change was assessed using the \emph{CGI-Improvement}
+scale. Both patients and therapists rated overall improvement relative
+to the beginning of therapy, regardless of whether the change was
+attributed entirely to treatment. Patient and therapist versions differ
+only in perspective but use equivalent response formats.
 
 \subsubsection{Global Improvement}\label{global-improvement}
 
@@ -675,7 +694,7 @@ therapy \\
 \textbf{BSI} & X & & X & X & X & X & X & X \\
 \textbf{BDI-II} & & X & X & X & X & X & X & X \\
 \textbf{DASS-42} & & X & X & X & X & X & X & X \\
-\textbf{PMH} & & & & & & & & \\
+\textbf{PMH} & & X & X & X & X & X & X & X \\
 \textbf{CTQ} & & X & & & & & & \\
 \textbf{CGI-S} & & X & & & & & & \\
 \textbf{CGI-I} & & & & & & & & \\
@@ -743,6 +762,14 @@ preprocessing to data evaluation.}
 \bibitem[\citeproctext]{ref-Beck1996}
 Beck, A. T., Steer, R. A., \& Brown, G. K. (1996). \emph{{BDI-II}: {Beck
 Depression Inventory} manual} (2nd ed.). Psychological Corporation.
+
+\bibitem[\citeproctext]{ref-bernstein2003}
+Bernstein, D. P., Stein, J. A., Newcomb, M. D., Walker, E., Pogge, D.,
+Ahluvalia, T., Stokes, J., Handelsman, L., Medrano, M., Desmond, D., \&
+Zule, W. (2003). Development and validation of a brief screening version
+of the Childhood Trauma Questionnaire. \emph{Child Abuse \& Neglect},
+\emph{27}(2), 169--190.
+\url{https://doi.org/10.1016/s0145-2134(02)00541-0}
 
 \bibitem[\citeproctext]{ref-10.5555ux2f944919.944937}
 Blei, D. M., Ng, A. Y., \& Jordan, M. I. (2003). Latent dirichlet
@@ -906,6 +933,14 @@ A. N., Kaiser, L., \& Polosukhin, I. (2017). Attention is {All} you
 \bibitem[\citeproctext]{ref-wampold2015great}
 Wampold, B. E., \& Imel, Z. E. (2015). \emph{The great psychotherapy
 debate: {The} evidence for what makes psychotherapy work}. Routledge.
+
+\bibitem[\citeproctext]{ref-wingenfeld2010}
+Wingenfeld, K., Spitzer, C., Mensebach, C., Grabe, H., Hill, A., Gast,
+U., Schlosser, N., Höpp, H., Beblo, T., \& Driessen, M. (2010). Die
+deutsche Version des Childhood Trauma Questionnaire (CTQ): Erste Befunde
+zu den psychometrischen Kennwerten. \emph{PPmP - Psychotherapie ·
+Psychosomatik · Medizinische Psychologie}, \emph{60}(08), e13--e13.
+\url{https://doi.org/10.1055/s-0030-1253494}
 
 \bibitem[\citeproctext]{ref-WorldHealthOrganization2017}
 World Health Organization. (2017). \emph{Depression and other common
