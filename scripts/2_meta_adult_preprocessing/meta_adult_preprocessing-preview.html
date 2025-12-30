@@ -1127,10 +1127,9 @@ chr (14): path_audiofile, patient_chiffre, txt1_problem_development, txt2_ex...
 <span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gas_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
 <span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(pmh_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) </span>
 <span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>df_merged <span class="ot">&lt;-</span> merged_text_clean <span class="sc">|&gt;</span></span>
-<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_merged_self_rating, <span class="at">by =</span> <span class="st">"patient_chiffre"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(patient_chiffre, case_nr, patient_dateofbirth, patient_age_therapy_start, patient_sex, marital_status, in_relationship, general_education, vocational_qualification, work_ability_status, previous_psychotherapy, assessment_date_DI, icd10_code, CGI_severity, therapist_dateofbirth, therapist_age_therapy_start, therapist_sex, <span class="fu">everything</span>())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a>df_merged <span class="ot">&lt;-</span> merged_text_clean <span class="sc">|&gt;</span></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_merged_self_rating, <span class="at">by =</span> <span class="st">"patient_chiffre"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, patient_dateofbirth, patient_age_therapy_start, patient_sex, marital_status, in_relationship, general_education, vocational_qualification, work_ability_status, previous_psychotherapy, assessment_date_DI, icd10_code, CGI_severity, therapist_dateofbirth, therapist_age_therapy_start, therapist_sex, <span class="fu">everything</span>(), <span class="sc">-</span>patient_chiffre, <span class="sc">-</span>icd10_code) <span class="co">#remove chiffre and icd code for export</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in left_join(merged_text_clean, df_merged_self_rating, by = "patient_chiffre"): Detected an unexpected many-to-many relationship between `x` and `y`.
 ℹ Row 10 of `x` matches multiple rows in `y`.
@@ -1138,6 +1137,7 @@ chr (14): path_audiofile, patient_chiffre, txt1_problem_development, txt2_ex...
 ℹ If a many-to-many relationship is expected, set `relationship =
   "many-to-many"` to silence this warning.</code></pre>
 </div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(df_merged, <span class="st">"/Volumes/meta_data/processed/working_data/merged_data.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 </section>

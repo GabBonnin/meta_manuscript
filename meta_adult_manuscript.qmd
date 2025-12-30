@@ -1,0 +1,241 @@
+---
+title: "Mental Health Evaluation through Text Analysis"
+author:
+  name: Gabriel Bonnin
+  affiliations: Ruhr University Bochum, Germany
+  email: gabriel.bonnin@ruhr-uni-bochum.de
+  corresponding: true
+bibliography: "references/META.bib"
+csl: "references/apa-2.csl"
+---
+
+::: {.callout-note}
+![](reports/Logo_RUBRS.svg){width=180px}
+
+This project is supported by the [Ruhr University Bochum Research School](https://www.research-school.rub.de).
+
+:::
+
+
+# Abstract
+
+Psychotherapy is one of the most effective treatments for mental health problems, but its success depends on accurate diagnostic assessments. Current diagnostic tools often use standardized closed-ended scales that, while reliable, may fail to capture the complexity and individuality of mental states. Advances in artificial intelligence (AI) and natural language processing (NLP) enable the measurement of psychological constructs through natural language. This approach shows considerable promise in addressing the limitations of traditional assessment methods by offering a more nuanced and personalized understanding of mental states.
+
+While previous NLP-based mental health studies have focused on social media posts, limiting their clinical applicability, this project applies state-of-the-art large language models (LLMs) to data from a German outpatient psychotherapy clinic. Before therapy, patients describe their mental health problems, functional impairment, and therapy goals in their own words. These texts are linked to key clinical outcomes such as diagnoses, symptom severity, functional impairment, and treatment success, providing a rich, ecologically valid resource for exploring the potential of language based assessments in real-world, clinical settings.
+
+By analyzing this data, we aim to uncover patterns in how they articulate mental health, emotions, and therapy expectations. These insights will inform the development of AI-powered tools that offer more personalized and clinically relevant assessments, surpassing traditional methods in accuracy and depth. Ultimately, this research aims to support clinicians in making more informed treatment decisions, enhance personalized care, and contribute to the modernization of mental health assessment.
+
+::: {pagebreak}
+:::
+
+# Introduction
+
+Mental health problems pose a significant global challenge, accounting for a considerable proportion of deaths and disability-adjusted life years [@WorldHealthOrganization2017]. Psychotherapy is an effective and sustainable intervention for reducing symptoms and improving quality of life [@wampold2015great; @chorpita2011evidence], but it’s success critically depends on accurate assessments [@Lutz2022; @Jensen-Doss2008].
+
+Current assessment practices typically combine subjective self-reports with clinical observations [@Bonnin2024a]. Standardized closed-ended tools such as the Beck Depression Inventory-II [@Beck1996] rely on numerical scales [@Likert1932] to structure and standardize assessments and are widely used in clinical research and practice. While these methods have advanced replicability and reliability in psychological assessment, they can miss important individual differences by restricting responses to pre-defined categories, limiting the ability to capture the complexity of mental states [@Kjell2024].
+
+Recent advances in AI, particularly transformer-based LLMs [@Vaswani2017], present promising solutions to these limitations [@Kjell2024]. LLMs excel in analyzing context-rich natural language with remarkable accuracy across diverse tasks [@devlin-etal-2019-bert]. Open-ended response formats, where patients describe their experiences in their own words, provide high-dimensional, context-rich information that remains underutilized in current assessment practices. Empirical studies highlight the potential of NLP-based analysis of open-ended responses, achieving moderate convergence with closed-ended rating scales using traditional NLP methods [@kjell2019semantic] and nearing theoretical upper limits of accuracy with LLMs [@Kjell2022]. Preliminary research also highlights their potential for predicting clinically significant outcomes, including suicide risk [@zirikly-etal-2019-clpsych; @mohammadi-etal-2019-clac-clpsych; @matero-etal-2019-suicide].
+
+At the outpatient psychotherapy clinic at Ruhr University Bochum, open-ended patient responses have been routinely collected from patients pre-therapy. While previous studies have explored the use of NLP for mental health assessment, they have largely relied on social media language, limiting their clinical applicability. This project moves beyond the current state-of-the-art by applying LLMs to analyze this unique, large-scale, and longitudinal clinical dataset, assessing the relationship between patients’ probed mental health responses and clinically relevant constructs such as diagnosis, symptom severity, and functional impairment. Additionally, it will predict key clinical outcomes such as treatment response and therapy goal attainment. Furthermore, the project seeks to generate clinically meaningful, data-driven insights that go beyond traditional diagnostic categories, offering a more nuanced and patient-centered understanding of mental health trajectories.
+
+# Methods
+
+## Preprocessing
+
+To streamline data collection, an automated transcription pipeline was implemented: The handwritten text data is first recorded by trained employees of the FBZ adult outpatient clinic using a mobile audio recording device. Identifying features (e.g. names, dates of birth, location details) were replaced by placeholders during recording (anonymisation). The transcription was carried out on local hardware using the open source tool Whisper Large v2 (<https://github.com/openai/whisper>), a state-of-the-art speech-to-text model [@Radford2022]. Each recording begins with a structured introduction, including a patient identification code, followed by responses to predefined questions. The transcription pipeline automatically processes all audio recordings, extracts the patient codes, and identifies responses to key questions.
+
+As an additional data correction step, the exported transcription table was screened for incomplete entries. Records with missing patient identification codes or without any extracted text were automatically flagged, exported for manual correction, and subsequently re-imported and merged back into the original dataset. The corrected dataset was then used for downstream analyses.
+
+## Measures
+
+### Sociodemographic and context measures
+
+Sociodemographic information included age, sex, marital and relationship status, general educational attainment, vocational qualification, and current work ability. Contextual variables captured prior psychological or psychiatric treatment and the manner in which therapy ended (e.g., regular completion, dropout).
+
+### Responses from open-ended questions before therapy
+
+At the start of therapy, patients complete two separate questionnaires designed to assess key aspects of their mental health concerns, functional impairments, and expectations for treatment. Questions 1–9 come from the first questionnaire (*Fragebogen zur Lebensgeschichte*), and questions 10–13 come from the second (*Eingangsfragebogen*). The questions include:
+
+1.  **Problem development:** ‘Briefly describe how the problems for which you are seeking treatment have developed over time.’ (german original question: „Beschreiben Sie kurz, wie sich Ihre Probleme, wegen derer Sie eine Behandlung aufsuchen, im Laufe der Zeit entwickelt haben.")
+2.  **Extra stressors:** ‘What causes you stress in addition to your everyday problems (e.g. finances, housing situation)?’ (german original question: „Was macht Ihnen zusätzlich zu Ihren Problemen im Alltag Stress (z. B. Finanzen, Wohnsituation)?“)
+3.  **Pre-onset changes:** ‘Did something special change in your life before the onset of your symptoms? (e.g. death of an important person, divorce or separation, change in work situation or income, addition to the family)’ (german original question: „Hat sich vor dem Beginn Ihrer Beschwerden etwas Besonderes in Ihrem Leben verändert? (z. B. Tod einer wichtigen Bezugsperson, Scheidung oder Trennung, Veränderung der Arbeitssituation oder des Einkommens, Familienzuwachs)“)
+4.  **Event connection:** ‘Do you see a connection between the event(s) and the development of your problems?’ (german original question: „Sehen Sie einen Zusammenhang zwischen dem Ereignis/den Ereignissen und der Entwicklung Ihrer Probleme?“)
+5.  **Physical symptoms:** ‘Are there any physical side effects when your problems occur?’ (german original question: „Gibt es körperliche Begleiterscheinungen, wenn Ihre Probleme auftreten?“)
+6.  **Problem causes:** ‘What do you think are the causes of your problems?’ (german original question: „Welche Ursachen sehen Sie für Ihre Probleme?“)
+7.  **Expected improvements:** ‘What would improve in your life if you no longer had your problems?’ (german original question: „Was würde sich in Ihrem Leben verbessern, wenn Sie ihre Probleme nicht mehr hätten?“)
+8.  **Environment response:** ‘How does your environment (partner, family, friends, work colleagues) react to your problems?’ (german original question: „Wie reagiert Ihre Umwelt (Partner:in, Familie, Freund:innen, Arbeitskolleg:innen) auf die Probleme?")
+9.  **No change required:** ‘What should not change under any circumstances as a result of the therapy?’ (german original question: „Was sollte sich durch die Therapie auf keinen Fall verändern?“)
+10. **Problem description:** ‘Finally, please describe in your own words the problems for which you would like treatment.’ (german original question: „Beschreiben Sie zum Abschluss bitte noch einmal in eigenen Worten Ihre Probleme, deretwegen Sie eine Behandlung wünschen.“)
+11. **Impacted life areas:** ‘In which areas of your life do these problems limit you (e.g. job, relationship)?’ (german original question: „In welchen Lebensbereichen schränken Sie diese Probleme ein (z. B. Beruf, Partnerschaft)?“)
+12. **Therapy goals:** ‘What would you like to achieve for yourself in therapy?’ (german original question: „Was möchten Sie in der Therapie für sich erreichen?“)
+
+### Psychometric measures
+
+Clinical and psychometric variables were retrieved from the FBZ database and included diagnostic information, self-report symptom measures, therapist- and patient-rated outcome measures, positive mental health indicators, and therapeutic process variables. Diagnoses were coded according to DSM-5 and ICD-10 criteria. Symptom severity and treatment outcomes were assessed using a combination of standardized self-report questionnaires and clinician-rated instruments administered at different points during treatment.
+
+#### Diagnosis
+
+Diagnosis at the outpatient clinic is conducted using structured clinical interviews. These typically take place before therapy begins, usually at the fourth therapist–patient contact. The interview used is the Diagnostic Interview for Mental Disorders [@margraf2021], which covers the most frequent DSM-5 disorders encountered in outpatient therapy settings.
+
+#### Beck-Depression-Inventory II
+
+Depressive symptoms were assessed using the *Beck Depression Inventory–II* (BDI-II; [@Beck1996]), a widely used self-report questionnaire measuring the severity of depressive symptomatology over the past two weeks.
+
+#### Depression Anxiety Stress Scale 42
+
+General psychological distress was assessed using the *Depression Anxiety Stress Scales–42* (DASS-42[@Lovibond1995]), which consists of 42 items measuring symptoms of depression, anxiety, and stress on a XXX scale.
+
+#### Brief Symptom Inventory
+
+Overall psychopathological symptom burden was measured using the *Brief Symptom Inventory* (BSI; [@book]), the short form of the Symptom Checklist-90-Revised (SCL-90-R; Derogatis). The BSI consists of 53 items rated on a 5-point Likert scale ranging from 0 (“not at all”) to 4 (“extremely”). Responses to 49 items are assigned to nine primary symptom dimensions, while four items are evaluated separately. These symptom dimensions are summarized into three global indices: the *Global Severity Index* (GSI), reflecting overall psychological distress; the *Positive Symptom Distress Index* (PSDI), indicating symptom intensity; and the *Positive Symptom Total* (PST), representing the number of reported symptoms.
+
+#### Positive Mental Health Scale
+
+Positive mental health (PMH) was assessed with the nine-item *PMH scale* [@lukat2016]. Responses are given on a 4-point Likert scale from 0 (disagree) to 3 (agree). Item scores are summed to yield a total score ranging from 0 to 27, with higher scores reflecting greater PMH. The scale has been validated as a unidimensional measure with excellent internal consistency (Cronbach’s α = .93), good test–retest reliability (Pearson r = .74–.81), and evidence of scalar invariance across samples and over time [@lukat2016]. Furthermore, it shows strong convergent and discriminant validity and is sensitive to therapeutic change across diverse populations [@lukat2016].
+
+#### Childhood Trauma Questionnaire
+
+Early adverse experiences were assessed using the *Childhood Trauma Questionnaire* (CTQ) [@bernstein2003], a widely used self-report instrument for the retrospective assessment of childhood maltreatment. The CTQ measures five domains of adverse experiences: emotional abuse, physical abuse, sexual abuse, emotional neglect, and physical neglect. Items are rated on a 5-point Likert scale ranging from 1 ("not at all") to 5 ("very often"), with higher scores indicating greater exposure to maltreatment. The German version of the CTQ has demonstrated good psychometric properties, including satisfactory reliability and validity in clinical samples [@wingenfeld2010].
+
+#### Clinical Global Impression
+
+##### Severity Scale
+
+Clinician-rated symptom severity and improvement were assessed using the *Clinical Global Impression* (CGI) scales. The *CGI-Severity* scale evaluates the clinician’s global impression of the patient’s current level of mental illness, based on their total clinical experience with this population. The item asks: “Considering your total clinical experience with this particular population, how mentally ill is the patient at this time?”
+
+##### Improvement Scale
+
+Treatment-related change was assessed using the *CGI-Improvement* scale. Both patients and therapists rated overall improvement relative to the beginning of therapy, regardless of whether the change was attributed entirely to treatment. Patient and therapist versions differ only in perspective but use equivalent response formats.
+
+### Global Improvement
+
+Global therapy outcome was assessed using a six-point global success rating based on two items measuring perceived benefit and satisfaction with therapy [@michalak2003]. These items were completed by both patients and therapists and capture a retrospective evaluation of treatment success. The items assess (1) the extent to which expectations toward therapy have been fulfilled and (2) the overall perceived benefit of therapy. Responses are given on a 6-point Likert scale ranging from 1 (“on the contrary / rather harmful”) to 6 (“completely / very helpful”).
+
+### Goal Attainment Scale
+
+Individualized treatment outcomes were assessed using a goal attainment measure inspired by the Goal Attainment Scaling approach [@kiresuk1968]. At the beginning of therapy, patients and therapists collaboratively define individualized treatment goals. During the course and at the end of therapy, patients and therapists retrospectively evaluated the extent to which each of the predefined goals had been achieved.
+
+Goal attainment was rated on a standardized six-point numerical scale ranging from deterioration relative to the initial goal state (-1 = moved away from the goal) to full goal attainment (4 = goal achieved). The scale reflects patients’ subjective assessment of goal progress, with intermediate categories indicating partial progress toward the respective goal.
+
+For each patient, an overall goal attainment score was computed as the mean rating across all individually defined goals, representing the average subjective level of goal progress at the end of therapy.
+
+### Measurement time points
+
+| Timepoint | DU-DI | DU-Prä | KZT1-DU4 | KZT1-DUPost | KZT2-DUPost | LZT1-DUPost | LZT2-DUPost | Kat6 |
+|--------|--------|--------|--------|--------|--------|--------|--------|--------|
+| **Explanation** | Pre-therapy, 4th contact | Pre-therapy, 6th contact | 4th therapy session | 12th therapy session | 24th therapy session | 45th therapy session | 60th therapy session | 6 month after therapy |
+| **Diagnosis** | X |  |  |  |  |  |  |  |
+| **Demographics** |  | X |  |  |  |  |  |  |
+| **BSI** | X |  | X | X | X | X | X | X |
+| **BDI-II** |  | X | X | X | X | X | X | X |
+| **DASS-42** |  | X | X | X | X | X | X | X |
+| **PMH** |  | X | X | X | X | X | X | X |
+| **CTQ** |  | X |  |  |  |  |  |  |
+| **CGI-S** |  | X |  |  |  |  |  |  |
+| **CGI-I** |  |  |  |  |  |  |  |  |
+| **Glob-Pt** |  |  |  |  |  |  |  |  |
+| **GAS** |  |  |  | X | X | X | X | X |
+
+## Analysis
+
+The Sequential Evaluation with Model Pre-registration [@kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024] framework will be implemented to ensure robust model development, mitigating overfitting and enabling unbiased performance evaluation. Additionally, evaluating models on prospective data will simulate real-world clinical deployment by assessing performance on new, unseen patient data.
+
+During the model development phase, preprocessing pipelines will be finalized, and exploratory models developed using advanced cross-validation techniques. Contextual embeddings derived from pretrained LLMs will be linked to clinical outcomes using state-of-the-art prediction models, including ridge regression [@Hoerl1970], lasso regression [@10.1111/j.2517-6161.1996.tb02080.x], and random forests [@598994]. The final pipelines will be pre-registered for evaluation (e.g., <https://aspredicted.org/>).
+
+In the evaluation phase, pre-registered models will be tested on held-out datasets, enabling unbiased performance assessments. This phase will include detailed error analysis to identify potential biases and limitations, as well as comparative analyses to benchmark model performance against the HRG’s models.
+
+Furthermore, topic modeling techniques (e.g., Latent Dirichlet Allocation; [@10.5555/944919.944937], or BERTopic; [@grootendorst2022bertopicneuraltopicmodeling]) will be employed to explore themes in patient-generated text. These analyses will provide valuable clinical insights into patients’ subjective experiences, including their perceived problems, impairments, and goals. By analyzing these insights, I aim to highlight commonalities and differences in patient narratives across diverse populations or conditions. This process may also reveal nuanced linguistic cues that correlate with clinical outcomes, offering a richer understanding of patient perspectives and informing personalized care strategies.
+
+![The step-by-step process of patient narrative analysis, from preprocessing to data evaluation.](reports/Abbildung_Gabriel_eng.png){#figure_1 width="100%"}
+
+::: {pagebreak}
+:::
+
+# Results
+
+A descriptive analysis revealed substantial heterogeneity across questions in both response rates and linguistic richness (Table X). Broad narrative prompts, particularly the problem description and therapy goals questions, showed low missingness and high median word counts, indicating that patients readily provided extended self-generated narratives when asked to reflect holistically on their difficulties or desired changes. In contrast, questions targeting specific events, causal attributions, physical symptoms, or affected life domains often elicited brief or list-like responses, consistent with their more constrained and confirmatory formats. 
+
+```{r}
+#| include: false
+
+working_data <- readRDS("/Volumes/meta_data/processed/working_data/merged_data.rds")
+
+library(tidyverse)
+library(stringi)
+library(skimr)
+library(knitr)
+
+text_cols <- names(working_data)[str_detect(names(working_data), "^txt\\d+_")]
+
+working_data_long <- working_data |> 
+  pivot_longer(
+    cols = all_of(text_cols),
+    names_to = "question_raw",
+    values_to = "text"
+  ) %>%
+  mutate(
+    question_id = str_extract(question_raw, "\\d+") |> as.integer(),
+    question_label = str_remove(question_raw, "^txt\\d+_"),
+    text = str_squish(text),
+    is_missing = is.na(text) | text == ""
+  )
+
+working_data_long <- working_data_long |> 
+  mutate(
+    n_chars = ifelse(is_missing, NA_integer_, nchar(text)),
+    n_words = ifelse(is_missing, NA_integer_, stri_count_words(text)),
+    is_very_short = !is_missing & n_words <= 3
+  )
+
+qc_by_question <- working_data_long |> 
+  group_by(question_id, question_label) |> 
+  summarise(
+    n_total = n(),
+    missing_pct = mean(is_missing) * 100,
+    very_short_pct = mean(is_very_short) * 100,
+    median_words = median(n_words, na.rm = TRUE),
+    p10_words = quantile(n_words, 0.10, na.rm = TRUE),
+    p90_words = quantile(n_words, 0.90, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+question_labels <- c(
+  "Problem development",
+  "Extra stressors",
+  "Pre-onset changes",
+  "Event connection",
+  "Physical symptoms",
+  "Problem causes",
+  "Expected improvements",
+  "Environment response",
+  "No change required",
+  "Problem description",
+  "Impacted life areas",
+  "Therapy goals"
+)
+
+qc_table <- qc_by_question |>
+  mutate(
+    Question = factor(question_id, levels = 1:12, labels = question_labels)
+  ) |>
+  select(
+    Question,
+    n_total,
+    missing_pct,
+    very_short_pct,
+    median_words,
+    p10_words,
+    p90_words
+  )
+```
+```{r}
+#| echo: false
+
+qc_table |>
+  kable(
+    caption = "Table X. Descriptive statistics of open-ended responses by question.",
+    align = "lcccccc",
+    booktabs = TRUE
+  )
+```
+
