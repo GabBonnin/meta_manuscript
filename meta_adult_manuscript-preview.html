@@ -244,6 +244,7 @@
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Mental Health Evaluation through Text Analysis</h1>
+            <p class="subtitle lead">umbrella project documentation</p>
           </div>
 
     
@@ -286,9 +287,8 @@
   <ul>
   <li><a href="#abstract" id="toc-abstract" class="nav-link active" data-scroll-target="#abstract">Abstract</a></li>
   <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction">Introduction</a></li>
-  <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
+  <li><a href="#shared-methods" id="toc-shared-methods" class="nav-link" data-scroll-target="#shared-methods">Shared Methods</a>
   <ul class="collapse">
-  <li><a href="#preprocessing" id="toc-preprocessing" class="nav-link" data-scroll-target="#preprocessing">Preprocessing</a></li>
   <li><a href="#measures" id="toc-measures" class="nav-link" data-scroll-target="#measures">Measures</a>
   <ul class="collapse">
   <li><a href="#sociodemographic-and-context-measures" id="toc-sociodemographic-and-context-measures" class="nav-link" data-scroll-target="#sociodemographic-and-context-measures">Sociodemographic and context measures</a></li>
@@ -296,11 +296,18 @@
   <li><a href="#psychometric-measures" id="toc-psychometric-measures" class="nav-link" data-scroll-target="#psychometric-measures">Psychometric measures</a></li>
   <li><a href="#global-improvement" id="toc-global-improvement" class="nav-link" data-scroll-target="#global-improvement">Global Improvement</a></li>
   <li><a href="#goal-attainment-scale" id="toc-goal-attainment-scale" class="nav-link" data-scroll-target="#goal-attainment-scale">Goal Attainment Scale</a></li>
+  </ul></li>
   <li><a href="#measurement-time-points" id="toc-measurement-time-points" class="nav-link" data-scroll-target="#measurement-time-points">Measurement time points</a></li>
+  <li><a href="#preprocessing" id="toc-preprocessing" class="nav-link" data-scroll-target="#preprocessing">Preprocessing</a></li>
+  <li><a href="#shared-analytic-framework" id="toc-shared-analytic-framework" class="nav-link" data-scroll-target="#shared-analytic-framework">Shared analytic framework</a></li>
   </ul></li>
-  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a></li>
+  <li><a href="#preliminary-results-dataset-characterization" id="toc-preliminary-results-dataset-characterization" class="nav-link" data-scroll-target="#preliminary-results-dataset-characterization">Preliminary results: dataset characterization</a></li>
+  <li><a href="#substudies-planned-manuscripts" id="toc-substudies-planned-manuscripts" class="nav-link" data-scroll-target="#substudies-planned-manuscripts">Substudies / planned manuscripts</a>
+  <ul class="collapse">
+  <li><a href="#substudy-1-language-as-clinical-assessment-cross-sectional" id="toc-substudy-1-language-as-clinical-assessment-cross-sectional" class="nav-link" data-scroll-target="#substudy-1-language-as-clinical-assessment-cross-sectional">Substudy 1: Language as clinical assessment (cross-sectional)</a></li>
+  <li><a href="#substudy-2-patient-narratives-and-themes" id="toc-substudy-2-patient-narratives-and-themes" class="nav-link" data-scroll-target="#substudy-2-patient-narratives-and-themes">Substudy 2: Patient narratives and themes</a></li>
+  <li><a href="#substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction" id="toc-substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction" class="nav-link" data-scroll-target="#substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction">Substudy 3: Predicting treatment response and goal attainment (longitudinal prediction)</a></li>
   </ul></li>
-  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
   </ul>
 </nav>
 </div>
@@ -324,9 +331,10 @@ Note
 </div>
 <section id="abstract" class="level1">
 <h1>Abstract</h1>
-<p>Psychotherapy is one of the most effective treatments for mental health problems, but its success depends on accurate diagnostic assessments. Current diagnostic tools often use standardized closed-ended scales that, while reliable, may fail to capture the complexity and individuality of mental states. Advances in artificial intelligence (AI) and natural language processing (NLP) enable the measurement of psychological constructs through natural language. This approach shows considerable promise in addressing the limitations of traditional assessment methods by offering a more nuanced and personalized understanding of mental states.</p>
-<p>While previous NLP-based mental health studies have focused on social media posts, limiting their clinical applicability, this project applies state-of-the-art large language models (LLMs) to data from a German outpatient psychotherapy clinic. Before therapy, patients describe their mental health problems, functional impairment, and therapy goals in their own words. These texts are linked to key clinical outcomes such as diagnoses, symptom severity, functional impairment, and treatment success, providing a rich, ecologically valid resource for exploring the potential of language based assessments in real-world, clinical settings.</p>
-<p>By analyzing this data, we aim to uncover patterns in how they articulate mental health, emotions, and therapy expectations. These insights will inform the development of AI-powered tools that offer more personalized and clinically relevant assessments, surpassing traditional methods in accuracy and depth. Ultimately, this research aims to support clinicians in making more informed treatment decisions, enhance personalized care, and contribute to the modernization of mental health assessment.</p>
+<p>Psychotherapy is one of the most effective treatments for mental health problems, but its success depends on accurate diagnostic assessments. Current assessment practices largely rely on standardized closed-ended scales that, while reliable, may fail to capture the complexity, context and individuality of patients’ mental states. Advances in artificial intelligence (AI) and natural language processing (NLP) enable the measurement of psychological constructs through natural language, offering a promising complement to traditional assessment methods by leveraging patients’ own descriptions of their experiences.</p>
+<p>While previous NLP-based mental health research has primarily focused on social media language, this project applies state-of-the-art large language models (LLMs) to open-ended intake data from a German outpatient psychotherapy clinic. Before therapy, patients describe the development, context, and perceived causes of their problems, as well as their current difficulties and therapy goals, in their own words. These texts are linked to key clinical measures, including diagnoses, symptom severity, functional impairment, and treatment outcomes, providing an ecologically valid resource for studying language-based assessment in real-world clinical settings.</p>
+<p>The project comprises three complementary substudies. First, we examine whether patient language at intake reflects cross-sectional symptom severity and clinician-rated impairment and whether it provides incremental information beyond established self-report questionnaires. Second, we conduct a narrative and thematic analysis of patient responses to different open-ended prompts to characterize recurring themes and selective response patterns in how patients make sense of their mental health problems. Third, we evaluate whether pre-therapy language predicts longitudinal treatment outcomes, including global improvement and individualized goal attainment, beyond baseline symptom measures.</p>
+<p>Together, these studies aim to clarify how patient-generated language can be used for assessment, interpretation, and prognosis in psychotherapy. The findings are intended to inform the development of clinically meaningful, language-based assessment tools that support personalized care and contribute to the modernization of mental health evaluation.</p>
 <div class="{pagebreak}">
 
 </div>
@@ -334,17 +342,16 @@ Note
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
 <p>Mental health problems pose a significant global challenge, accounting for a considerable proportion of deaths and disability-adjusted life years <span class="citation" data-cites="WorldHealthOrganization2017">(<a href="#ref-WorldHealthOrganization2017" role="doc-biblioref">World Health Organization, 2017</a>)</span>. Psychotherapy is an effective and sustainable intervention for reducing symptoms and improving quality of life <span class="citation" data-cites="wampold2015great chorpita2011evidence">(<a href="#ref-chorpita2011evidence" role="doc-biblioref">Chorpita et al., 2011</a>; <a href="#ref-wampold2015great" role="doc-biblioref">Wampold &amp; Imel, 2015</a>)</span>, but it’s success critically depends on accurate assessments <span class="citation" data-cites="Lutz2022 Jensen-Doss2008">(<a href="#ref-Jensen-Doss2008" role="doc-biblioref">Jensen-Doss &amp; Weisz, 2008</a>; <a href="#ref-Lutz2022" role="doc-biblioref">Lutz et al., 2022</a>)</span>.</p>
-<p>Current assessment practices typically combine subjective self-reports with clinical observations <span class="citation" data-cites="Bonnin2024a">(<a href="#ref-Bonnin2024a" role="doc-biblioref">Bonnin et al., 2024</a>)</span>. Standardized closed-ended tools such as the Beck Depression Inventory-II <span class="citation" data-cites="Beck1996">(<a href="#ref-Beck1996" role="doc-biblioref">Beck et al., 1996</a>)</span> rely on numerical scales <span class="citation" data-cites="Likert1932">(<a href="#ref-Likert1932" role="doc-biblioref">Likert, 1932</a>)</span> to structure and standardize assessments and are widely used in clinical research and practice. While these methods have advanced replicability and reliability in psychological assessment, they can miss important individual differences by restricting responses to pre-defined categories, limiting the ability to capture the complexity of mental states <span class="citation" data-cites="Kjell2024">(<a href="#ref-Kjell2024" role="doc-biblioref">Kjell, Kjell, et al., 2024</a>)</span>.</p>
+<p>Standardized closed-ended tools such as the Beck Depression Inventory-II <span class="citation" data-cites="Beck1996">(<a href="#ref-Beck1996" role="doc-biblioref">Beck et al., 1996</a>)</span> rely on numerical scales <span class="citation" data-cites="Likert1932">(<a href="#ref-Likert1932" role="doc-biblioref">Likert, 1932</a>)</span> to structure and standardize assessments and are widely used in clinical research and practice. While these methods have advanced replicability and reliability in psychological assessment, they can miss important individual differences by restricting responses to pre-defined categories, limiting the ability to capture the complexity of mental states <span class="citation" data-cites="Kjell2024">(<a href="#ref-Kjell2024" role="doc-biblioref">Kjell, Kjell, et al., 2024</a>)</span>.</p>
 <p>Recent advances in AI, particularly transformer-based LLMs <span class="citation" data-cites="Vaswani2017">(<a href="#ref-Vaswani2017" role="doc-biblioref">Vaswani et al., 2017</a>)</span>, present promising solutions to these limitations <span class="citation" data-cites="Kjell2024">(<a href="#ref-Kjell2024" role="doc-biblioref">Kjell, Kjell, et al., 2024</a>)</span>. LLMs excel in analyzing context-rich natural language with remarkable accuracy across diverse tasks <span class="citation" data-cites="devlin-etal-2019-bert">(<a href="#ref-devlin-etal-2019-bert" role="doc-biblioref">Devlin et al., 2019</a>)</span>. Open-ended response formats, where patients describe their experiences in their own words, provide high-dimensional, context-rich information that remains underutilized in current assessment practices. Empirical studies highlight the potential of NLP-based analysis of open-ended responses, achieving moderate convergence with closed-ended rating scales using traditional NLP methods <span class="citation" data-cites="kjell2019semantic">(<a href="#ref-kjell2019semantic" role="doc-biblioref">Kjell et al., 2019</a>)</span> and nearing theoretical upper limits of accuracy with LLMs <span class="citation" data-cites="Kjell2022">(<a href="#ref-Kjell2022" role="doc-biblioref">Kjell et al., 2022</a>)</span>. Preliminary research also highlights their potential for predicting clinically significant outcomes, including suicide risk <span class="citation" data-cites="zirikly-etal-2019-clpsych mohammadi-etal-2019-clac-clpsych matero-etal-2019-suicide">(<a href="#ref-matero-etal-2019-suicide" role="doc-biblioref">Matero et al., 2019</a>; <a href="#ref-mohammadi-etal-2019-clac-clpsych" role="doc-biblioref">Mohammadi et al., 2019</a>; <a href="#ref-zirikly-etal-2019-clpsych" role="doc-biblioref">Zirikly et al., 2019</a>)</span>.</p>
-<p>At the outpatient psychotherapy clinic at Ruhr University Bochum, open-ended patient responses have been routinely collected from patients pre-therapy. While previous studies have explored the use of NLP for mental health assessment, they have largely relied on social media language, limiting their clinical applicability. This project moves beyond the current state-of-the-art by applying LLMs to analyze this unique, large-scale, and longitudinal clinical dataset, assessing the relationship between patients’ probed mental health responses and clinically relevant constructs such as diagnosis, symptom severity, and functional impairment. Additionally, it will predict key clinical outcomes such as treatment response and therapy goal attainment. Furthermore, the project seeks to generate clinically meaningful, data-driven insights that go beyond traditional diagnostic categories, offering a more nuanced and patient-centered understanding of mental health trajectories.</p>
+<p>However, much of the existing literature relies on social media or non-clinical text data, raising concerns about ecological validity and clinical relevance. In contrast, open-ended patient responses are routinely collected in clinical settings as part of pre-therapy intake procedures but remain largely underused in empirical research. At the Mental Health Research and Treatment Center at Ruhr University Bochum, patients respond to multiple prompts addressing the development and context of their problems, perceived causes, social reactions, current difficulties, and therapy goals. These narratives are linked to structured diagnostic interviews, repeated symptom assessments, clinician ratings, and longitudinal outcome measures. This unique, large-scale, and longitudinal clinical dataset enables a comprehensive examination of patient language across multiple analytic perspectives.</p>
+<p>Accordingly, the present project is organized into three complementary substudies. The first investigates whether pre-therapy language reflects cross-sectional symptom severity and clinician-rated impairment and whether language-based representations provide incremental information beyond standardized self-report questionnaires. The second focuses on the semantic content and structure of patient narratives, using question-specific analyses to identify recurring themes and selective response patterns in how patients conceptualize their mental health problems. The third evaluates the prognostic value of pre-therapy language by testing whether patient narratives predict treatment response and individualized goal attainment over time, beyond baseline symptom severity.</p>
+<p>By integrating assessment, interpretive, and prognostic perspectives, this project aims to advance the clinical use of natural language in psychotherapy. Ultimately, the findings seek to support more nuanced, patient-centered assessment practices and contribute to the development of language-based tools that complement existing diagnostic frameworks and inform personalized treatment planning.</p>
 </section>
-<section id="methods" class="level1">
-<h1>Methods</h1>
-<section id="preprocessing" class="level2">
-<h2 class="anchored" data-anchor-id="preprocessing">Preprocessing</h2>
-<p>To streamline data collection, an automated transcription pipeline was implemented: The handwritten text data is first recorded by trained employees of the FBZ adult outpatient clinic using a mobile audio recording device. Identifying features (e.g.&nbsp;names, dates of birth, location details) were replaced by placeholders during recording (anonymisation). The transcription was carried out on local hardware using the open source tool Whisper Large v2 (<a href="https://github.com/openai/whisper" class="uri">https://github.com/openai/whisper</a>), a state-of-the-art speech-to-text model <span class="citation" data-cites="Radford2022">(<a href="#ref-Radford2022" role="doc-biblioref">Radford et al., 2022</a>)</span>. Each recording begins with a structured introduction, including a patient identification code, followed by responses to predefined questions. The transcription pipeline automatically processes all audio recordings, extracts the patient codes, and identifies responses to key questions.</p>
-<p>As an additional data correction step, the exported transcription table was screened for incomplete entries. Records with missing patient identification codes or without any extracted text were automatically flagged, exported for manual correction, and subsequently re-imported and merged back into the original dataset. The corrected dataset was then used for downstream analyses.</p>
-</section>
+<section id="shared-methods" class="level1">
+<h1>Shared Methods</h1>
+<p>All substudies draw on the same clinical cohort and share a common set of intake and outcome variables. The shared dataset comprises (a) pre-therapy intake data, including sociodemographics, standardized psychometric questionnaires, and question-specific open-ended patient narratives, and (b) longitudinal clinical measures collected repeatedly during and after treatment. Textual analyses are based exclusively on pre-therapy narratives, while psychometric and clinician-rated measures are used as cross-sectional outcomes, covariates, or longitudinal endpoints depending on the substudy.</p>
+<p>The following sections describe the shared dataset, preprocessing pipeline, and measurement instruments used across all substudies.</p>
 <section id="measures" class="level2">
 <h2 class="anchored" data-anchor-id="measures">Measures</h2>
 <section id="sociodemographic-and-context-measures" class="level3">
@@ -353,7 +360,7 @@ Note
 </section>
 <section id="responses-from-open-ended-questions-before-therapy" class="level3">
 <h3 class="anchored" data-anchor-id="responses-from-open-ended-questions-before-therapy">Responses from open-ended questions before therapy</h3>
-<p>At the start of therapy, patients complete two separate questionnaires designed to assess key aspects of their mental health concerns, functional impairments, and expectations for treatment. Questions 1–9 come from the first questionnaire (<em>Fragebogen zur Lebensgeschichte</em>), and questions 10–13 come from the second (<em>Eingangsfragebogen</em>). The questions include:</p>
+<p>At the start of therapy, patients complete two separate questionnaires designed to assess key aspects of their mental health concerns, functional impairments, and expectations for treatment. Questions 1–9 come from the first questionnaire (<em>Fragebogen zur Lebensgeschichte</em>), and questions 10–12 come from the second (<em>Eingangsfragebogen</em>). The questions include:</p>
 <ol type="1">
 <li><strong>Problem development:</strong> ‘Briefly describe how the problems for which you are seeking treatment have developed over time.’ (german original question: „Beschreiben Sie kurz, wie sich Ihre Probleme, wegen derer Sie eine Behandlung aufsuchen, im Laufe der Zeit entwickelt haben.”)</li>
 <li><strong>Extra stressors:</strong> ‘What causes you stress in addition to your everyday problems (e.g.&nbsp;finances, housing situation)?’ (german original question: „Was macht Ihnen zusätzlich zu Ihren Problemen im Alltag Stress (z. B. Finanzen, Wohnsituation)?“)</li>
@@ -418,8 +425,9 @@ Note
 <p>Goal attainment was rated on a standardized six-point numerical scale ranging from deterioration relative to the initial goal state (-1 = moved away from the goal) to full goal attainment (4 = goal achieved). The scale reflects patients’ subjective assessment of goal progress, with intermediate categories indicating partial progress toward the respective goal.</p>
 <p>For each patient, an overall goal attainment score was computed as the mean rating across all individually defined goals, representing the average subjective level of goal progress at the end of therapy.</p>
 </section>
-<section id="measurement-time-points" class="level3">
-<h3 class="anchored" data-anchor-id="measurement-time-points">Measurement time points</h3>
+</section>
+<section id="measurement-time-points" class="level2">
+<h2 class="anchored" data-anchor-id="measurement-time-points">Measurement time points</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 11%">
@@ -581,13 +589,19 @@ Note
 </tbody>
 </table>
 </section>
+<section id="preprocessing" class="level2">
+<h2 class="anchored" data-anchor-id="preprocessing">Preprocessing</h2>
+<p>To streamline data collection, an automated transcription pipeline was implemented: The handwritten text data is first recorded by trained employees of the FBZ adult outpatient clinic using a mobile audio recording device. Identifying features (e.g.&nbsp;names, dates of birth, location details) were replaced by placeholders during recording (anonymisation). The transcription was carried out on local hardware using the open source tool Whisper Large v2 (<a href="https://github.com/openai/whisper" class="uri">https://github.com/openai/whisper</a>), a state-of-the-art speech-to-text model <span class="citation" data-cites="Radford2022">(<a href="#ref-Radford2022" role="doc-biblioref">Radford et al., 2022</a>)</span>. Each recording begins with a structured introduction, including a patient identification code, followed by responses to predefined questions. The transcription pipeline automatically processes all audio recordings, extracts the patient codes, and identifies responses to key questions.</p>
+<p>As an additional data correction step, the exported transcription table was screened for incomplete entries. Records with missing patient identification codes or without any extracted text were automatically flagged, exported for manual correction, and subsequently re-imported and merged back into the original dataset. The corrected dataset was then used for downstream analyses.</p>
 </section>
-<section id="analysis" class="level2">
-<h2 class="anchored" data-anchor-id="analysis">Analysis</h2>
+<section id="shared-analytic-framework" class="level2">
+<h2 class="anchored" data-anchor-id="shared-analytic-framework">Shared analytic framework</h2>
 <p>The Sequential Evaluation with Model Pre-registration <span class="citation" data-cites="kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024">(<a href="#ref-kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024" role="doc-biblioref">Kjell, Ganesan, et al., 2024</a>)</span> framework will be implemented to ensure robust model development, mitigating overfitting and enabling unbiased performance evaluation. Additionally, evaluating models on prospective data will simulate real-world clinical deployment by assessing performance on new, unseen patient data.</p>
 <p>During the model development phase, preprocessing pipelines will be finalized, and exploratory models developed using advanced cross-validation techniques. Contextual embeddings derived from pretrained LLMs will be linked to clinical outcomes using state-of-the-art prediction models, including ridge regression <span class="citation" data-cites="Hoerl1970">(<a href="#ref-Hoerl1970" role="doc-biblioref">Hoerl &amp; Kennard, 1970</a>)</span>, lasso regression <span class="citation" data-cites="10.1111/j.2517-6161.1996.tb02080.x">(<a href="#ref-10.1111/j.2517-6161.1996.tb02080.x" role="doc-biblioref">Tibshirani, 1996</a>)</span>, and random forests <span class="citation" data-cites="598994">(<a href="#ref-598994" role="doc-biblioref">Ho, 1995</a>)</span>. The final pipelines will be pre-registered for evaluation (e.g., <a href="https://aspredicted.org/" class="uri">https://aspredicted.org/</a>).</p>
 <p>In the evaluation phase, pre-registered models will be tested on held-out datasets, enabling unbiased performance assessments. This phase will include detailed error analysis to identify potential biases and limitations, as well as comparative analyses to benchmark model performance against the HRG’s models.</p>
-<p>Furthermore, topic modeling techniques (e.g., Latent Dirichlet Allocation; <span class="citation" data-cites="10.5555/944919.944937">(<a href="#ref-10.5555/944919.944937" role="doc-biblioref">Blei et al., 2003</a>)</span>, or BERTopic; <span class="citation" data-cites="grootendorst2022bertopicneuraltopicmodeling">(<a href="#ref-grootendorst2022bertopicneuraltopicmodeling" role="doc-biblioref">Grootendorst, 2022</a>)</span>) will be employed to explore themes in patient-generated text. These analyses will provide valuable clinical insights into patients’ subjective experiences, including their perceived problems, impairments, and goals. By analyzing these insights, I aim to highlight commonalities and differences in patient narratives across diverse populations or conditions. This process may also reveal nuanced linguistic cues that correlate with clinical outcomes, offering a richer understanding of patient perspectives and informing personalized care strategies.</p>
+<p>Furthermore, topic modeling techniques (e.g., Latent Dirichlet Allocation; <span class="citation" data-cites="10.5555/944919.944937">(<a href="#ref-10.5555/944919.944937" role="doc-biblioref">Blei et al., 2003</a>)</span>, or BERTopic; <span class="citation" data-cites="grootendorst2022bertopicneuraltopicmodeling">(<a href="#ref-grootendorst2022bertopicneuraltopicmodeling" role="doc-biblioref">Grootendorst, 2022</a>)</span>) will be employed to explore themes in patient-generated text.</p>
+<p>Specific operationalizations of text inputs, outcomes, and models differ across substudies and are specified below.</p>
+<p>The open-ended questions were administered in two questionnaire blocks. Analyses were restricted to cases in which the respective questionnaire was present. Within these blocks, item-level nonresponse is descriptively intepreted as potentially informative of selective responding without assuming specific psychological mechanisms.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><a href="reports/Abbildung_Gabriel_eng.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="The step-by-step process of patient narrative analysis, from preprocessing to data evaluation."><img src="reports/Abbildung_Gabriel_eng.png" class="img-fluid figure-img" style="width:100.0%" alt="The step-by-step process of patient narrative analysis, from preprocessing to data evaluation."></a></p>
@@ -599,8 +613,8 @@ Note
 </div>
 </section>
 </section>
-<section id="results" class="level1">
-<h1>Results</h1>
+<section id="preliminary-results-dataset-characterization" class="level1">
+<h1>Preliminary results: dataset characterization</h1>
 <p>A descriptive analysis revealed substantial heterogeneity across questions in both response rates and linguistic richness (Table X). Broad narrative prompts, particularly the problem description and therapy goals questions, showed low missingness and high median word counts, indicating that patients readily provided extended self-generated narratives when asked to reflect holistically on their difficulties or desired changes. In contrast, questions targeting specific events, causal attributions, physical symptoms, or affected life domains often elicited brief or list-like responses, consistent with their more constrained and confirmatory formats.</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>working_data <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"/Volumes/meta_data/processed/working_data/merged_data.rds"</span>)</span>
@@ -828,6 +842,93 @@ Note
 </table>
 </div>
 </div></div>
+<div class="{pagebreak}">
+
+</div>
+</section>
+<section id="substudies-planned-manuscripts" class="level1">
+<h1>Substudies / planned manuscripts</h1>
+<p>This project comprises multiple complementary substudies that share a common dataset and preprocessing pipeline but address distinct research questions. To avoid analytic flexibility and to maximize interpretability, each substudy pre-specifies its text inputs, outcomes, and evaluation strategy.</p>
+<section id="substudy-1-language-as-clinical-assessment-cross-sectional" class="level2">
+<h2 class="anchored" data-anchor-id="substudy-1-language-as-clinical-assessment-cross-sectional">Substudy 1: Language as clinical assessment (cross-sectional)</h2>
+<p><strong>Status.</strong> Planned</p>
+<p><strong>Core research question.</strong><br>
+Does patients’ pre-therapy language provide clinically meaningful information about symptom severity and functioning, and does it add predictive value beyond established self-report questionnaires? Additionally, to what extent is this information captured by large language model (LLM)–based representations compared with simpler linguistic features?</p>
+<p><strong>Conceptual contribution.</strong><br>
+This substudy conceptualizes patient-generated language as an independent assessment modality rather than a proxy for existing symptom scales. While prior work has demonstrated correlations between language and self-reported symptoms, few studies have tested whether language captures incremental clinical information beyond standardized questionnaires, particularly for clinician-rated outcomes.</p>
+<p><strong>Sample definition.</strong></p>
+<ul>
+<li><p>Training Data (N=)</p></li>
+<li><p>Validation Data (N=)</p></li>
+<li><p>Inclusion: Patients with at least one non-missing narrative response (Q10 or Q12) and available baseline symptom assessments.</p></li>
+</ul>
+<p><strong>Text inputs.</strong></p>
+<ul>
+<li><p>Primary: Q10 <em>Problem description</em></p></li>
+<li><p>Secondary: Q12 <em>Therapy goals</em></p></li>
+<li><p>Sensitivity Analyses:</p>
+<ul>
+<li><p>Concatenation of Q10 + Q12.</p></li>
+<li><p>Concatenation of all answered open-ended responses.</p></li>
+</ul></li>
+</ul>
+<p><strong>Outcomes.</strong></p>
+<ul>
+<li><p>Convergent validity outcomes: Cross-sectional self-report symptom measures (BDI-II, BSI/GSI, DASS-42).</p></li>
+<li><p>Incremental validity outcomes: Clinician-rated symptom severity (CGI-Severity).</p></li>
+</ul>
+<p><strong>Models &amp; evaluation.</strong> Baselines (length, pronouns/negations) vs.&nbsp;LLM embeddings + ridge/lasso; holdout evaluation; incremental validity over scales (e.g., language adds predictive value beyond baseline questionnaires).</p>
+</section>
+<section id="substudy-2-patient-narratives-and-themes" class="level2">
+<h2 class="anchored" data-anchor-id="substudy-2-patient-narratives-and-themes">Substudy 2: Patient narratives and themes</h2>
+<p><strong>Status.</strong> Planned</p>
+<p><strong>Core research question.</strong><br>
+How do patients conceptualize the development, context, and perceived causes of their mental health problems, as well as anticipated improvements, and how do these narrative patterns vary across individuals and clinical groups?</p>
+<p><strong>Conceptual contribution.</strong><br>
+This substudy emphasizes interpretation and theory generation, using patient language to uncover recurring narrative themes related to problem development, stressors, causal attributions, social context, and desired change. By analyzing these themes, this substudy provides insight into how narrative content and response patterns relate to diagnostic categories and baseline severity.</p>
+<p><strong>Sample definition.</strong></p>
+<ul>
+<li>Cohort version (N =)</li>
+</ul>
+<p><strong>Text inputs.</strong> Q1 <em>Problem development</em>, Q2 <em>Extra stressors</em>, Q3 <em>Pre-onset changes</em>, Q6 <em>Problem causes</em>, Q7 <em>Expected improvements</em>, Q8 <em>Environment response</em>. Question-wise modeling (no forced concatenation).</p>
+<p><strong>Outcomes.</strong> No single predictive outcome is specified, as the primary aim is interpretive and theory-generating rather than predictive.</p>
+<ul>
+<li>Primary analyses: Descriptive characterization of thematic content and narrative patterns within and across questions.</li>
+<li>Secondary analyses: Stratification of themes by diagnostic categories, baseline symptom severity, or sociodemographic characteristics.</li>
+</ul>
+<p><strong>Models &amp; evaluation.</strong> Topic modeling / embedding-based clustering; interpretive labeling; comparison of topic prevalence across patient groups.</p>
+</section>
+<section id="substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction" class="level2">
+<h2 class="anchored" data-anchor-id="substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction">Substudy 3: Predicting treatment response and goal attainment (longitudinal prediction)</h2>
+<p><strong>Status.</strong> Planned</p>
+<p><strong>Core research question.</strong><br>
+Can patients’ pre-therapy language predict clinically meaningful treatment outcomes—such as global improvement, clinician-rated change, and individualized goal attainment—beyond baseline symptom severity and demographic characteristics?</p>
+<p><strong>Conceptual contribution.</strong><br>
+This substudy extends language-based mental health assessment from cross-sectional validity to prognostic utility. While prior work has primarily examined whether language reflects current symptom severity, far less is known about whether pre-therapy narratives encode information relevant for future treatment response, such as motivation, goal clarity, perceived agency, or narrative coherence. By evaluating the ability of pre-therapy language to predict longitudinal outcomes above and beyond baseline symptom measures, this substudy tests whether patient-generated text captures clinically actionable signals that are not accessible through standard intake questionnaires alone.</p>
+<p><strong>Sample definition.</strong></p>
+<ul>
+<li><p>Training Data (N=)</p></li>
+<li><p>Validation Data (N=)</p></li>
+<li><p>Inclusion: Patients with at least one non-missing narrative response (Q10 or Q12) and available baseline symptom assessments.</p></li>
+</ul>
+<p><strong>Text inputs.</strong> Primary: Q10 and Q12; Secondary: concatenation models.</p>
+<p><strong>Outcomes.</strong></p>
+<ul>
+<li><p>Clinician-rated improvement (CGI-Improvement) at 6 months-follow-up assessment.</p></li>
+<li><p>Global therapy outcome ratings (patient- and therapist-reported) at 6 months-follow-up assessment.</p></li>
+<li><p>Goal Attainment Scale at 6 months-follow-up assessment.</p></li>
+<li><p>Pre-Post Differences in Symptom Rating Scales ((BDI-II, BSI/GSI, DASS-42).</p></li>
+</ul>
+<p><strong>Models &amp; evaluation.</strong></p>
+<ul>
+<li><p>Baseline prognostic models: Demographic variables and baseline symptom severity (e.g., BDI-II, BSI/GSI, CGI-Severity).</p></li>
+<li><p>Language-augmented models: Baseline predictors plus language representations derived from pre-therapy text.</p></li>
+<li><p>Feature types:</p>
+<ul>
+<li><p>Simple language features (e.g., word count, pronouns, negations).</p></li>
+<li><p>Contextual embeddings derived from pretrained large language models.</p></li>
+</ul></li>
+</ul>
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-Beck1996" class="csl-entry" role="listitem">
 Beck, A. T., Steer, R. A., &amp; Brown, G. K. (1996). <em><span>BDI-II</span>: <span>Beck Depression Inventory</span> manual</em> (2nd ed.). Psychological Corporation.
@@ -837,9 +938,6 @@ Bernstein, D. P., Stein, J. A., Newcomb, M. D., Walker, E., Pogge, D., Ahluvalia
 </div>
 <div id="ref-10.5555/944919.944937" class="csl-entry" role="listitem">
 Blei, D. M., Ng, A. Y., &amp; Jordan, M. I. (2003). Latent dirichlet allocation. <em>Journal of Machine Learning Research</em>, <em>3</em>(null), 993–1022.
-</div>
-<div id="ref-Bonnin2024a" class="csl-entry" role="listitem">
-Bonnin, G., Kröber, S., &amp; Brachel, R. von. (2024). Die <span>Klassifikation</span> psychischer <span class="nocase">St<span class="nocase">ö</span>rungen</span> mit diagnostischen <span>Interviews</span>. In T. Teismann, P. Thoma, S. Taubner, A. Wannemüller, &amp; K. von Sydow (Eds.), <em>Klinische <span>Psychologie</span> und <span>Psychotherapie</span>: <span>Ein</span> verfahrens<span>ü</span>bergreifendes <span>Lehr-</span> und <span>Lernbuch</span></em>. Hogrefe.
 </div>
 <div id="ref-chorpita2011evidence" class="csl-entry" role="listitem">
 Chorpita, B. F., Daleiden, E. L., Ebesutani, C., Young, J., Becker, K. D., Nakamura, B. J., Phillips, L., Ward, A., Lynch, R., Trent, L., et al. (2011). Evidence-based treatments for children and adolescents: <span>An</span> updated review of indicators of efficacy and effectiveness. <em>Clinical Psychology: Science and Practice</em>, <em>18</em>(2), 154–172.
@@ -923,6 +1021,7 @@ World Health Organization. (2017). <em>Depression and other common mental disord
 Zirikly, A., Resnik, P., Uzuner, Ö., &amp; Hollingshead, K. (2019). <span>CLPsych</span> 2019 shared task: <span>Predicting</span> the degree of suicide risk in <span>Reddit</span> posts. In K. Niederhoffer, K. Hollingshead, P. Resnik, R. Resnik, &amp; K. Loveys (Eds.), <em>Proceedings of the sixth workshop on computational linguistics and clinical psychology</em> (pp. 24–33). Association for Computational Linguistics. <a href="https://doi.org/10.18653/v1/W19-3003">https://doi.org/10.18653/v1/W19-3003</a>
 </div>
 </div>
+</section>
 </section>
      </main>
 <!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">
