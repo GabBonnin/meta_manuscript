@@ -106,6 +106,7 @@ div.csl-indent {
 <meta name="citation_reference" content="citation_title=Psychometric properties of the positive mental health scale (PMH-scale);,citation_author=Justina Lukat;,citation_author=Jürgen Margraf;,citation_author=Rainer Lutz;,citation_author=William M. Veld;,citation_author=Eni S. Becker;,citation_publication_date=2016-02-10;,citation_cover_date=2016-02-10;,citation_year=2016;,citation_fulltext_html_url=https://doi.org/10.1186/s40359-016-0111-x;,citation_issue=1;,citation_doi=10.1186/s40359-016-0111-x;,citation_volume=4;,citation_journal_title=BMC Psychology;">
 <meta name="citation_reference" content="citation_title=Die deutsche Version des Childhood Trauma Questionnaire (CTQ): Erste Befunde zu den psychometrischen Kennwerten;,citation_author=Katja Wingenfeld;,citation_author=Carsten Spitzer;,citation_author=Christoph Mensebach;,citation_author=Hans Grabe;,citation_author=Andreas Hill;,citation_author=Ursula Gast;,citation_author=Nicole Schlosser;,citation_author=Hella Höpp;,citation_author=Thomas Beblo;,citation_author=Martin Driessen;,citation_publication_date=2010-04-01;,citation_cover_date=2010-04-01;,citation_year=2010;,citation_fulltext_html_url=http://dx.doi.org/10.1055/s-0030-1253494;,citation_issue=08;,citation_doi=10.1055/s-0030-1253494;,citation_volume=60;,citation_language=de;,citation_journal_title=PPmP - Psychotherapie · Psychosomatik · Medizinische Psychologie;">
 <meta name="citation_reference" content="citation_title=Development and validation of a brief screening version of the Childhood Trauma Questionnaire;,citation_author=David P Bernstein;,citation_author=Judith A Stein;,citation_author=Michael D Newcomb;,citation_author=Edward Walker;,citation_author=David Pogge;,citation_author=Taruna Ahluvalia;,citation_author=John Stokes;,citation_author=Leonard Handelsman;,citation_author=Martha Medrano;,citation_author=David Desmond;,citation_author=William Zule;,citation_publication_date=2003-02;,citation_cover_date=2003-02;,citation_year=2003;,citation_fulltext_html_url=http://dx.doi.org/10.1016/S0145-2134(02)00541-0;,citation_issue=2;,citation_doi=10.1016/s0145-2134(02)00541-0;,citation_volume=27;,citation_language=en;,citation_journal_title=Child Abuse &amp;amp;amp; Neglect;">
+<meta name="citation_reference" content="citation_title=A mathematical theory of communication;,citation_author=Claude E Shannon;,citation_publication_date=1948;,citation_cover_date=1948;,citation_year=1948;,citation_issue=3;,citation_volume=27;,citation_journal_title=The Bell system technical journal;">
 </head>
 
 <body class="quarto-light">
@@ -177,6 +178,7 @@ div.csl-indent {
   <li><a href="#substudy-1-language-as-clinical-assessment-cross-sectional" id="toc-substudy-1-language-as-clinical-assessment-cross-sectional" class="nav-link" data-scroll-target="#substudy-1-language-as-clinical-assessment-cross-sectional">Substudy 1: Language as clinical assessment (cross-sectional)</a></li>
   <li><a href="#substudy-2-patient-narratives-and-themes" id="toc-substudy-2-patient-narratives-and-themes" class="nav-link" data-scroll-target="#substudy-2-patient-narratives-and-themes">Substudy 2: Patient narratives and themes</a></li>
   <li><a href="#substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction" id="toc-substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction" class="nav-link" data-scroll-target="#substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction">Substudy 3: Predicting treatment response and goal attainment (longitudinal prediction)</a></li>
+  <li><a href="#substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment" id="toc-substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment" class="nav-link" data-scroll-target="#substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment">Substudy 4: Prompt-based LLM rubrics for interpretable language assessment</a></li>
   </ul></li>
   </ul>
 <div class="quarto-alternate-notebooks"><h2>Notebooks</h2><ul><li><a href="meta_adult_manuscript-preview.html"><i class="bi bi-journal-code"></i>Article Notebook</a></li><li><a href="scripts/2_meta_adult_preprocessing/meta_adult_preprocessing-preview.html"><i class="bi bi-journal-code"></i>META preprocessing</a></li><li><a href="scripts/1_meta_adult_transcription/meta_adult_transcription-preview.html"><i class="bi bi-journal-code"></i>META transcription</a></li></ul></div></nav>
@@ -250,6 +252,7 @@ Note
 <li><strong>Impacted life areas:</strong> ‘In which areas of your life do these problems limit you (e.g.&nbsp;job, relationship)?’ (german original question: „In welchen Lebensbereichen schränken Sie diese Probleme ein (z. B. Beruf, Partnerschaft)?“)</li>
 <li><strong>Therapy goals:</strong> ‘What would you like to achieve for yourself in therapy?’ (german original question: „Was möchten Sie in der Therapie für sich erreichen?“)</li>
 </ol>
+<p>To characterize engagement and heterogeneity in responses to the open-ended intake questions, we computed descriptive statistics for each question, including response length and an entropy-based diversity index <span class="citation" data-cites="shannon1948mathematical">(<a href="#ref-shannon1948mathematical" role="doc-biblioref">Shannon, 1948</a>)</span>. Responses were pooled across participants for each question and tokenized into word types. Shannon entropy was computed over the resulting word probability distribution and transformed into an effective diversity measure, representing the effective number of equally frequent word types elicited by each question. Whereas word count reflects the quantity of text produced, the diversity index captures the dispersion of lexical content across respondents and provides a complementary indicator of how strongly different question constrain or open the response space.</p>
 </section>
 <section id="psychometric-measures" class="level3">
 <h3 class="anchored" data-anchor-id="psychometric-measures">Psychometric measures</h3>
@@ -490,19 +493,20 @@ Note
 </section>
 <section id="preliminary-results-dataset-characterization" class="level1">
 <h1>Preliminary results: dataset characterization</h1>
-<p>A descriptive analysis revealed substantial heterogeneity across questions in both response rates and linguistic richness (Table X). Broad narrative prompts, particularly the problem description and therapy goals questions, showed low missingness and high median word counts, indicating that patients readily provided extended self-generated narratives when asked to reflect holistically on their difficulties or desired changes. In contrast, questions targeting specific events, causal attributions, physical symptoms, or affected life domains often elicited brief or list-like responses, consistent with their more constrained and confirmatory formats.</p>
+<p>Descriptive analyses revealed substantial heterogeneity across questions in response rates, length, and lexical diversity. Holistic questions such as problem description (q10) and therapy goals (q12) showed low missingness, longer median response lengths, and high lexical diversity, indicating that patients readily produced extended and heterogeneous narratives when asked to reflect broadly on their difficulties or desired changes. In contrast, prompts targeting causal connections (q4) or constraints (q11) frequently elicited short or missing responses and exhibited lower diversity, consistent with more constrained or confirmatory response formats. Notably, lexical diversity varied independently of response length, suggesting that some prompts elicited shared narrative scripts despite moderate verbosity (e.g., q7 Expected Improvements).</p>
 <div class="cell">
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Table X. Descriptive statistics of open-ended responses by question.</caption>
 <colgroup>
-<col style="width: 22%">
-<col style="width: 9%">
-<col style="width: 13%">
-<col style="width: 16%">
+<col style="width: 19%">
+<col style="width: 7%">
+<col style="width: 11%">
 <col style="width: 14%">
-<col style="width: 11%">
-<col style="width: 11%">
+<col style="width: 12%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 15%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -513,6 +517,7 @@ Note
 <th style="text-align: center;">median_words</th>
 <th style="text-align: center;">p10_words</th>
 <th style="text-align: center;">p90_words</th>
+<th style="text-align: center;">diversity_index</th>
 </tr>
 </thead>
 <tbody>
@@ -524,6 +529,7 @@ Note
 <td style="text-align: center;">19.0</td>
 <td style="text-align: center;">6</td>
 <td style="text-align: center;">47.0</td>
+<td style="text-align: center;">638.3720</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Extra stressors</td>
@@ -533,6 +539,7 @@ Note
 <td style="text-align: center;">11.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">33.0</td>
+<td style="text-align: center;">518.3769</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Pre-onset changes</td>
@@ -542,6 +549,7 @@ Note
 <td style="text-align: center;">9.5</td>
 <td style="text-align: center;">1</td>
 <td style="text-align: center;">37.1</td>
+<td style="text-align: center;">466.3284</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Event connection</td>
@@ -551,6 +559,7 @@ Note
 <td style="text-align: center;">6.0</td>
 <td style="text-align: center;">1</td>
 <td style="text-align: center;">29.0</td>
+<td style="text-align: center;">416.7281</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Physical symptoms</td>
@@ -560,6 +569,7 @@ Note
 <td style="text-align: center;">5.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">18.0</td>
+<td style="text-align: center;">392.6414</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Problem causes</td>
@@ -569,6 +579,7 @@ Note
 <td style="text-align: center;">8.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">27.0</td>
+<td style="text-align: center;">492.3520</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Expected improvements</td>
@@ -578,6 +589,7 @@ Note
 <td style="text-align: center;">11.0</td>
 <td style="text-align: center;">4</td>
 <td style="text-align: center;">30.0</td>
+<td style="text-align: center;">323.4887</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Environment response</td>
@@ -587,6 +599,7 @@ Note
 <td style="text-align: center;">9.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">30.5</td>
+<td style="text-align: center;">310.6291</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">No change required</td>
@@ -596,6 +609,7 @@ Note
 <td style="text-align: center;">6.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">19.9</td>
+<td style="text-align: center;">241.5367</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Problem description</td>
@@ -605,6 +619,7 @@ Note
 <td style="text-align: center;">23.0</td>
 <td style="text-align: center;">6</td>
 <td style="text-align: center;">51.0</td>
+<td style="text-align: center;">626.1284</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Impacted life areas</td>
@@ -614,6 +629,7 @@ Note
 <td style="text-align: center;">6.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">32.4</td>
+<td style="text-align: center;">407.2106</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Therapy goals</td>
@@ -623,6 +639,7 @@ Note
 <td style="text-align: center;">15.0</td>
 <td style="text-align: center;">4</td>
 <td style="text-align: center;">36.0</td>
+<td style="text-align: center;">411.6541</td>
 </tr>
 </tbody>
 </table>
@@ -637,26 +654,14 @@ Note
 <p>This project comprises multiple complementary substudies that share a common dataset and preprocessing pipeline but address distinct research questions. To avoid analytic flexibility and to maximize interpretability, each substudy pre-specifies its text inputs, outcomes, and evaluation strategy.</p>
 <section id="substudy-1-language-as-clinical-assessment-cross-sectional" class="level2">
 <h2 class="anchored" data-anchor-id="substudy-1-language-as-clinical-assessment-cross-sectional">Substudy 1: Language as clinical assessment (cross-sectional)</h2>
-<p><strong>Status.</strong> Planned</p>
 <p><strong>Core research question.</strong><br>
 Does patients’ pre-therapy language provide clinically meaningful information about symptom severity and functioning, and does it add predictive value beyond established self-report questionnaires? Additionally, to what extent is this information captured by large language model (LLM)–based representations compared with simpler linguistic features?</p>
 <p><strong>Conceptual contribution.</strong><br>
 This substudy conceptualizes patient-generated language as an independent assessment modality rather than a proxy for existing symptom scales. While prior work has demonstrated correlations between language and self-reported symptoms, few studies have tested whether language captures incremental clinical information beyond standardized questionnaires, particularly for clinician-rated outcomes.</p>
-<p><strong>Sample definition.</strong></p>
-<ul>
-<li><p>Training Data (N=)</p></li>
-<li><p>Validation Data (N=)</p></li>
-<li><p>Inclusion: Patients with at least one non-missing narrative response (Q10 or Q12) and available baseline symptom assessments.</p></li>
-</ul>
 <p><strong>Text inputs.</strong></p>
 <ul>
 <li><p>Primary: Q10 <em>Problem description</em></p></li>
 <li><p>Secondary: Q12 <em>Therapy goals</em></p></li>
-<li><p>Sensitivity Analyses:</p>
-<ul>
-<li><p>Concatenation of Q10 + Q12.</p></li>
-<li><p>Concatenation of all answered open-ended responses.</p></li>
-</ul></li>
 </ul>
 <p><strong>Outcomes.</strong></p>
 <ul>
@@ -667,36 +672,20 @@ This substudy conceptualizes patient-generated language as an independent assess
 </section>
 <section id="substudy-2-patient-narratives-and-themes" class="level2">
 <h2 class="anchored" data-anchor-id="substudy-2-patient-narratives-and-themes">Substudy 2: Patient narratives and themes</h2>
-<p><strong>Status.</strong> Planned</p>
 <p><strong>Core research question.</strong><br>
 How do patients conceptualize the development, context, and perceived causes of their mental health problems, as well as anticipated improvements, and how do these narrative patterns vary across individuals and clinical groups?</p>
 <p><strong>Conceptual contribution.</strong><br>
-This substudy emphasizes interpretation and theory generation, using patient language to uncover recurring narrative themes related to problem development, stressors, causal attributions, social context, and desired change. By analyzing these themes, this substudy provides insight into how narrative content and response patterns relate to diagnostic categories and baseline severity.</p>
-<p><strong>Sample definition.</strong></p>
-<ul>
-<li>Cohort version (N =)</li>
-</ul>
-<p><strong>Text inputs.</strong> Q1 <em>Problem development</em>, Q2 <em>Extra stressors</em>, Q3 <em>Pre-onset changes</em>, Q6 <em>Problem causes</em>, Q7 <em>Expected improvements</em>, Q8 <em>Environment response</em>. Question-wise modeling (no forced concatenation).</p>
+This substudy emphasizes interpretation and theory generation, using patient language to uncover recurring narrative themes related to problem development, stressors, causal attributions, social context, and desired change. By analyzing these themes, this substudy provides insight into how narrative content and response patterns relate to diagnostic categories, baseline severity or sociodemographic and anamnestic characteristics.</p>
+<p><strong>Text inputs.</strong> Q1 <em>Problem development</em>, Q2 <em>Extra stressors</em>, Q3 <em>Pre-onset changes</em>, Q6 <em>Problem causes</em>, Q7 <em>Expected improvements</em>, Q8 <em>Environment response</em>. Question-wise modeling.</p>
 <p><strong>Outcomes.</strong> No single predictive outcome is specified, as the primary aim is interpretive and theory-generating rather than predictive.</p>
-<ul>
-<li>Primary analyses: Descriptive characterization of thematic content and narrative patterns within and across questions.</li>
-<li>Secondary analyses: Stratification of themes by diagnostic categories, baseline symptom severity, or sociodemographic characteristics.</li>
-</ul>
 <p><strong>Models &amp; evaluation.</strong> Topic modeling / embedding-based clustering; interpretive labeling; comparison of topic prevalence across patient groups.</p>
 </section>
 <section id="substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction" class="level2">
 <h2 class="anchored" data-anchor-id="substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction">Substudy 3: Predicting treatment response and goal attainment (longitudinal prediction)</h2>
-<p><strong>Status.</strong> Planned</p>
 <p><strong>Core research question.</strong><br>
-Can patients’ pre-therapy language predict clinically meaningful treatment outcomes—such as global improvement, clinician-rated change, and individualized goal attainment—beyond baseline symptom severity and demographic characteristics?</p>
+Can patients’ pre-therapy language predict clinically meaningful treatment outcomes beyond baseline symptom severity and demographic characteristics?</p>
 <p><strong>Conceptual contribution.</strong><br>
 This substudy extends language-based mental health assessment from cross-sectional validity to prognostic utility. While prior work has primarily examined whether language reflects current symptom severity, far less is known about whether pre-therapy narratives encode information relevant for future treatment response, such as motivation, goal clarity, perceived agency, or narrative coherence. By evaluating the ability of pre-therapy language to predict longitudinal outcomes above and beyond baseline symptom measures, this substudy tests whether patient-generated text captures clinically actionable signals that are not accessible through standard intake questionnaires alone.</p>
-<p><strong>Sample definition.</strong></p>
-<ul>
-<li><p>Training Data (N=)</p></li>
-<li><p>Validation Data (N=)</p></li>
-<li><p>Inclusion: Patients with at least one non-missing narrative response (Q10 or Q12) and available baseline symptom assessments.</p></li>
-</ul>
 <p><strong>Text inputs.</strong> Primary: Q10 and Q12; Secondary: concatenation models.</p>
 <p><strong>Outcomes.</strong></p>
 <ul>
@@ -709,12 +698,12 @@ This substudy extends language-based mental health assessment from cross-section
 <ul>
 <li><p>Baseline prognostic models: Demographic variables and baseline symptom severity (e.g., BDI-II, BSI/GSI, CGI-Severity).</p></li>
 <li><p>Language-augmented models: Baseline predictors plus language representations derived from pre-therapy text.</p></li>
-<li><p>Feature types:</p>
-<ul>
-<li><p>Simple language features (e.g., word count, pronouns, negations).</p></li>
-<li><p>Contextual embeddings derived from pretrained large language models.</p></li>
-</ul></li>
 </ul>
+</section>
+<section id="substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment" class="level2">
+<h2 class="anchored" data-anchor-id="substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment">Substudy 4: Prompt-based LLM rubrics for interpretable language assessment</h2>
+<p><strong>Core research question.</strong><br>
+Can prompt-based large language models (LLMs) reliably extract interpretable, clinically meaningful rubric scores from pre-therapy narratives, and do these rubric-based language measures add incremental value beyond (a) standardized questionnaires and (b) embedding-based language representations?</p>
 
 </section>
 </section>
@@ -791,6 +780,9 @@ Mohammadi, E., Amini, H., &amp; Kosseim, L. (2019). <span>CLaC</span> at <span>C
 </div>
 <div id="ref-Radford2022" class="csl-entry" role="listitem">
 Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., &amp; Sutskever, I. (2022). Robust <span>Speech Recognition</span> via <span>Large-Scale Weak Supervision</span>. <em>arXiv Preprint arXiv: 2212.04356</em>. <a href="https://arxiv.org/abs/2212.04356">https://arxiv.org/abs/2212.04356</a>
+</div>
+<div id="ref-shannon1948mathematical" class="csl-entry" role="listitem">
+Shannon, C. E. (1948). A mathematical theory of communication. <em>The Bell System Technical Journal</em>, <em>27</em>(3), 379423.
 </div>
 <div id="ref-10.1111/j.2517-6161.1996.tb02080.x" class="csl-entry" role="listitem">
 Tibshirani, R. (1996). Regression shrinkage and selection via the lasso. <em>Journal of the Royal Statistical Society: Series B (Methodological)</em>, <em>58</em>(1), 267–288. <a href="https://doi.org/10.1111/j.2517-6161.1996.tb02080.x">https://doi.org/10.1111/j.2517-6161.1996.tb02080.x</a>

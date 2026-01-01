@@ -229,6 +229,7 @@
 <meta name="citation_reference" content="citation_title=Psychometric properties of the positive mental health scale (PMH-scale);,citation_author=Justina Lukat;,citation_author=Jürgen Margraf;,citation_author=Rainer Lutz;,citation_author=William M. Veld;,citation_author=Eni S. Becker;,citation_publication_date=2016-02-10;,citation_cover_date=2016-02-10;,citation_year=2016;,citation_fulltext_html_url=https://doi.org/10.1186/s40359-016-0111-x;,citation_issue=1;,citation_doi=10.1186/s40359-016-0111-x;,citation_volume=4;,citation_journal_title=BMC Psychology;">
 <meta name="citation_reference" content="citation_title=Die deutsche Version des Childhood Trauma Questionnaire (CTQ): Erste Befunde zu den psychometrischen Kennwerten;,citation_author=Katja Wingenfeld;,citation_author=Carsten Spitzer;,citation_author=Christoph Mensebach;,citation_author=Hans Grabe;,citation_author=Andreas Hill;,citation_author=Ursula Gast;,citation_author=Nicole Schlosser;,citation_author=Hella Höpp;,citation_author=Thomas Beblo;,citation_author=Martin Driessen;,citation_publication_date=2010-04-01;,citation_cover_date=2010-04-01;,citation_year=2010;,citation_fulltext_html_url=http://dx.doi.org/10.1055/s-0030-1253494;,citation_issue=08;,citation_doi=10.1055/s-0030-1253494;,citation_volume=60;,citation_language=de;,citation_journal_title=PPmP - Psychotherapie · Psychosomatik · Medizinische Psychologie;">
 <meta name="citation_reference" content="citation_title=Development and validation of a brief screening version of the Childhood Trauma Questionnaire;,citation_author=David P Bernstein;,citation_author=Judith A Stein;,citation_author=Michael D Newcomb;,citation_author=Edward Walker;,citation_author=David Pogge;,citation_author=Taruna Ahluvalia;,citation_author=John Stokes;,citation_author=Leonard Handelsman;,citation_author=Martha Medrano;,citation_author=David Desmond;,citation_author=William Zule;,citation_publication_date=2003-02;,citation_cover_date=2003-02;,citation_year=2003;,citation_fulltext_html_url=http://dx.doi.org/10.1016/S0145-2134(02)00541-0;,citation_issue=2;,citation_doi=10.1016/s0145-2134(02)00541-0;,citation_volume=27;,citation_language=en;,citation_journal_title=Child Abuse &amp;amp;amp; Neglect;">
+<meta name="citation_reference" content="citation_title=A mathematical theory of communication;,citation_author=Claude E Shannon;,citation_publication_date=1948;,citation_cover_date=1948;,citation_year=1948;,citation_issue=3;,citation_volume=27;,citation_journal_title=The Bell system technical journal;">
 </head>
 
   <body class="quarto-notebook quarto-light">
@@ -307,6 +308,7 @@
   <li><a href="#substudy-1-language-as-clinical-assessment-cross-sectional" id="toc-substudy-1-language-as-clinical-assessment-cross-sectional" class="nav-link" data-scroll-target="#substudy-1-language-as-clinical-assessment-cross-sectional">Substudy 1: Language as clinical assessment (cross-sectional)</a></li>
   <li><a href="#substudy-2-patient-narratives-and-themes" id="toc-substudy-2-patient-narratives-and-themes" class="nav-link" data-scroll-target="#substudy-2-patient-narratives-and-themes">Substudy 2: Patient narratives and themes</a></li>
   <li><a href="#substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction" id="toc-substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction" class="nav-link" data-scroll-target="#substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction">Substudy 3: Predicting treatment response and goal attainment (longitudinal prediction)</a></li>
+  <li><a href="#substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment" id="toc-substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment" class="nav-link" data-scroll-target="#substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment">Substudy 4: Prompt-based LLM rubrics for interpretable language assessment</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -375,6 +377,7 @@ Note
 <li><strong>Impacted life areas:</strong> ‘In which areas of your life do these problems limit you (e.g.&nbsp;job, relationship)?’ (german original question: „In welchen Lebensbereichen schränken Sie diese Probleme ein (z. B. Beruf, Partnerschaft)?“)</li>
 <li><strong>Therapy goals:</strong> ‘What would you like to achieve for yourself in therapy?’ (german original question: „Was möchten Sie in der Therapie für sich erreichen?“)</li>
 </ol>
+<p>To characterize engagement and heterogeneity in responses to the open-ended intake questions, we computed descriptive statistics for each question, including response length and an entropy-based diversity index <span class="citation" data-cites="shannon1948mathematical">(<a href="#ref-shannon1948mathematical" role="doc-biblioref">Shannon, 1948</a>)</span>. Responses were pooled across participants for each question and tokenized into word types. Shannon entropy was computed over the resulting word probability distribution and transformed into an effective diversity measure, representing the effective number of equally frequent word types elicited by each question. Whereas word count reflects the quantity of text produced, the diversity index captures the dispersion of lexical content across respondents and provides a complementary indicator of how strongly different question constrain or open the response space.</p>
 </section>
 <section id="psychometric-measures" class="level3">
 <h3 class="anchored" data-anchor-id="psychometric-measures">Psychometric measures</h3>
@@ -615,11 +618,18 @@ Note
 </section>
 <section id="preliminary-results-dataset-characterization" class="level1">
 <h1>Preliminary results: dataset characterization</h1>
-<p>A descriptive analysis revealed substantial heterogeneity across questions in both response rates and linguistic richness (Table X). Broad narrative prompts, particularly the problem description and therapy goals questions, showed low missingness and high median word counts, indicating that patients readily provided extended self-generated narratives when asked to reflect holistically on their difficulties or desired changes. In contrast, questions targeting specific events, causal attributions, physical symptoms, or affected life domains often elicited brief or list-like responses, consistent with their more constrained and confirmatory formats.</p>
+<p>Descriptive analyses revealed substantial heterogeneity across questions in response rates, length, and lexical diversity. Holistic questions such as problem description (q10) and therapy goals (q12) showed low missingness, longer median response lengths, and high lexical diversity, indicating that patients readily produced extended and heterogeneous narratives when asked to reflect broadly on their difficulties or desired changes. In contrast, prompts targeting causal connections (q4) or constraints (q11) frequently elicited short or missing responses and exhibited lower diversity, consistent with more constrained or confirmatory response formats. Notably, lexical diversity varied independently of response length, suggesting that some prompts elicited shared narrative scripts despite moderate verbosity (e.g., q7 Expected Improvements).</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>working_data <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"/Volumes/meta_data/processed/working_data/merged_data.rds"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Load processed working dataset</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Contains one column per open-ended question (txt1_..., txt2_..., etc.)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>working_data <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(<span class="st">"/Volumes/meta_data/processed/working_data/merged_data.rds"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Load required packages</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)   <span class="co"># data wrangling</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.4     ✔ readr     2.1.5
@@ -632,91 +642,157 @@ Note
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringi)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringi)     <span class="co"># word counts</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)       <span class="co"># table output</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)    <span class="co"># tokenization for lexical diversity</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>text_cols <span class="ot">&lt;-</span> <span class="fu">names</span>(working_data)[<span class="fu">str_detect</span>(<span class="fu">names</span>(working_data), <span class="st">"^txt</span><span class="sc">\\</span><span class="st">d+_"</span>)]</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>working_data_long <span class="ot">&lt;-</span> working_data <span class="sc">|&gt;</span> </span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">all_of</span>(text_cols),</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"question_raw"</span>,</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"text"</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">question_id =</span> <span class="fu">str_extract</span>(question_raw, <span class="st">"</span><span class="sc">\\</span><span class="st">d+"</span>) <span class="sc">|&gt;</span> <span class="fu">as.integer</span>(),</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">question_label =</span> <span class="fu">str_remove</span>(question_raw, <span class="st">"^txt</span><span class="sc">\\</span><span class="st">d+_"</span>),</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">str_squish</span>(text),</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_missing =</span> <span class="fu">is.na</span>(text) <span class="sc">|</span> text <span class="sc">==</span> <span class="st">""</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>working_data_long <span class="ot">&lt;-</span> working_data_long <span class="sc">|&gt;</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify text columns corresponding to open-ended questions</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Assumes columns are named like "txt1_problem", "txt2_stressors", etc.</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>text_cols <span class="ot">&lt;-</span> <span class="fu">names</span>(working_data)[<span class="fu">str_detect</span>(<span class="fu">names</span>(working_data), <span class="st">"^txt</span><span class="sc">\\</span><span class="st">d+_"</span>)]</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape data to long format: one row per person × question</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># This makes it easy to compute question-level descriptives</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>working_data_long <span class="ot">&lt;-</span> working_data <span class="sc">|&gt;</span> </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="fu">all_of</span>(text_cols),</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="st">"question_raw"</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"text"</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_chars =</span> <span class="fu">ifelse</span>(is_missing, <span class="cn">NA_integer_</span>, <span class="fu">nchar</span>(text)),</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_words =</span> <span class="fu">ifelse</span>(is_missing, <span class="cn">NA_integer_</span>, <span class="fu">stri_count_words</span>(text)),</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_very_short =</span> <span class="sc">!</span>is_missing <span class="sc">&amp;</span> n_words <span class="sc">&lt;=</span> <span class="dv">3</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>qc_by_question <span class="ot">&lt;-</span> working_data_long <span class="sc">|&gt;</span> </span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(question_id, question_label) <span class="sc">|&gt;</span> </span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_total =</span> <span class="fu">n</span>(),</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="at">missing_pct =</span> <span class="fu">mean</span>(is_missing) <span class="sc">*</span> <span class="dv">100</span>,</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">very_short_pct =</span> <span class="fu">mean</span>(is_very_short) <span class="sc">*</span> <span class="dv">100</span>,</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_words =</span> <span class="fu">median</span>(n_words, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">p10_words =</span> <span class="fu">quantile</span>(n_words, <span class="fl">0.10</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">p90_words =</span> <span class="fu">quantile</span>(n_words, <span class="fl">0.90</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>question_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Problem development"</span>,</span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Extra stressors"</span>,</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Pre-onset changes"</span>,</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Event connection"</span>,</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Physical symptoms"</span>,</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Problem causes"</span>,</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Expected improvements"</span>,</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Environment response"</span>,</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>  <span class="st">"No change required"</span>,</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Problem description"</span>,</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Impacted life areas"</span>,</span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Therapy goals"</span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>qc_table <span class="ot">&lt;-</span> qc_by_question <span class="sc">|&gt;</span></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">Question =</span> <span class="fu">factor</span>(question_id, <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">labels =</span> question_labels)</span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    Question,</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    n_total,</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    missing_pct,</span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    very_short_pct,</span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    median_words,</span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    p10_words,</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    p90_words</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract numeric question ID (1–12) from column name</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">question_id =</span> <span class="fu">str_extract</span>(question_raw, <span class="st">"</span><span class="sc">\\</span><span class="st">d+"</span>) <span class="sc">|&gt;</span> <span class="fu">as.integer</span>(),</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract human-readable question label from column name</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="at">question_label =</span> <span class="fu">str_remove</span>(question_raw, <span class="st">"^txt</span><span class="sc">\\</span><span class="st">d+_"</span>),</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Normalize whitespace in text</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">text =</span> <span class="fu">str_squish</span>(text),</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Flag missing or empty responses</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_missing =</span> <span class="fu">is.na</span>(text) <span class="sc">|</span> text <span class="sc">==</span> <span class="st">""</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute basic per-response text features</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co"># These are *response-level* quantities, later summarized by question</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>working_data_long <span class="ot">&lt;-</span> working_data_long <span class="sc">|&gt;</span> </span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_chars =</span> <span class="fu">ifelse</span>(is_missing, <span class="cn">NA_integer_</span>, <span class="fu">nchar</span>(text)),            <span class="co"># character count</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_words =</span> <span class="fu">ifelse</span>(is_missing, <span class="cn">NA_integer_</span>, <span class="fu">stri_count_words</span>(text)), <span class="co"># word count</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">is_very_short =</span> <span class="sc">!</span>is_missing <span class="sc">&amp;</span> n_words <span class="sc">&lt;=</span> <span class="dv">3</span>                         <span class="co"># list-like / minimal responses</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co"># Question-level descriptive statistics (engagement &amp; length)</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="co"># These summarize HOW MUCH people write, not WHAT they write</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>qc_by_question <span class="ot">&lt;-</span> working_data_long <span class="sc">|&gt;</span> </span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(question_id, question_label) <span class="sc">|&gt;</span> </span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_total =</span> <span class="fu">n</span>(),                                  <span class="co"># total number of responses</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">missing_pct =</span> <span class="fu">mean</span>(is_missing) <span class="sc">*</span> <span class="dv">100</span>,           <span class="co"># nonresponse rate</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    <span class="at">very_short_pct =</span> <span class="fu">mean</span>(is_very_short) <span class="sc">*</span> <span class="dv">100</span>,     <span class="co"># minimal responses</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="at">median_words =</span> <span class="fu">median</span>(n_words, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),   <span class="co"># typical response length</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    <span class="at">p10_words =</span> <span class="fu">quantile</span>(n_words, <span class="fl">0.10</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    <span class="at">p90_words =</span> <span class="fu">quantile</span>(n_words, <span class="fl">0.90</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="co"># Human-readable question labels for tables</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>question_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Problem development"</span>,</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Extra stressors"</span>,</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Pre-onset changes"</span>,</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Event connection"</span>,</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Physical symptoms"</span>,</span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Problem causes"</span>,</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Expected improvements"</span>,</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Environment response"</span>,</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>  <span class="st">"No change required"</span>,</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Problem description"</span>,</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Impacted life areas"</span>,</span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>  <span class="st">"Therapy goals"</span></span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="co"># Tokenize responses for lexical diversity analysis</span></span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a><span class="co"># Goal: quantify how diverse the vocabulary is ACROSS RESPONDENTS per question</span></span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a><span class="co"># (not within individual responses)</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>tokens_by_question <span class="ot">&lt;-</span> working_data_long <span class="sc">|&gt;</span> </span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>is_missing) <span class="sc">|&gt;</span>                     <span class="co"># exclude missing responses</span></span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text, <span class="at">token =</span> <span class="st">"words"</span>) <span class="sc">|&gt;</span>  <span class="co"># split into word tokens</span></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(word, <span class="st">"^</span><span class="sc">\\</span><span class="st">d+$"</span>))        <span class="co"># remove pure numbers</span></span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute Shannon entropy and diversity index per question</span></span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a><span class="co"># Entropy reflects dispersion of word usage across all responses</span></span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a><span class="co"># Diversity index = 2^H = "effective number of equally frequent word types"</span></span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>diversity_by_question <span class="ot">&lt;-</span> tokens_by_question <span class="sc">|&gt;</span> </span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(question_id, question_label, word) <span class="sc">|&gt;</span>   <span class="co"># word frequencies per question</span></span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(question_id, question_label) <span class="sc">|&gt;</span> </span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">|&gt;</span>                     <span class="co"># word probabilities</span></span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">shannon_entropy =</span> <span class="sc">-</span><span class="fu">sum</span>(p <span class="sc">*</span> <span class="fu">log2</span>(p)),        <span class="co"># Shannon entropy</span></span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>    <span class="at">diversity_index =</span> <span class="dv">2</span> <span class="sc">^</span> shannon_entropy,      <span class="co"># effective vocabulary size</span></span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_tokens =</span> <span class="fu">sum</span>(n),                      <span class="co"># total words (for context)</span></span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>    <span class="at">vocab_size =</span> <span class="fu">n_distinct</span>(word),              <span class="co"># raw vocabulary size</span></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine all descriptives into final question-level table</span></span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a><span class="co"># This table triangulates:</span></span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a><span class="co"># - engagement (missing, very short)</span></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a><span class="co"># - quantity (word counts)</span></span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a><span class="co"># - dispersion (lexical diversity)</span></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>qc_table <span class="ot">&lt;-</span> qc_by_question <span class="sc">|&gt;</span></span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>    <span class="at">Question =</span> <span class="fu">factor</span>(question_id, <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">labels =</span> question_labels)</span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>    diversity_by_question,</span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"question_id"</span>, <span class="st">"question_label"</span>)</span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>    Question,</span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>    n_total,</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>    missing_pct,</span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>    very_short_pct,</span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>    median_words,</span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>    p10_words,</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>    p90_words,</span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>    diversity_index</span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>qc_table <span class="sc">|&gt;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Table X. Descriptive statistics of open-ended responses by question."</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">align =</span> <span class="st">"lcccccc"</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">align =</span> <span class="st">"lccccccc"</span>,</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">booktabs =</span> <span class="cn">TRUE</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Table X. Descriptive statistics of open-ended responses by question.</caption>
 <colgroup>
-<col style="width: 22%">
-<col style="width: 9%">
-<col style="width: 13%">
-<col style="width: 16%">
+<col style="width: 19%">
+<col style="width: 7%">
+<col style="width: 11%">
 <col style="width: 14%">
-<col style="width: 11%">
-<col style="width: 11%">
+<col style="width: 12%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 15%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -727,6 +803,7 @@ Note
 <th style="text-align: center;">median_words</th>
 <th style="text-align: center;">p10_words</th>
 <th style="text-align: center;">p90_words</th>
+<th style="text-align: center;">diversity_index</th>
 </tr>
 </thead>
 <tbody>
@@ -738,6 +815,7 @@ Note
 <td style="text-align: center;">19.0</td>
 <td style="text-align: center;">6</td>
 <td style="text-align: center;">47.0</td>
+<td style="text-align: center;">638.3720</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Extra stressors</td>
@@ -747,6 +825,7 @@ Note
 <td style="text-align: center;">11.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">33.0</td>
+<td style="text-align: center;">518.3769</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Pre-onset changes</td>
@@ -756,6 +835,7 @@ Note
 <td style="text-align: center;">9.5</td>
 <td style="text-align: center;">1</td>
 <td style="text-align: center;">37.1</td>
+<td style="text-align: center;">466.3284</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Event connection</td>
@@ -765,6 +845,7 @@ Note
 <td style="text-align: center;">6.0</td>
 <td style="text-align: center;">1</td>
 <td style="text-align: center;">29.0</td>
+<td style="text-align: center;">416.7281</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Physical symptoms</td>
@@ -774,6 +855,7 @@ Note
 <td style="text-align: center;">5.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">18.0</td>
+<td style="text-align: center;">392.6414</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Problem causes</td>
@@ -783,6 +865,7 @@ Note
 <td style="text-align: center;">8.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">27.0</td>
+<td style="text-align: center;">492.3520</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Expected improvements</td>
@@ -792,6 +875,7 @@ Note
 <td style="text-align: center;">11.0</td>
 <td style="text-align: center;">4</td>
 <td style="text-align: center;">30.0</td>
+<td style="text-align: center;">323.4887</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Environment response</td>
@@ -801,6 +885,7 @@ Note
 <td style="text-align: center;">9.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">30.5</td>
+<td style="text-align: center;">310.6291</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">No change required</td>
@@ -810,6 +895,7 @@ Note
 <td style="text-align: center;">6.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">19.9</td>
+<td style="text-align: center;">241.5367</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Problem description</td>
@@ -819,6 +905,7 @@ Note
 <td style="text-align: center;">23.0</td>
 <td style="text-align: center;">6</td>
 <td style="text-align: center;">51.0</td>
+<td style="text-align: center;">626.1284</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Impacted life areas</td>
@@ -828,6 +915,7 @@ Note
 <td style="text-align: center;">6.0</td>
 <td style="text-align: center;">2</td>
 <td style="text-align: center;">32.4</td>
+<td style="text-align: center;">407.2106</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Therapy goals</td>
@@ -837,6 +925,7 @@ Note
 <td style="text-align: center;">15.0</td>
 <td style="text-align: center;">4</td>
 <td style="text-align: center;">36.0</td>
+<td style="text-align: center;">411.6541</td>
 </tr>
 </tbody>
 </table>
@@ -851,26 +940,14 @@ Note
 <p>This project comprises multiple complementary substudies that share a common dataset and preprocessing pipeline but address distinct research questions. To avoid analytic flexibility and to maximize interpretability, each substudy pre-specifies its text inputs, outcomes, and evaluation strategy.</p>
 <section id="substudy-1-language-as-clinical-assessment-cross-sectional" class="level2">
 <h2 class="anchored" data-anchor-id="substudy-1-language-as-clinical-assessment-cross-sectional">Substudy 1: Language as clinical assessment (cross-sectional)</h2>
-<p><strong>Status.</strong> Planned</p>
 <p><strong>Core research question.</strong><br>
 Does patients’ pre-therapy language provide clinically meaningful information about symptom severity and functioning, and does it add predictive value beyond established self-report questionnaires? Additionally, to what extent is this information captured by large language model (LLM)–based representations compared with simpler linguistic features?</p>
 <p><strong>Conceptual contribution.</strong><br>
 This substudy conceptualizes patient-generated language as an independent assessment modality rather than a proxy for existing symptom scales. While prior work has demonstrated correlations between language and self-reported symptoms, few studies have tested whether language captures incremental clinical information beyond standardized questionnaires, particularly for clinician-rated outcomes.</p>
-<p><strong>Sample definition.</strong></p>
-<ul>
-<li><p>Training Data (N=)</p></li>
-<li><p>Validation Data (N=)</p></li>
-<li><p>Inclusion: Patients with at least one non-missing narrative response (Q10 or Q12) and available baseline symptom assessments.</p></li>
-</ul>
 <p><strong>Text inputs.</strong></p>
 <ul>
 <li><p>Primary: Q10 <em>Problem description</em></p></li>
 <li><p>Secondary: Q12 <em>Therapy goals</em></p></li>
-<li><p>Sensitivity Analyses:</p>
-<ul>
-<li><p>Concatenation of Q10 + Q12.</p></li>
-<li><p>Concatenation of all answered open-ended responses.</p></li>
-</ul></li>
 </ul>
 <p><strong>Outcomes.</strong></p>
 <ul>
@@ -881,36 +958,20 @@ This substudy conceptualizes patient-generated language as an independent assess
 </section>
 <section id="substudy-2-patient-narratives-and-themes" class="level2">
 <h2 class="anchored" data-anchor-id="substudy-2-patient-narratives-and-themes">Substudy 2: Patient narratives and themes</h2>
-<p><strong>Status.</strong> Planned</p>
 <p><strong>Core research question.</strong><br>
 How do patients conceptualize the development, context, and perceived causes of their mental health problems, as well as anticipated improvements, and how do these narrative patterns vary across individuals and clinical groups?</p>
 <p><strong>Conceptual contribution.</strong><br>
-This substudy emphasizes interpretation and theory generation, using patient language to uncover recurring narrative themes related to problem development, stressors, causal attributions, social context, and desired change. By analyzing these themes, this substudy provides insight into how narrative content and response patterns relate to diagnostic categories and baseline severity.</p>
-<p><strong>Sample definition.</strong></p>
-<ul>
-<li>Cohort version (N =)</li>
-</ul>
-<p><strong>Text inputs.</strong> Q1 <em>Problem development</em>, Q2 <em>Extra stressors</em>, Q3 <em>Pre-onset changes</em>, Q6 <em>Problem causes</em>, Q7 <em>Expected improvements</em>, Q8 <em>Environment response</em>. Question-wise modeling (no forced concatenation).</p>
+This substudy emphasizes interpretation and theory generation, using patient language to uncover recurring narrative themes related to problem development, stressors, causal attributions, social context, and desired change. By analyzing these themes, this substudy provides insight into how narrative content and response patterns relate to diagnostic categories, baseline severity or sociodemographic and anamnestic characteristics.</p>
+<p><strong>Text inputs.</strong> Q1 <em>Problem development</em>, Q2 <em>Extra stressors</em>, Q3 <em>Pre-onset changes</em>, Q6 <em>Problem causes</em>, Q7 <em>Expected improvements</em>, Q8 <em>Environment response</em>. Question-wise modeling.</p>
 <p><strong>Outcomes.</strong> No single predictive outcome is specified, as the primary aim is interpretive and theory-generating rather than predictive.</p>
-<ul>
-<li>Primary analyses: Descriptive characterization of thematic content and narrative patterns within and across questions.</li>
-<li>Secondary analyses: Stratification of themes by diagnostic categories, baseline symptom severity, or sociodemographic characteristics.</li>
-</ul>
 <p><strong>Models &amp; evaluation.</strong> Topic modeling / embedding-based clustering; interpretive labeling; comparison of topic prevalence across patient groups.</p>
 </section>
 <section id="substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction" class="level2">
 <h2 class="anchored" data-anchor-id="substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction">Substudy 3: Predicting treatment response and goal attainment (longitudinal prediction)</h2>
-<p><strong>Status.</strong> Planned</p>
 <p><strong>Core research question.</strong><br>
-Can patients’ pre-therapy language predict clinically meaningful treatment outcomes—such as global improvement, clinician-rated change, and individualized goal attainment—beyond baseline symptom severity and demographic characteristics?</p>
+Can patients’ pre-therapy language predict clinically meaningful treatment outcomes beyond baseline symptom severity and demographic characteristics?</p>
 <p><strong>Conceptual contribution.</strong><br>
 This substudy extends language-based mental health assessment from cross-sectional validity to prognostic utility. While prior work has primarily examined whether language reflects current symptom severity, far less is known about whether pre-therapy narratives encode information relevant for future treatment response, such as motivation, goal clarity, perceived agency, or narrative coherence. By evaluating the ability of pre-therapy language to predict longitudinal outcomes above and beyond baseline symptom measures, this substudy tests whether patient-generated text captures clinically actionable signals that are not accessible through standard intake questionnaires alone.</p>
-<p><strong>Sample definition.</strong></p>
-<ul>
-<li><p>Training Data (N=)</p></li>
-<li><p>Validation Data (N=)</p></li>
-<li><p>Inclusion: Patients with at least one non-missing narrative response (Q10 or Q12) and available baseline symptom assessments.</p></li>
-</ul>
 <p><strong>Text inputs.</strong> Primary: Q10 and Q12; Secondary: concatenation models.</p>
 <p><strong>Outcomes.</strong></p>
 <ul>
@@ -923,12 +984,12 @@ This substudy extends language-based mental health assessment from cross-section
 <ul>
 <li><p>Baseline prognostic models: Demographic variables and baseline symptom severity (e.g., BDI-II, BSI/GSI, CGI-Severity).</p></li>
 <li><p>Language-augmented models: Baseline predictors plus language representations derived from pre-therapy text.</p></li>
-<li><p>Feature types:</p>
-<ul>
-<li><p>Simple language features (e.g., word count, pronouns, negations).</p></li>
-<li><p>Contextual embeddings derived from pretrained large language models.</p></li>
-</ul></li>
 </ul>
+</section>
+<section id="substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment" class="level2">
+<h2 class="anchored" data-anchor-id="substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment">Substudy 4: Prompt-based LLM rubrics for interpretable language assessment</h2>
+<p><strong>Core research question.</strong><br>
+Can prompt-based large language models (LLMs) reliably extract interpretable, clinically meaningful rubric scores from pre-therapy narratives, and do these rubric-based language measures add incremental value beyond (a) standardized questionnaires and (b) embedding-based language representations?</p>
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-Beck1996" class="csl-entry" role="listitem">
 Beck, A. T., Steer, R. A., &amp; Brown, G. K. (1996). <em><span>BDI-II</span>: <span>Beck Depression Inventory</span> manual</em> (2nd ed.). Psychological Corporation.
@@ -1001,6 +1062,9 @@ Mohammadi, E., Amini, H., &amp; Kosseim, L. (2019). <span>CLaC</span> at <span>C
 </div>
 <div id="ref-Radford2022" class="csl-entry" role="listitem">
 Radford, A., Kim, J. W., Xu, T., Brockman, G., McLeavey, C., &amp; Sutskever, I. (2022). Robust <span>Speech Recognition</span> via <span>Large-Scale Weak Supervision</span>. <em>arXiv Preprint arXiv: 2212.04356</em>. <a href="https://arxiv.org/abs/2212.04356">https://arxiv.org/abs/2212.04356</a>
+</div>
+<div id="ref-shannon1948mathematical" class="csl-entry" role="listitem">
+Shannon, C. E. (1948). A mathematical theory of communication. <em>The Bell System Technical Journal</em>, <em>27</em>(3), 379423.
 </div>
 <div id="ref-10.1111/j.2517-6161.1996.tb02080.x" class="csl-entry" role="listitem">
 Tibshirani, R. (1996). Regression shrinkage and selection via the lasso. <em>Journal of the Royal Statistical Society: Series B (Methodological)</em>, <em>58</em>(1), 267–288. <a href="https://doi.org/10.1111/j.2517-6161.1996.tb02080.x">https://doi.org/10.1111/j.2517-6161.1996.tb02080.x</a>

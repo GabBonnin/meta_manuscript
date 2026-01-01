@@ -72,6 +72,8 @@ At the start of therapy, patients complete two separate questionnaires designed 
 11. **Impacted life areas:** ‘In which areas of your life do these problems limit you (e.g. job, relationship)?’ (german original question: „In welchen Lebensbereichen schränken Sie diese Probleme ein (z. B. Beruf, Partnerschaft)?“)
 12. **Therapy goals:** ‘What would you like to achieve for yourself in therapy?’ (german original question: „Was möchten Sie in der Therapie für sich erreichen?“)
 
+To characterize engagement and heterogeneity in responses to the open-ended intake questions, we computed descriptive statistics for each question, including response length and an entropy-based diversity index [@shannon1948mathematical]. Responses were pooled across participants for each question and tokenized into word types. Shannon entropy was computed over the resulting word probability distribution and transformed into an effective diversity measure, representing the effective number of equally frequent word types elicited by each question. Whereas word count reflects the quantity of text produced, the diversity index captures the dispersion of lexical content across respondents and provides a complementary indicator of how strongly different question constrain or open the response space.
+
 ### Psychometric measures
 
 Clinical and psychometric variables were retrieved from the FBZ database and included diagnostic information, self-report symptom measures, therapist- and patient-rated outcome measures, positive mental health indicators, and therapeutic process variables. Diagnoses were coded according to DSM-5 and ICD-10 criteria. Symptom severity and treatment outcomes were assessed using a combination of standardized self-report questionnaires and clinician-rated instruments administered at different points during treatment.
@@ -166,20 +168,35 @@ The open-ended questions were administered in two questionnaire blocks. Analyses
 
 # Preliminary results: dataset characterization
 
-A descriptive analysis revealed substantial heterogeneity across questions in both response rates and linguistic richness (Table X). Broad narrative prompts, particularly the problem description and therapy goals questions, showed low missingness and high median word counts, indicating that patients readily provided extended self-generated narratives when asked to reflect holistically on their difficulties or desired changes. In contrast, questions targeting specific events, causal attributions, physical symptoms, or affected life domains often elicited brief or list-like responses, consistent with their more constrained and confirmatory formats.
+Descriptive analyses revealed substantial heterogeneity across questions in response rates, length, and lexical diversity. Holistic questions such as problem description (q10) and therapy goals (q12) showed low missingness, longer median response lengths, and high lexical diversity, indicating that patients readily produced extended and heterogeneous narratives when asked to reflect broadly on their difficulties or desired changes. In contrast, prompts targeting causal connections (q4) or constraints (q11) frequently elicited short or missing responses and exhibited lower diversity, consistent with more constrained or confirmatory response formats. Notably, lexical diversity varied independently of response length, suggesting that some prompts elicited shared narrative scripts despite moderate verbosity (e.g., q7 Expected Improvements).
 
 ```{r}
 #| include: false
 
+# ------------------------------------------------------------
+# Load processed working dataset
+# ------------------------------------------------------------
+# Contains one column per open-ended question (txt1_..., txt2_..., etc.)
 working_data <- readRDS("/Volumes/meta_data/processed/working_data/merged_data.rds")
 
-library(tidyverse)
-library(stringi)
-library(skimr)
-library(knitr)
+# ------------------------------------------------------------
+# Load required packages
+# ------------------------------------------------------------
+library(tidyverse)   # data wrangling
+library(stringi)     # word counts
+library(knitr)       # table output
+library(tidytext)    # tokenization for lexical diversity
 
+# ------------------------------------------------------------
+# Identify text columns corresponding to open-ended questions
+# ------------------------------------------------------------
+# Assumes columns are named like "txt1_problem", "txt2_stressors", etc.
 text_cols <- names(working_data)[str_detect(names(working_data), "^txt\\d+_")]
 
+# ------------------------------------------------------------
+# Reshape data to long format: one row per person × question
+# ------------------------------------------------------------
+# This makes it easy to compute question-level descriptives
 working_data_long <- working_data |> 
   pivot_longer(
     cols = all_of(text_cols),
@@ -187,31 +204,49 @@ working_data_long <- working_data |>
     values_to = "text"
   ) %>%
   mutate(
+    # Extract numeric question ID (1–12) from column name
     question_id = str_extract(question_raw, "\\d+") |> as.integer(),
+    
+    # Extract human-readable question label from column name
     question_label = str_remove(question_raw, "^txt\\d+_"),
+    
+    # Normalize whitespace in text
     text = str_squish(text),
+    
+    # Flag missing or empty responses
     is_missing = is.na(text) | text == ""
   )
 
+# ------------------------------------------------------------
+# Compute basic per-response text features
+# ------------------------------------------------------------
+# These are *response-level* quantities, later summarized by question
 working_data_long <- working_data_long |> 
   mutate(
-    n_chars = ifelse(is_missing, NA_integer_, nchar(text)),
-    n_words = ifelse(is_missing, NA_integer_, stri_count_words(text)),
-    is_very_short = !is_missing & n_words <= 3
+    n_chars = ifelse(is_missing, NA_integer_, nchar(text)),            # character count
+    n_words = ifelse(is_missing, NA_integer_, stri_count_words(text)), # word count
+    is_very_short = !is_missing & n_words <= 3                         # list-like / minimal responses
   )
 
+# ------------------------------------------------------------
+# Question-level descriptive statistics (engagement & length)
+# ------------------------------------------------------------
+# These summarize HOW MUCH people write, not WHAT they write
 qc_by_question <- working_data_long |> 
   group_by(question_id, question_label) |> 
   summarise(
-    n_total = n(),
-    missing_pct = mean(is_missing) * 100,
-    very_short_pct = mean(is_very_short) * 100,
-    median_words = median(n_words, na.rm = TRUE),
+    n_total = n(),                                  # total number of responses
+    missing_pct = mean(is_missing) * 100,           # nonresponse rate
+    very_short_pct = mean(is_very_short) * 100,     # minimal responses
+    median_words = median(n_words, na.rm = TRUE),   # typical response length
     p10_words = quantile(n_words, 0.10, na.rm = TRUE),
     p90_words = quantile(n_words, 0.90, na.rm = TRUE),
     .groups = "drop"
   )
 
+# ------------------------------------------------------------
+# Human-readable question labels for tables
+# ------------------------------------------------------------
 question_labels <- c(
   "Problem development",
   "Extra stressors",
@@ -227,9 +262,47 @@ question_labels <- c(
   "Therapy goals"
 )
 
+# ------------------------------------------------------------
+# Tokenize responses for lexical diversity analysis
+# ------------------------------------------------------------
+# Goal: quantify how diverse the vocabulary is ACROSS RESPONDENTS per question
+# (not within individual responses)
+tokens_by_question <- working_data_long |> 
+  filter(!is_missing) |>                     # exclude missing responses
+  unnest_tokens(word, text, token = "words") |>  # split into word tokens
+  filter(!str_detect(word, "^\\d+$"))        # remove pure numbers
+
+# ------------------------------------------------------------
+# Compute Shannon entropy and diversity index per question
+# ------------------------------------------------------------
+# Entropy reflects dispersion of word usage across all responses
+# Diversity index = 2^H = "effective number of equally frequent word types"
+diversity_by_question <- tokens_by_question |> 
+  count(question_id, question_label, word) |>   # word frequencies per question
+  group_by(question_id, question_label) |> 
+  mutate(p = n / sum(n)) |>                     # word probabilities
+  summarise(
+    shannon_entropy = -sum(p * log2(p)),        # Shannon entropy
+    diversity_index = 2 ^ shannon_entropy,      # effective vocabulary size
+    total_tokens = sum(n),                      # total words (for context)
+    vocab_size = n_distinct(word),              # raw vocabulary size
+    .groups = "drop"
+  )
+
+# ------------------------------------------------------------
+# Combine all descriptives into final question-level table
+# ------------------------------------------------------------
+# This table triangulates:
+# - engagement (missing, very short)
+# - quantity (word counts)
+# - dispersion (lexical diversity)
 qc_table <- qc_by_question |>
   mutate(
     Question = factor(question_id, levels = 1:12, labels = question_labels)
+  ) |>
+  left_join(
+    diversity_by_question,
+    by = c("question_id", "question_label")
   ) |>
   select(
     Question,
@@ -238,8 +311,10 @@ qc_table <- qc_by_question |>
     very_short_pct,
     median_words,
     p10_words,
-    p90_words
+    p90_words,
+    diversity_index
   )
+
 ```
 
 ```{r}
@@ -248,7 +323,7 @@ qc_table <- qc_by_question |>
 qc_table |>
   kable(
     caption = "Table X. Descriptive statistics of open-ended responses by question.",
-    align = "lcccccc",
+    align = "lccccccc",
     booktabs = TRUE
   )
 ```
@@ -262,33 +337,17 @@ This project comprises multiple complementary substudies that share a common dat
 
 ## Substudy 1: Language as clinical assessment (cross-sectional)
 
-**Status.** Planned
-
 **Core research question.**\
 Does patients’ pre-therapy language provide clinically meaningful information about symptom severity and functioning, and does it add predictive value beyond established self-report questionnaires? Additionally, to what extent is this information captured by large language model (LLM)–based representations compared with simpler linguistic features?
 
 **Conceptual contribution.**\
 This substudy conceptualizes patient-generated language as an independent assessment modality rather than a proxy for existing symptom scales. While prior work has demonstrated correlations between language and self-reported symptoms, few studies have tested whether language captures incremental clinical information beyond standardized questionnaires, particularly for clinician-rated outcomes.
 
-**Sample definition.**
-
--   Training Data (N=)
-
--   Validation Data (N=)
-
--   Inclusion: Patients with at least one non-missing narrative response (Q10 or Q12) and available baseline symptom assessments.
-
 **Text inputs.**
 
 -   Primary: Q10 *Problem description*
 
 -   Secondary: Q12 *Therapy goals*
-
--   Sensitivity Analyses:
-
-    -   Concatenation of Q10 + Q12.
-
-    -   Concatenation of all answered open-ended responses.
 
 **Outcomes.**
 
@@ -300,44 +359,25 @@ This substudy conceptualizes patient-generated language as an independent assess
 
 ## Substudy 2: Patient narratives and themes
 
-**Status.** Planned
-
 **Core research question.**\
 How do patients conceptualize the development, context, and perceived causes of their mental health problems, as well as anticipated improvements, and how do these narrative patterns vary across individuals and clinical groups?
 
 **Conceptual contribution.**\
-This substudy emphasizes interpretation and theory generation, using patient language to uncover recurring narrative themes related to problem development, stressors, causal attributions, social context, and desired change. By analyzing these themes, this substudy provides insight into how narrative content and response patterns relate to diagnostic categories and baseline severity.
+This substudy emphasizes interpretation and theory generation, using patient language to uncover recurring narrative themes related to problem development, stressors, causal attributions, social context, and desired change. By analyzing these themes, this substudy provides insight into how narrative content and response patterns relate to diagnostic categories, baseline severity or sociodemographic and anamnestic characteristics.
 
-**Sample definition.**
-
--   Cohort version (N =)
-
-**Text inputs.** Q1 *Problem development*, Q2 *Extra stressors*, Q3 *Pre-onset changes*, Q6 *Problem causes*, Q7 *Expected improvements*, Q8 *Environment response*. Question-wise modeling (no forced concatenation).
+**Text inputs.** Q1 *Problem development*, Q2 *Extra stressors*, Q3 *Pre-onset changes*, Q6 *Problem causes*, Q7 *Expected improvements*, Q8 *Environment response*. Question-wise modeling.
 
 **Outcomes.** No single predictive outcome is specified, as the primary aim is interpretive and theory-generating rather than predictive.
-
--   Primary analyses: Descriptive characterization of thematic content and narrative patterns within and across questions.
--   Secondary analyses: Stratification of themes by diagnostic categories, baseline symptom severity, or sociodemographic characteristics.
 
 **Models & evaluation.** Topic modeling / embedding-based clustering; interpretive labeling; comparison of topic prevalence across patient groups.
 
 ## Substudy 3: Predicting treatment response and goal attainment (longitudinal prediction)
 
-**Status.** Planned
-
 **Core research question.**\
-Can patients’ pre-therapy language predict clinically meaningful treatment outcomes—such as global improvement, clinician-rated change, and individualized goal attainment—beyond baseline symptom severity and demographic characteristics?
+Can patients’ pre-therapy language predict clinically meaningful treatment outcomes beyond baseline symptom severity and demographic characteristics?
 
 **Conceptual contribution.**\
 This substudy extends language-based mental health assessment from cross-sectional validity to prognostic utility. While prior work has primarily examined whether language reflects current symptom severity, far less is known about whether pre-therapy narratives encode information relevant for future treatment response, such as motivation, goal clarity, perceived agency, or narrative coherence. By evaluating the ability of pre-therapy language to predict longitudinal outcomes above and beyond baseline symptom measures, this substudy tests whether patient-generated text captures clinically actionable signals that are not accessible through standard intake questionnaires alone.
-
-**Sample definition.**
-
--   Training Data (N=)
-
--   Validation Data (N=)
-
--   Inclusion: Patients with at least one non-missing narrative response (Q10 or Q12) and available baseline symptom assessments.
 
 **Text inputs.** Primary: Q10 and Q12; Secondary: concatenation models.
 
@@ -357,8 +397,7 @@ This substudy extends language-based mental health assessment from cross-section
 
 -   Language-augmented models: Baseline predictors plus language representations derived from pre-therapy text.
 
--   Feature types:
+## Substudy 4: Prompt-based LLM rubrics for interpretable language assessment
 
-    -   Simple language features (e.g., word count, pronouns, negations).
-
-    -   Contextual embeddings derived from pretrained large language models.
+**Core research question.**\
+Can prompt-based large language models (LLMs) reliably extract interpretable, clinically meaningful rubric scores from pre-therapy narratives, and do these rubric-based language measures add incremental value beyond (a) standardized questionnaires and (b) embedding-based language representations?
