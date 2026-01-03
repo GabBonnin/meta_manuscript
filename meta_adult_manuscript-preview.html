@@ -183,7 +183,8 @@
 <script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
-     
+     <script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">  
       <meta name="citation_title" content="Mental Health Evaluation through Text Analysis">
 <meta name="citation_author" content="Gabriel Bonnin">
 <meta name="citation_language" content="en">
@@ -302,8 +303,12 @@
   <li><a href="#preprocessing" id="toc-preprocessing" class="nav-link" data-scroll-target="#preprocessing">Preprocessing</a></li>
   <li><a href="#shared-analytic-framework" id="toc-shared-analytic-framework" class="nav-link" data-scroll-target="#shared-analytic-framework">Shared analytic framework</a></li>
   </ul></li>
-  <li><a href="#preliminary-results-dataset-characterization" id="toc-preliminary-results-dataset-characterization" class="nav-link" data-scroll-target="#preliminary-results-dataset-characterization">Preliminary results: dataset characterization</a></li>
-  <li><a href="#substudies-planned-manuscripts" id="toc-substudies-planned-manuscripts" class="nav-link" data-scroll-target="#substudies-planned-manuscripts">Substudies / planned manuscripts</a>
+  <li><a href="#preliminary-results" id="toc-preliminary-results" class="nav-link" data-scroll-target="#preliminary-results">Preliminary results</a>
+  <ul class="collapse">
+  <li><a href="#descriptive-statistics-of-textual-data" id="toc-descriptive-statistics-of-textual-data" class="nav-link" data-scroll-target="#descriptive-statistics-of-textual-data">Descriptive statistics of textual data</a></li>
+  <li><a href="#descriptive-statistics-of-clinical-data" id="toc-descriptive-statistics-of-clinical-data" class="nav-link" data-scroll-target="#descriptive-statistics-of-clinical-data">Descriptive statistics of clinical data</a></li>
+  </ul></li>
+  <li><a href="#substudies" id="toc-substudies" class="nav-link" data-scroll-target="#substudies">Substudies</a>
   <ul class="collapse">
   <li><a href="#substudy-1-language-as-clinical-assessment-cross-sectional" id="toc-substudy-1-language-as-clinical-assessment-cross-sectional" class="nav-link" data-scroll-target="#substudy-1-language-as-clinical-assessment-cross-sectional">Substudy 1: Language as clinical assessment (cross-sectional)</a></li>
   <li><a href="#substudy-2-patient-narratives-and-themes" id="toc-substudy-2-patient-narratives-and-themes" class="nav-link" data-scroll-target="#substudy-2-patient-narratives-and-themes">Substudy 2: Patient narratives and themes</a></li>
@@ -335,7 +340,7 @@ Note
 <h1>Abstract</h1>
 <p>Psychotherapy is one of the most effective treatments for mental health problems, but its success depends on accurate diagnostic assessments. Current assessment practices largely rely on standardized closed-ended scales that, while reliable, may fail to capture the complexity, context and individuality of patients’ mental states. Advances in artificial intelligence (AI) and natural language processing (NLP) enable the measurement of psychological constructs through natural language, offering a promising complement to traditional assessment methods by leveraging patients’ own descriptions of their experiences.</p>
 <p>While previous NLP-based mental health research has primarily focused on social media language, this project applies state-of-the-art large language models (LLMs) to open-ended intake data from a German outpatient psychotherapy clinic. Before therapy, patients describe the development, context, and perceived causes of their problems, as well as their current difficulties and therapy goals, in their own words. These texts are linked to key clinical measures, including diagnoses, symptom severity, functional impairment, and treatment outcomes, providing an ecologically valid resource for studying language-based assessment in real-world clinical settings.</p>
-<p>The project comprises three complementary substudies. First, we examine whether patient language at intake reflects cross-sectional symptom severity and clinician-rated impairment and whether it provides incremental information beyond established self-report questionnaires. Second, we conduct a narrative and thematic analysis of patient responses to different open-ended prompts to characterize recurring themes and selective response patterns in how patients make sense of their mental health problems. Third, we evaluate whether pre-therapy language predicts longitudinal treatment outcomes, including global improvement and individualized goal attainment, beyond baseline symptom measures.</p>
+<p>The project comprises several complementary substudies. First, we examine whether patient language at intake reflects cross-sectional symptom severity and impairment and whether it provides incremental information beyond established self-report questionnaires. Second, we conduct a thematic analysis of patient responses to different open-ended prompts to characterize recurring themes. Third, we evaluate whether pre-therapy language predicts longitudinal treatment outcomes beyond baseline symptom measures.</p>
 <p>Together, these studies aim to clarify how patient-generated language can be used for assessment, interpretation, and prognosis in psychotherapy. The findings are intended to inform the development of clinically meaningful, language-based assessment tools that support personalized care and contribute to the modernization of mental health evaluation.</p>
 <div class="{pagebreak}">
 
@@ -377,7 +382,6 @@ Note
 <li><strong>Impacted life areas:</strong> ‘In which areas of your life do these problems limit you (e.g.&nbsp;job, relationship)?’ (german original question: „In welchen Lebensbereichen schränken Sie diese Probleme ein (z. B. Beruf, Partnerschaft)?“)</li>
 <li><strong>Therapy goals:</strong> ‘What would you like to achieve for yourself in therapy?’ (german original question: „Was möchten Sie in der Therapie für sich erreichen?“)</li>
 </ol>
-<p>To characterize engagement and heterogeneity in responses to the open-ended intake questions, we computed descriptive statistics for each question, including response length and an entropy-based diversity index <span class="citation" data-cites="shannon1948mathematical">(<a href="#ref-shannon1948mathematical" role="doc-biblioref">Shannon, 1948</a>)</span>. Responses were pooled across participants for each question and tokenized into word types. Shannon entropy was computed over the resulting word probability distribution and transformed into an effective diversity measure, representing the effective number of equally frequent word types elicited by each question. Whereas word count reflects the quantity of text produced, the diversity index captures the dispersion of lexical content across respondents and provides a complementary indicator of how strongly different question constrain or open the response space.</p>
 </section>
 <section id="psychometric-measures" class="level3">
 <h3 class="anchored" data-anchor-id="psychometric-measures">Psychometric measures</h3>
@@ -392,7 +396,7 @@ Note
 </section>
 <section id="depression-anxiety-stress-scale-42" class="level4">
 <h4 class="anchored" data-anchor-id="depression-anxiety-stress-scale-42">Depression Anxiety Stress Scale 42</h4>
-<p>General psychological distress was assessed using the <em>Depression Anxiety Stress Scales–42</em> (DASS-42<span class="citation" data-cites="Lovibond1995">(<a href="#ref-Lovibond1995" role="doc-biblioref">Lovibond &amp; Lovibond, 1995</a>)</span>), which consists of 42 items measuring symptoms of depression, anxiety, and stress on a XXX scale.</p>
+<p>Depressive symptoms, anxiety symptoms, and general psychological distress were assessed using the Depression Anxiety Stress Scale–42<em>Depression Anxiety Stress Scale–42</em> (DASS-42<span class="citation" data-cites="Lovibond1995">(<a href="#ref-Lovibond1995" role="doc-biblioref">Lovibond &amp; Lovibond, 1995</a>)</span>), which consists of 42 items measuring symptoms of depression, anxiety, and stress on a 4-point likert scale.</p>
 </section>
 <section id="brief-symptom-inventory" class="level4">
 <h4 class="anchored" data-anchor-id="brief-symptom-inventory">Brief Symptom Inventory</h4>
@@ -408,9 +412,10 @@ Note
 </section>
 <section id="clinical-global-impression" class="level4">
 <h4 class="anchored" data-anchor-id="clinical-global-impression">Clinical Global Impression</h4>
+<p>Clinician-rated symptom severity and improvement were assessed using the <em>Clinical Global Impression</em> (CGI) scales.</p>
 <section id="severity-scale" class="level5">
 <h5 class="anchored" data-anchor-id="severity-scale">Severity Scale</h5>
-<p>Clinician-rated symptom severity and improvement were assessed using the <em>Clinical Global Impression</em> (CGI) scales. The <em>CGI-Severity</em> scale evaluates the clinician’s global impression of the patient’s current level of mental illness, based on their total clinical experience with this population. The item asks: “Considering your total clinical experience with this particular population, how mentally ill is the patient at this time?”</p>
+<p>The <em>CGI-Severity</em> scale evaluates the clinician’s global impression of the patient’s current level of mental illness, based on their total clinical experience with this population. The item asks: <em>“Considering your total clinical experience with this particular population, how mentally ill is the patient at this time?”</em></p>
 </section>
 <section id="improvement-scale" class="level5">
 <h5 class="anchored" data-anchor-id="improvement-scale">Improvement Scale</h5>
@@ -561,22 +566,22 @@ Note
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
 </tr>
 <tr class="odd">
 <td><strong>Glob-Pt</strong></td>
 <td></td>
 <td></td>
 <td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
+<td>X</td>
 </tr>
 <tr class="even">
 <td><strong>GAS</strong></td>
@@ -594,30 +599,24 @@ Note
 </section>
 <section id="preprocessing" class="level2">
 <h2 class="anchored" data-anchor-id="preprocessing">Preprocessing</h2>
-<p>To streamline data collection, an automated transcription pipeline was implemented: The handwritten text data is first recorded by trained employees of the FBZ adult outpatient clinic using a mobile audio recording device. Identifying features (e.g.&nbsp;names, dates of birth, location details) were replaced by placeholders during recording (anonymisation). The transcription was carried out on local hardware using the open source tool Whisper Large v2 (<a href="https://github.com/openai/whisper" class="uri">https://github.com/openai/whisper</a>), a state-of-the-art speech-to-text model <span class="citation" data-cites="Radford2022">(<a href="#ref-Radford2022" role="doc-biblioref">Radford et al., 2022</a>)</span>. Each recording begins with a structured introduction, including a patient identification code, followed by responses to predefined questions. The transcription pipeline automatically processes all audio recordings, extracts the patient codes, and identifies responses to key questions.</p>
+<p>To streamline data collection, an automated transcription pipeline was implemented: The handwritten text data is first recorded by trained employees of the FBZ adult outpatient clinic using a mobile audio recording device. Identifying features (e.g.&nbsp;names, dates of birth, location details) were replaced by placeholders during recording. The transcription was carried out on local hardware using the open source tool Whisper Large v2 (<a href="https://github.com/openai/whisper" class="uri">https://github.com/openai/whisper</a>), a state-of-the-art speech-to-text model <span class="citation" data-cites="Radford2022">(<a href="#ref-Radford2022" role="doc-biblioref">Radford et al., 2022</a>)</span>. Each recording begins with a structured introduction, including a patient identification code, followed by responses to predefined questions. The transcription pipeline automatically processes all audio recordings, extracts the patient codes, and identifies responses to key questions.</p>
 <p>As an additional data correction step, the exported transcription table was screened for incomplete entries. Records with missing patient identification codes or without any extracted text were automatically flagged, exported for manual correction, and subsequently re-imported and merged back into the original dataset. The corrected dataset was then used for downstream analyses.</p>
 </section>
 <section id="shared-analytic-framework" class="level2">
 <h2 class="anchored" data-anchor-id="shared-analytic-framework">Shared analytic framework</h2>
-<p>The Sequential Evaluation with Model Pre-registration <span class="citation" data-cites="kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024">(<a href="#ref-kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024" role="doc-biblioref">Kjell, Ganesan, et al., 2024</a>)</span> framework will be implemented to ensure robust model development, mitigating overfitting and enabling unbiased performance evaluation. Additionally, evaluating models on prospective data will simulate real-world clinical deployment by assessing performance on new, unseen patient data.</p>
-<p>During the model development phase, preprocessing pipelines will be finalized, and exploratory models developed using advanced cross-validation techniques. Contextual embeddings derived from pretrained LLMs will be linked to clinical outcomes using state-of-the-art prediction models, including ridge regression <span class="citation" data-cites="Hoerl1970">(<a href="#ref-Hoerl1970" role="doc-biblioref">Hoerl &amp; Kennard, 1970</a>)</span>, lasso regression <span class="citation" data-cites="10.1111/j.2517-6161.1996.tb02080.x">(<a href="#ref-10.1111/j.2517-6161.1996.tb02080.x" role="doc-biblioref">Tibshirani, 1996</a>)</span>, and random forests <span class="citation" data-cites="598994">(<a href="#ref-598994" role="doc-biblioref">Ho, 1995</a>)</span>. The final pipelines will be pre-registered for evaluation (e.g., <a href="https://aspredicted.org/" class="uri">https://aspredicted.org/</a>).</p>
-<p>In the evaluation phase, pre-registered models will be tested on held-out datasets, enabling unbiased performance assessments. This phase will include detailed error analysis to identify potential biases and limitations, as well as comparative analyses to benchmark model performance against the HRG’s models.</p>
-<p>Furthermore, topic modeling techniques (e.g., Latent Dirichlet Allocation; <span class="citation" data-cites="10.5555/944919.944937">(<a href="#ref-10.5555/944919.944937" role="doc-biblioref">Blei et al., 2003</a>)</span>, or BERTopic; <span class="citation" data-cites="grootendorst2022bertopicneuraltopicmodeling">(<a href="#ref-grootendorst2022bertopicneuraltopicmodeling" role="doc-biblioref">Grootendorst, 2022</a>)</span>) will be employed to explore themes in patient-generated text.</p>
-<p>Specific operationalizations of text inputs, outcomes, and models differ across substudies and are specified below.</p>
-<p>The open-ended questions were administered in two questionnaire blocks. Analyses were restricted to cases in which the respective questionnaire was present. Within these blocks, item-level nonresponse is descriptively intepreted as potentially informative of selective responding without assuming specific psychological mechanisms.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><a href="reports/Abbildung_Gabriel_eng.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="The step-by-step process of patient narrative analysis, from preprocessing to data evaluation."><img src="reports/Abbildung_Gabriel_eng.png" class="img-fluid figure-img" style="width:100.0%" alt="The step-by-step process of patient narrative analysis, from preprocessing to data evaluation."></a></p>
-<figcaption>The step-by-step process of patient narrative analysis, from preprocessing to data evaluation.</figcaption>
-</figure>
-</div>
+<p>All substudies in this project are based on the same clinical cohort and share a common analytic foundation. Specific operationalizations of text inputs, outcomes, and analytic models differ across substudies and are specified in the corresponding substudy sections below.</p>
+<p><strong>Data scope and unit of analysis</strong>. Across all substudies, analyses focus on pre-therapy patient narratives collected during intake. Language-based analyses are temporally ordered such that patient narratives precede all clinical outcomes of interest. Outcomes may be assessed cross-sectionally (at intake) or longitudinally (during or after therapy), depending on the substudy. The unit of analysis is the individual patient. Textual data collected during therapy are not used as predictors in any analysis.</p>
+<p><strong>Descriptive characterization of open-ended responses.</strong> As a shared descriptive foundation, responses to each open-ended prompt are characterized with respect to engagement and heterogeneity. Descriptive statistics include response length and an entropy-based lexical diversity index <span class="citation" data-cites="shannon1948mathematical">(<a href="#ref-shannon1948mathematical" role="doc-biblioref">Shannon, 1948</a>)</span>, computed across pooled responses per question. This characterization provides a common empirical basis for interpreting prompt-specific response patterns across substudies.</p>
+<p>Because the open-ended questions were administered in two questionnaire blocks, analyses are restricted to cases in which the respective questionnaire was present. Within these blocks, item-level nonresponse is summarized descriptively and interpreted as potentially informative of selective responding.</p>
 <div class="{pagebreak}">
 
 </div>
 </section>
 </section>
-<section id="preliminary-results-dataset-characterization" class="level1">
-<h1>Preliminary results: dataset characterization</h1>
+<section id="preliminary-results" class="level1">
+<h1>Preliminary results</h1>
+<section id="descriptive-statistics-of-textual-data" class="level2">
+<h2 class="anchored" data-anchor-id="descriptive-statistics-of-textual-data">Descriptive statistics of textual data</h2>
 <p>Descriptive analyses revealed substantial heterogeneity across questions in response rates, length, and lexical diversity. Holistic questions such as problem description (q10) and therapy goals (q12) showed low missingness, longer median response lengths, and high lexical diversity, indicating that patients readily produced extended and heterogeneous narratives when asked to reflect broadly on their difficulties or desired changes. In contrast, prompts targeting causal connections (q4) or constraints (q11) frequently elicited short or missing responses and exhibited lower diversity, consistent with more constrained or confirmatory response formats. Notably, lexical diversity varied independently of response length, suggesting that some prompts elicited shared narrative scripts despite moderate verbosity (e.g., q7 Expected Improvements).</p>
 <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ------------------------------------------------------------</span></span>
@@ -931,74 +930,269 @@ Note
 </table>
 </div>
 </div></div>
+</section>
+<section id="descriptive-statistics-of-clinical-data" class="level2">
+<h2 class="anchored" data-anchor-id="descriptive-statistics-of-clinical-data">Descriptive statistics of clinical data</h2>
+<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'kableExtra'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:dplyr':
+
+    group_rows</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 1) Build long DSMV data (one row per case x slot) ----</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>dsmv_cols <span class="ot">&lt;-</span> <span class="fu">grep</span>(<span class="st">"^dsmv_diagnosis_[1-7](_|$)"</span>, <span class="fu">names</span>(working_data), <span class="at">value =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>first_non_empty <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x[<span class="sc">!</span><span class="fu">is.na</span>(x) <span class="sc">&amp;</span> x <span class="sc">!=</span> <span class="st">""</span>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(x) <span class="sc">==</span> <span class="dv">0</span>) <span class="cn">NA_character_</span> <span class="cf">else</span> x[<span class="dv">1</span>]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>dsmv_long <span class="ot">&lt;-</span> working_data <span class="sc">%&gt;%</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, <span class="fu">all_of</span>(dsmv_cols)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>case_nr, as.character)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">cols =</span> <span class="sc">-</span>case_nr,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">"slot"</span>, <span class="st">"field"</span>),</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_pattern =</span> <span class="st">"^dsmv_diagnosis_([1-7])(?:_(.*))?$"</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_to =</span> <span class="st">"value"</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">field =</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(field) <span class="sc">|</span> field <span class="sc">==</span> <span class="st">""</span>, <span class="st">"diagnosis"</span>, field)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">names_from  =</span> field,</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_from =</span> value,</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">values_fn   =</span> first_non_empty</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(diagnosis) <span class="sc">&amp;</span> diagnosis <span class="sc">!=</span> <span class="st">""</span>)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 2) translate german diagnostic labels to english ----</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>lookup <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"/Volumes/meta_data/processed/working_data/diagnosis_lookup_de_en.csv"</span>, <span class="at">delim =</span> <span class="st">";"</span>, <span class="at">show_col_types =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>dsmv_long_en <span class="ot">&lt;-</span> dsmv_long <span class="sc">%&gt;%</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(lookup, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"diagnosis"</span> <span class="ot">=</span> <span class="st">"diagnosis_de"</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diagnosis =</span> <span class="fu">coalesce</span>(diagnosis_en, diagnosis)) <span class="sc">%&gt;%</span>  <span class="co"># fallback if missing</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>diagnosis_en)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 3) Counts: all vs primary (by type label) ----</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>all_diag <span class="ot">&lt;-</span> dsmv_long_en <span class="sc">%&gt;%</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(diagnosis, <span class="at">name =</span> <span class="st">"n_all"</span>)</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>primary_diag <span class="ot">&lt;-</span> dsmv_long_en <span class="sc">%&gt;%</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(type <span class="sc">==</span> <span class="st">"primary diagnosis"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(diagnosis, <span class="at">name =</span> <span class="st">"n_primary"</span>)</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 4) Combine + fill NAs ----</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>diag_summary <span class="ot">&lt;-</span> <span class="fu">full_join</span>(all_diag, primary_diag, <span class="at">by =</span> <span class="st">"diagnosis"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_all =</span> <span class="fu">replace_na</span>(n_all, <span class="dv">0</span>L),</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_primary =</span> <span class="fu">replace_na</span>(n_primary, <span class="dv">0</span>L)</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 5) Collapse Major Depression subtypes (store the result!) ----</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>diag_collapsed <span class="ot">&lt;-</span> diag_summary <span class="sc">%&gt;%</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">diagnosis =</span> <span class="fu">if_else</span>(</span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>      <span class="fu">grepl</span>(<span class="st">"^Major Depressive"</span>, diagnosis),</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>      <span class="st">"Major Depression (all subtypes)"</span>,</span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>      diagnosis</span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(diagnosis) <span class="sc">%&gt;%</span></span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_all =</span> <span class="fu">sum</span>(n_all),</span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_primary =</span> <span class="fu">sum</span>(n_primary),</span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a><span class="co"># --- 6) Keep &gt;=10, and add "Other (&lt;10)" from the collapsed table ----</span></span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>diag_main <span class="ot">&lt;-</span> diag_collapsed <span class="sc">%&gt;%</span></span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n_all <span class="sc">&gt;=</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n_all))</span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>other_row <span class="ot">&lt;-</span> diag_collapsed <span class="sc">%&gt;%</span></span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n_all <span class="sc">&lt;</span> <span class="dv">10</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb8-74"><a href="#cb8-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">diagnosis =</span> <span class="st">"Other diagnoses (&lt;10)"</span>,</span>
+<span id="cb8-75"><a href="#cb8-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_all =</span> <span class="fu">sum</span>(n_all),</span>
+<span id="cb8-76"><a href="#cb8-76" aria-hidden="true" tabindex="-1"></a>    <span class="at">n_primary =</span> <span class="fu">sum</span>(n_primary)</span>
+<span id="cb8-77"><a href="#cb8-77" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb8-78"><a href="#cb8-78" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-79"><a href="#cb8-79" aria-hidden="true" tabindex="-1"></a>diag_table_final <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(diag_main, other_row)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [4]:</pre></div><div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>diag_table_final <span class="sc">%&gt;%</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">DSM-V diagnosis</span><span class="st">`</span> <span class="ot">=</span> diagnosis,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">All diagnoses (n)</span><span class="st">`</span> <span class="ot">=</span> n_all,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Primary diagnoses (n)</span><span class="st">`</span> <span class="ot">=</span> n_primary</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable</span>(</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">align =</span> <span class="fu">c</span>(<span class="st">"l"</span>, <span class="st">"c"</span>, <span class="st">"c"</span>),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">booktabs =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"DSM-5 diagnoses in the sample (absolute frequencies)"</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">kable_styling</span>(<span class="at">full_width =</span> <span class="cn">FALSE</span>, <span class="at">position =</span> <span class="st">"left"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">footnote</span>(<span class="at">general =</span> <span class="st">"Diagnoses were collapsed for display. Only diagnoses with ≥10 occurrences are shown individually; remaining diagnoses are summarized as 'Other diagnoses (&lt;10)'."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>DSM-5 diagnoses in the sample (absolute frequencies)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">DSM-V diagnosis</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">All diagnoses (n)</th>
+<th style="text-align: center;" data-quarto-table-cell-role="th">Primary diagnoses (n)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Major Depression (all subtypes)</td>
+<td style="text-align: center;">201</td>
+<td style="text-align: center;">162</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Persistent Depressive Disorder (Dysthymia)</td>
+<td style="text-align: center;">78</td>
+<td style="text-align: center;">55</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Social Anxiety Disorder (Social Phobia)</td>
+<td style="text-align: center;">55</td>
+<td style="text-align: center;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Posttraumatic Stress Disorder</td>
+<td style="text-align: center;">33</td>
+<td style="text-align: center;">22</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Panic Disorder</td>
+<td style="text-align: center;">27</td>
+<td style="text-align: center;">14</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Generalized Anxiety Disorder</td>
+<td style="text-align: center;">26</td>
+<td style="text-align: center;">14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Agoraphobia</td>
+<td style="text-align: center;">25</td>
+<td style="text-align: center;">11</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Adjustment Disorder with Depressed Mood</td>
+<td style="text-align: center;">19</td>
+<td style="text-align: center;">19</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Borderline Personality Disorder</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">9</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Obsessive-Compulsive Disorder</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">9</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Somatic Symptom Disorder</td>
+<td style="text-align: center;">15</td>
+<td style="text-align: center;">13</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Adjustment Disorder with Mixed Anxiety and Depressed Mood</td>
+<td style="text-align: center;">14</td>
+<td style="text-align: center;">14</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Other diagnoses (&lt;10)</td>
+<td style="text-align: center;">133</td>
+<td style="text-align: center;">45</td>
+</tr>
+</tbody><tfoot>
+<tr class="odd">
+<td style="text-align: left; padding: 0;"><span style="font-style: italic;">Note: </span></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left; padding: 0;"><sup></sup> Diagnoses were collapsed for display. Only diagnoses with ≥10 occurrences are shown individually; remaining diagnoses are summarized as 'Other diagnoses (&lt;10)'.</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+</tfoot>
+
+</table>
+</div>
+</div></div>
 <div class="{pagebreak}">
 
 </div>
 </section>
-<section id="substudies-planned-manuscripts" class="level1">
-<h1>Substudies / planned manuscripts</h1>
+</section>
+<section id="substudies" class="level1">
+<h1>Substudies</h1>
 <p>This project comprises multiple complementary substudies that share a common dataset and preprocessing pipeline but address distinct research questions. To avoid analytic flexibility and to maximize interpretability, each substudy pre-specifies its text inputs, outcomes, and evaluation strategy.</p>
 <section id="substudy-1-language-as-clinical-assessment-cross-sectional" class="level2">
 <h2 class="anchored" data-anchor-id="substudy-1-language-as-clinical-assessment-cross-sectional">Substudy 1: Language as clinical assessment (cross-sectional)</h2>
-<p><strong>Core research question.</strong><br>
-Does patients’ pre-therapy language provide clinically meaningful information about symptom severity and functioning, and does it add predictive value beyond established self-report questionnaires? Additionally, to what extent is this information captured by large language model (LLM)–based representations compared with simpler linguistic features?</p>
-<p><strong>Conceptual contribution.</strong><br>
-This substudy conceptualizes patient-generated language as an independent assessment modality rather than a proxy for existing symptom scales. While prior work has demonstrated correlations between language and self-reported symptoms, few studies have tested whether language captures incremental clinical information beyond standardized questionnaires, particularly for clinician-rated outcomes.</p>
-<p><strong>Text inputs.</strong></p>
-<ul>
-<li><p>Primary: Q10 <em>Problem description</em></p></li>
-<li><p>Secondary: Q12 <em>Therapy goals</em></p></li>
-</ul>
+<p><strong>Core research question.</strong> Does patients’ pre-therapy language provide clinically meaningful information about symptom severity and functioning, and does it add predictive value beyond established self-report questionnaires? Additionally, to what extent is this information captured by large language model (LLM)–based representations compared with simpler linguistic features?</p>
+<p><strong>Conceptual contribution.</strong> This substudy conceptualizes patient-generated language as an independent assessment modality rather than a proxy for existing symptom scales. While prior work has demonstrated correlations between language and self-reported symptoms, few studies have tested whether language captures incremental clinical information beyond standardized questionnaires, particularly for clinician-rated outcomes.</p>
+<p><strong>Text inputs.</strong> Q1 Problem developtment, Q10 <em>Problem description,</em> Q12 <em>Therapy goals</em></p>
 <p><strong>Outcomes.</strong></p>
 <ul>
-<li><p>Convergent validity outcomes: Cross-sectional self-report symptom measures (BDI-II, BSI/GSI, DASS-42).</p></li>
+<li><p>Convergent validity outcomes: Cross-sectional self-report symptom (BDI-II, BSI/GSI, DASS-42) and well-being (PMH) measures</p></li>
 <li><p>Incremental validity outcomes: Clinician-rated symptom severity (CGI-Severity).</p></li>
 </ul>
-<p><strong>Models &amp; evaluation.</strong> Baselines (length, pronouns/negations) vs.&nbsp;LLM embeddings + ridge/lasso; holdout evaluation; incremental validity over scales (e.g., language adds predictive value beyond baseline questionnaires).</p>
+<p><strong>Models &amp; evaluation.</strong> Convergent validity with self-report symptom measures (BDI-II, BSI/GSI, DASS-42) will be evaluated by estimating the proportion of symptom variance explained by language-based representations. Incremental validity will be tested by assessing whether language explains additional variance in clinician-rated symptom severity (CGI-Severity) beyond self-report questionnaires.</p>
+<p>The Sequential Evaluation with Model Pre-registration <span class="citation" data-cites="kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024">(<a href="#ref-kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024" role="doc-biblioref">Kjell, Ganesan, et al., 2024</a>)</span> framework will be implemented to ensure robust model development, mitigating overfitting and enabling unbiased performance evaluation. Additionally, evaluating models on prospective data will simulate real-world clinical deployment by assessing performance on new, unseen patient data.</p>
+<p>During the model development phase, preprocessing pipelines will be finalized, and exploratory models developed using advanced cross-validation techniques. Contextual embeddings derived from pretrained LLMs will be linked to clinical outcomes using state-of-the-art prediction models, including ridge regression <span class="citation" data-cites="Hoerl1970">(<a href="#ref-Hoerl1970" role="doc-biblioref">Hoerl &amp; Kennard, 1970</a>)</span>, lasso regression <span class="citation" data-cites="10.1111/j.2517-6161.1996.tb02080.x">(<a href="#ref-10.1111/j.2517-6161.1996.tb02080.x" role="doc-biblioref">Tibshirani, 1996</a>)</span>, and random forests <span class="citation" data-cites="598994">(<a href="#ref-598994" role="doc-biblioref">Ho, 1995</a>)</span>. The final pipelines will be pre-registered for evaluation (e.g., <a href="https://aspredicted.org/" class="uri">https://aspredicted.org/</a>). In the evaluation phase, pre-registered models will be tested on held-out datasets, enabling unbiased performance assessments.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="reports/Abbildung_Gabriel_eng.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="The step-by-step process of patient narrative analysis, from preprocessing to data evaluation."><img src="reports/Abbildung_Gabriel_eng.png" class="img-fluid figure-img" style="width:100.0%" alt="The step-by-step process of patient narrative analysis, from preprocessing to data evaluation."></a></p>
+<figcaption>The step-by-step process of patient narrative analysis, from preprocessing to data evaluation.</figcaption>
+</figure>
+</div>
 </section>
 <section id="substudy-2-patient-narratives-and-themes" class="level2">
 <h2 class="anchored" data-anchor-id="substudy-2-patient-narratives-and-themes">Substudy 2: Patient narratives and themes</h2>
-<p><strong>Core research question.</strong><br>
-How do patients conceptualize the development, context, and perceived causes of their mental health problems, as well as anticipated improvements, and how do these narrative patterns vary across individuals and clinical groups?</p>
-<p><strong>Conceptual contribution.</strong><br>
-This substudy emphasizes interpretation and theory generation, using patient language to uncover recurring narrative themes related to problem development, stressors, causal attributions, social context, and desired change. By analyzing these themes, this substudy provides insight into how narrative content and response patterns relate to diagnostic categories, baseline severity or sociodemographic and anamnestic characteristics.</p>
+<p><strong>Core research question.</strong> How do patients conceptualize the their mental health problems, as well as anticipated improvements, and how do these narrative patterns vary across individuals and clinical groups?</p>
+<p><strong>Conceptual contribution.</strong> This substudy emphasizes interpretation and theory generation, using patient language to uncover recurring narrative themes. By analyzing these themes, this substudy provides insight into how narrative content and response patterns relate to diagnostic categories, baseline severity or sociodemographic (e.g.&nbsp;age, gender) and anamnestic (e.g.&nbsp;childhood trauma) characteristics.</p>
 <p><strong>Text inputs.</strong> Q1 <em>Problem development</em>, Q2 <em>Extra stressors</em>, Q3 <em>Pre-onset changes</em>, Q6 <em>Problem causes</em>, Q7 <em>Expected improvements</em>, Q8 <em>Environment response</em>. Question-wise modeling.</p>
 <p><strong>Outcomes.</strong> No single predictive outcome is specified, as the primary aim is interpretive and theory-generating rather than predictive.</p>
 <p><strong>Models &amp; evaluation.</strong> Topic modeling / embedding-based clustering; interpretive labeling; comparison of topic prevalence across patient groups.</p>
 </section>
 <section id="substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction" class="level2">
 <h2 class="anchored" data-anchor-id="substudy-3-predicting-treatment-response-and-goal-attainment-longitudinal-prediction">Substudy 3: Predicting treatment response and goal attainment (longitudinal prediction)</h2>
-<p><strong>Core research question.</strong><br>
-Can patients’ pre-therapy language predict clinically meaningful treatment outcomes beyond baseline symptom severity and demographic characteristics?</p>
-<p><strong>Conceptual contribution.</strong><br>
-This substudy extends language-based mental health assessment from cross-sectional validity to prognostic utility. While prior work has primarily examined whether language reflects current symptom severity, far less is known about whether pre-therapy narratives encode information relevant for future treatment response, such as motivation, goal clarity, perceived agency, or narrative coherence. By evaluating the ability of pre-therapy language to predict longitudinal outcomes above and beyond baseline symptom measures, this substudy tests whether patient-generated text captures clinically actionable signals that are not accessible through standard intake questionnaires alone.</p>
-<p><strong>Text inputs.</strong> Primary: Q10 and Q12; Secondary: concatenation models.</p>
+<p><strong>Core research question.</strong> Can patients’ pre-therapy language predict clinically meaningful treatment outcomes beyond baseline symptom severity and demographic characteristics?</p>
+<p><strong>Conceptual contribution.</strong> This substudy extends language-based mental health assessment from cross-sectional validity to prognostic utility. While prior work has primarily examined whether language reflects current symptom severity, far less is known about whether pre-therapy narratives encode information relevant for future treatment response, such as motivation, goal clarity, perceived agency, or narrative coherence. By evaluating the ability of pre-therapy language to predict longitudinal outcomes above and beyond baseline symptom and well-being measures, this substudy tests whether patient-generated text captures clinically actionable signals that are not accessible through standard intake questionnaires alone.</p>
+<p><strong>Text inputs.</strong> Primary: Q10, Q12, Q7, Q1; Secondary: concatenation models.</p>
 <p><strong>Outcomes.</strong></p>
 <ul>
 <li><p>Clinician-rated improvement (CGI-Improvement) at 6 months-follow-up assessment.</p></li>
 <li><p>Global therapy outcome ratings (patient- and therapist-reported) at 6 months-follow-up assessment.</p></li>
 <li><p>Goal Attainment Scale at 6 months-follow-up assessment.</p></li>
-<li><p>Pre-Post Differences in Symptom Rating Scales ((BDI-II, BSI/GSI, DASS-42).</p></li>
+<li><p>Pre-Post differences in symptom (BDI-II, BSI/GSI, DASS-42) and well-being (PMH) scales .</p></li>
 </ul>
 <p><strong>Models &amp; evaluation.</strong></p>
 <ul>
-<li><p>Baseline prognostic models: Demographic variables and baseline symptom severity (e.g., BDI-II, BSI/GSI, CGI-Severity).</p></li>
+<li><p>Baseline prognostic models: Demographic variables and baseline symptom severity and well-being (e.g., BDI-II, BSI/GSI, PMH, CGI-Severity).</p></li>
 <li><p>Language-augmented models: Baseline predictors plus language representations derived from pre-therapy text.</p></li>
 </ul>
 </section>
 <section id="substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment" class="level2">
 <h2 class="anchored" data-anchor-id="substudy-4-prompt-based-llm-rubrics-for-interpretable-language-assessment">Substudy 4: Prompt-based LLM rubrics for interpretable language assessment</h2>
-<p><strong>Core research question.</strong><br>
-Can prompt-based large language models (LLMs) reliably extract interpretable, clinically meaningful rubric scores from pre-therapy narratives, and do these rubric-based language measures add incremental value beyond (a) standardized questionnaires and (b) embedding-based language representations?</p>
+<p><strong>Core research question.</strong> Can prompt-based large language models (LLMs) reliably extract interpretable, clinically meaningful rubric scores from pre-therapy narratives, and do these rubric-based language measures add incremental value beyond (a) standardized questionnaires and (b) embedding-based language representations?</p>
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" data-line-spacing="2" role="list">
 <div id="ref-Beck1996" class="csl-entry" role="listitem">
 Beck, A. T., Steer, R. A., &amp; Brown, G. K. (1996). <em><span>BDI-II</span>: <span>Beck Depression Inventory</span> manual</em> (2nd ed.). Psychological Corporation.
 </div>
 <div id="ref-bernstein2003" class="csl-entry" role="listitem">
 Bernstein, D. P., Stein, J. A., Newcomb, M. D., Walker, E., Pogge, D., Ahluvalia, T., Stokes, J., Handelsman, L., Medrano, M., Desmond, D., &amp; Zule, W. (2003). Development and validation of a brief screening version of the Childhood Trauma Questionnaire. <em>Child Abuse &amp; Neglect</em>, <em>27</em>(2), 169–190. <a href="https://doi.org/10.1016/s0145-2134(02)00541-0">https://doi.org/10.1016/s0145-2134(02)00541-0</a>
-</div>
-<div id="ref-10.5555/944919.944937" class="csl-entry" role="listitem">
-Blei, D. M., Ng, A. Y., &amp; Jordan, M. I. (2003). Latent dirichlet allocation. <em>Journal of Machine Learning Research</em>, <em>3</em>(null), 993–1022.
 </div>
 <div id="ref-chorpita2011evidence" class="csl-entry" role="listitem">
 Chorpita, B. F., Daleiden, E. L., Ebesutani, C., Young, J., Becker, K. D., Nakamura, B. J., Phillips, L., Ward, A., Lynch, R., Trent, L., et al. (2011). Evidence-based treatments for children and adolescents: <span>An</span> updated review of indicators of efficacy and effectiveness. <em>Clinical Psychology: Science and Practice</em>, <em>18</em>(2), 154–172.
@@ -1008,9 +1202,6 @@ Devlin, J., Chang, M.-W., Lee, K., &amp; Toutanova, K. (2019). <span>BERT</span>
 </div>
 <div id="ref-book" class="csl-entry" role="listitem">
 Franke, G. (2002). <em>Franke, g.h. (2000). BSI. Brief symptom inventory - deutsche version. Manual. Göttingen: beltz.</em>
-</div>
-<div id="ref-grootendorst2022bertopicneuraltopicmodeling" class="csl-entry" role="listitem">
-Grootendorst, M. (2022). <em><span>BERTopic</span>: <span>Neural</span> topic modeling with a class-based <span>TF-IDF</span> procedure</em>. <a href="https://arxiv.org/abs/2203.05794">https://arxiv.org/abs/2203.05794</a>
 </div>
 <div id="ref-598994" class="csl-entry" role="listitem">
 Ho, T. K. (1995). Random decision forests. <em>Proceedings of 3rd International Conference on Document Analysis and Recognition</em>, <em>1</em>, 278–282 vol.1. <a href="https://doi.org/10.1109/ICDAR.1995.598994">https://doi.org/10.1109/ICDAR.1995.598994</a>
