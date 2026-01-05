@@ -82,11 +82,11 @@ Diagnosis at the outpatient clinic is conducted using structured clinical interv
 
 #### Beck-Depression-Inventory II
 
-Depressive symptoms were assessed using the *Beck Depression Inventory–II* (BDI-II; [@Beck1996]), a widely used self-report questionnaire measuring the severity of depressive symptomatology over the past two weeks.
+Depressive symptoms were assessed using the *Beck Depression Inventory–II* (BDI-II; [@Beck1996]), a widely used self-report questionnaire measuring the severity of depressive symptomatology over the past two weeks.
 
 #### Depression Anxiety Stress Scale 42
 
-Depressive symptoms, anxiety symptoms, and general psychological distress were assessed using the Depression Anxiety Stress Scale–42*Depression Anxiety Stress Scale–42* (DASS-42[@Lovibond1995]), which consists of 42 items measuring symptoms of depression, anxiety, and stress on a 4-point likert scale.
+Depressive symptoms, anxiety symptoms, and general psychological distress were assessed using the *Depression Anxiety Stress Scale–42* (DASS-42[@Lovibond1995]), which consists of 42 items measuring symptoms of depression, anxiety, and stress on a 4-point likert scale.
 
 #### Brief Symptom Inventory
 
@@ -127,7 +127,7 @@ For each patient, an overall goal attainment score was computed as the mean rati
 ## Measurement time points
 
 | Timepoint | DU-DI | DU-Prä | KZT1-DU4 | KZT1-DUPost | KZT2-DUPost | LZT1-DUPost | LZT2-DUPost | Kat6 |
-|----|----|----|----|----|----|----|----|----|
+|--------|--------|--------|--------|--------|--------|--------|--------|--------|
 | **Explanation** | Pre-therapy, 4th contact | Pre-therapy, 6th contact | 4th therapy session | 12th therapy session | 24th therapy session | 45th therapy session | 60th therapy session | 6 month after therapy |
 | **Diagnosis** | X |  |  |  |  |  |  |  |
 | **Demographics** |  | X |  |  |  |  |  |  |
@@ -162,46 +162,305 @@ Because the open-ended questions were administered in two questionnaire blocks, 
 
 # Preliminary results
 
-## Descriptive statistics of textual data
+## Descriptive statistics
+
+```{r}
+#| include: false
+
+# ============================================================
+# Load processed working dataset
+# ============================================================
+# Dataset contains:
+# - one row per patient (unit of analysis)
+# - one column per open-ended question or clinical variable
+working_data <- readRDS("/Volumes/meta_data/processed/working_data/merged_data.rds")
+# ============================================================
+# Load required packages
+# ============================================================
+library(tidyverse)   # dplyr / tidyr / ggplot / general wrangling
+library(stringi)     # robust word counts (stri_count_words)
+library(knitr)       # kable() table rendering
+library(tidytext)    # unnest_tokens() for tokenization
+library(purrr)       # map() helpers
+
+# ============================================================
+# Output helpers (to support pdf + html + docx via Quarto/Pandoc)
+# ============================================================
+
+# Print a note below a table in a way that survives multiple output formats.
+print_note <- function(text) {
+  cat("\n\n", "Note:", text, "\n\n")
+}
+
+# Indent labels in tables. We use LaTeX spacing for PDF and inline HTML for HTML/docx.
+indent_label <- function(x, level = 1) {
+  if (knitr::is_latex_output()) {
+    paste0(strrep("\\hspace{1em}", level), x)
+  } else {
+    paste0(
+      "<span style='padding-left:", 1.2 * level, "em; display:inline-block;'>",
+      x,
+      "</span>"
+    )
+  }
+}
+
+# Decide kable() format based on output target.
+# - latex for PDF
+# - html for HTML
+# - pipe for Word/docx via pandoc
+kable_fmt <- function() {
+  if (knitr::is_latex_output()) "latex"
+  else if (knitr::is_html_output()) "html"
+  else "pipe"
+}
+
+# Line break that works inside a table cell for each output type.
+cell_br <- function() {
+  if (knitr::is_latex_output()) "\\\\"
+  else "<br>"
+}
+
+# Bold text in a way that works across formats.
+fmt_bold <- function(x) {
+  if (knitr::is_latex_output()) paste0("\\textbf{", x, "}")
+  else paste0("<strong>", x, "</strong>")
+}
+
+# ============================================================
+# Table helper: add "section header rows" for grouped printing
+# ============================================================
+# This is a lightweight alternative to kableExtra::pack_rows
+# It inserts a bold header row before each section (e.g., instrument).
+add_section_rows <- function(df, section_col = "instrument", label_col = "Scale") {
+
+  sections <- unique(df[[section_col]])
+
+  # Create an "empty row" with correct column types so bind_rows() is safe.
+  typed_na_row <- function(template_df) {
+    dplyr::slice(template_df, 1) %>%
+      dplyr::mutate(dplyr::across(dplyr::everything(), ~ .x[NA_integer_]))
+  }
+
+  dplyr::bind_rows(lapply(sections, function(s) {
+
+    # rows belonging to this section
+    block <- df[df[[section_col]] == s, , drop = FALSE]
+
+    # header row: same structure as block but label column is bold section title
+    header <- typed_na_row(block)
+    header[[label_col]] <- fmt_bold(s)
+
+    # indent all scale labels under this header for readability
+    block[[label_col]] <- indent_label(block[[label_col]], level = 1)
+
+    dplyr::bind_rows(header, block)
+  }))
+}
+```
+
+### Demographics and context factors
+
+```{r}
+#| include: false
+
+# ============================================================
+# Formatting helpers for demographics tables
+# ============================================================
+
+fmt_pct <- function(x) sprintf("%.1f%%", 100 * x)
+fmt_mean_sd <- function(x) sprintf("%.2f \u00B1 %.2f", mean(x, na.rm = TRUE), sd(x, na.rm = TRUE))
+
+# Variables to include (patient vs therapist sections)
+
+vars_patient <- c(
+  "patient_age_therapy_start",
+  "patient_sex",
+  "in_relationship",
+  "marital_status",
+  "general_education",
+  "vocational_qualification",
+  "work_ability_status",
+  "previous_psychotherapy",
+  "CGI_severity"
+)
+
+vars_therapist <- c(
+  "therapist_age_therapy_start",
+  "therapist_sex"
+)
+
+# Human-readable labels used in the table
+pretty_names <- c(
+  patient_age_therapy_start   = "Age at therapy start",
+  patient_sex                 = "Sex",
+  in_relationship             = "In relationship",
+  marital_status              = "Marital status",
+  general_education           = "General education",
+  vocational_qualification    = "Vocational qualification",
+  work_ability_status         = "Work ability status",
+  previous_psychotherapy      = "Previous psychotherapy",
+  CGI_severity                = "CGI severity",
+  therapist_age_therapy_start = "Age at therapy start",
+  therapist_sex               = "Sex"
+)
+
+# ============================================================
+# Build a "mixed" descriptives table:
+# - numeric vars: one row with Mean ± SD and valid/missing n
+# - categorical vars: one header row + one row per category level
+# ============================================================
+make_section <- function(data, vars, section_title, pretty_names) {
+  df <- data %>% dplyr::select(dplyr::all_of(vars))
+  num_vars <- names(df)[vapply(df, is.numeric, logical(1))]
+  cat_vars <- setdiff(names(df), num_vars)
+
+  # ----------------------------
+  # Numeric rows (one per variable)
+  # ----------------------------
+  num_tab <- tibble::tibble(Variable_raw = num_vars) %>%
+    dplyr::mutate(
+      Section = section_title,
+      Variable = dplyr::recode(Variable_raw, !!!pretty_names),
+      is_header = TRUE,
+      Level = "",
+      Valid_n   = sapply(df[num_vars], \(x) sum(!is.na(x))),
+      Missing_n = sapply(df[num_vars], \(x) sum(is.na(x))),
+      `Mean ± SD` = sapply(df[num_vars], \(x) if (all(is.na(x))) "" else fmt_mean_sd(x)),
+      `n (%)` = ""
+    )
+
+  # ----------------------------
+  # Categorical rows (header + levels)
+  # ----------------------------
+  cat_long <- df %>%
+    tidyr::pivot_longer(dplyr::all_of(cat_vars), names_to = "Variable_raw", values_to = "Value") %>%
+    dplyr::mutate(
+      Section = section_title,
+      Variable = dplyr::recode(Variable_raw, !!!pretty_names)
+    )
+
+  # Header row per categorical variable: reports valid/missing counts
+  cat_header <- cat_long %>%
+    dplyr::group_by(Section, Variable_raw, Variable) %>%
+    dplyr::summarise(
+      Valid_n   = sum(!is.na(Value)),
+      Missing_n = sum(is.na(Value)),
+      .groups = "drop"
+    ) %>%
+    dplyr::mutate(
+      is_header = TRUE,
+      Level = "",
+      `Mean ± SD` = "",
+      `n (%)` = ""
+    )
+  
+  # Level rows: counts within each categorical variable
+  cat_levels <- cat_long %>%
+    dplyr::filter(!is.na(Value)) %>%
+    dplyr::group_by(Section, Variable_raw, Variable) %>%
+    dplyr::mutate(
+      Valid_n = dplyr::n(),
+      # Preserve original level order as much as possible
+      Value_f = if (is.factor(Value)) Value else factor(as.character(Value), levels = unique(as.character(Value)))
+    ) %>%
+    dplyr::ungroup() %>%
+    dplyr::count(Section, Variable_raw, Variable, Value_f, Valid_n, name = "n", sort = FALSE) %>%
+    dplyr::mutate(
+      is_header = FALSE,
+      Missing_n = NA_integer_,
+      level_order = as.integer(Value_f),
+      Level = paste0(as.character(Value_f)),
+      `Mean ± SD` = "",
+      `n (%)` = sprintf("%d (%s)", n, fmt_pct(n / Valid_n))
+    ) %>%
+    dplyr::select(Section, Variable_raw, Variable, is_header, Level, level_order,
+                  Valid_n, Missing_n, `Mean ± SD`, `n (%)`)
+
+  # ----------------------------
+  # Combine numeric + categorical blocks and order nicely
+  # ----------------------------  
+  dplyr::bind_rows(
+    num_tab %>% dplyr::mutate(level_order = NA_integer_),
+    cat_header %>% dplyr::mutate(level_order = NA_integer_),
+    cat_levels
+  ) %>%
+    dplyr::mutate(
+      var_order  = match(Variable_raw, vars),
+      row_order  = ifelse(is_header, 0L, 1L),
+      level_order = ifelse(is.na(level_order), 0L, level_order)
+    ) %>%
+    dplyr::arrange(var_order, row_order, level_order) %>%
+    dplyr::mutate(
+      Variable  = ifelse(is_header, paste0("**", Variable, "**"), ""),
+      Valid_n   = ifelse(is_header, as.character(Valid_n), ""),
+      Missing_n = ifelse(is_header, as.character(Missing_n), "")
+    ) %>%
+    dplyr::select(Section, Variable, Valid_n, Missing_n, Level, `Mean ± SD`, `n (%)`)
+}
+
+# Build patient and therapist sections, then split into two printed tables
+patient_section <- make_section(working_data, vars_patient, "Patient", pretty_names)
+therapist_section <- make_section(working_data, vars_therapist, "Therapist", pretty_names)
+
+final_tab_print <- bind_rows(patient_section, therapist_section)
+
+pt <- final_tab_print %>% dplyr::filter(Section == "Patient") %>% dplyr::select(-Section)
+th <- final_tab_print %>% dplyr::filter(Section == "Therapist") %>% dplyr::select(-Section)
+
+pt <- pt %>% dplyr::rename(`Valid n` = Valid_n, `Missing n` = Missing_n)
+th <- th %>% dplyr::rename(`Valid n` = Valid_n, `Missing n` = Missing_n)
+```
+
+```{r}
+#| echo: false
+
+kable(
+  pt,
+  caption = "Table X. Descriptive statistics of patient demographics and context factors.",
+  align = c("l","c","c","l","c","c"), 
+  booktabs = TRUE
+  )
+```
+
+```{r}
+#| echo: false
+
+kable(
+  th,
+  caption = "Table X. Descriptive statistics of therapist demographics and context factors.",
+  align = c("l","c","c","l","c","c"), 
+  booktabs = TRUE
+  )
+```
+
+### Textual data
 
 Descriptive analyses revealed substantial heterogeneity across questions in response rates, length, and lexical diversity. Holistic questions such as problem description (q10) and therapy goals (q12) showed low missingness, longer median response lengths, and high lexical diversity, indicating that patients readily produced extended and heterogeneous narratives when asked to reflect broadly on their difficulties or desired changes. In contrast, prompts targeting causal connections (q4) or constraints (q11) frequently elicited short or missing responses and exhibited lower diversity, consistent with more constrained or confirmatory response formats. Notably, lexical diversity varied independently of response length, suggesting that some prompts elicited shared narrative scripts despite moderate verbosity (e.g., q7 Expected Improvements).
 
 ```{r}
 #| include: false
 
-# ------------------------------------------------------------
-# Load processed working dataset
-# ------------------------------------------------------------
-# Contains one column per open-ended question (txt1_..., txt2_..., etc.)
-working_data <- readRDS("/Volumes/meta_data/processed/working_data/merged_data.rds")
 
-# ------------------------------------------------------------
-# Load required packages
-# ------------------------------------------------------------
-library(tidyverse)   # data wrangling
-library(stringi)     # word counts
-library(knitr)       # table output
-library(tidytext)    # tokenization for lexical diversity
-
-# ------------------------------------------------------------
-# Identify text columns corresponding to open-ended questions
-# ------------------------------------------------------------
-# Assumes columns are named like "txt1_problem", "txt2_stressors", etc.
+# ============================================================
+# Identify text columns for open-ended questions
+# ============================================================
+# Convention: columns are named like "txt1_problem", "txt2_stressors", ...
 text_cols <- names(working_data)[str_detect(names(working_data), "^txt\\d+_")]
 
-# ------------------------------------------------------------
-# Reshape data to long format: one row per person × question
-# ------------------------------------------------------------
+# ============================================================
+# Reshape to long format: one row = one patient × one question
+# ============================================================
 # This makes it easy to compute question-level descriptives
-working_data_long <- working_data |> 
+working_data_long <- working_data %>% 
   pivot_longer(
     cols = all_of(text_cols),
     names_to = "question_raw",
     values_to = "text"
-  ) %>%
+  ) %>% 
   mutate(
     # Extract numeric question ID (1–12) from column name
-    question_id = str_extract(question_raw, "\\d+") |> as.integer(),
+    question_id = str_extract(question_raw, "\\d+") %>% as.integer(),
     
     # Extract human-readable question label from column name
     question_label = str_remove(question_raw, "^txt\\d+_"),
@@ -213,23 +472,23 @@ working_data_long <- working_data |>
     is_missing = is.na(text) | text == ""
   )
 
-# ------------------------------------------------------------
-# Compute basic per-response text features
-# ------------------------------------------------------------
-# These are *response-level* quantities, later summarized by question
-working_data_long <- working_data_long |> 
+# ============================================================
+# Response-level text features (per row)
+# ============================================================
+# These will later be summarised per question.
+working_data_long <- working_data_long %>% 
   mutate(
     n_chars = ifelse(is_missing, NA_integer_, nchar(text)),            # character count
     n_words = ifelse(is_missing, NA_integer_, stri_count_words(text)), # word count
     is_very_short = !is_missing & n_words <= 3                         # list-like / minimal responses
   )
 
-# ------------------------------------------------------------
-# Question-level descriptive statistics (engagement & length)
-# ------------------------------------------------------------
+# ============================================================
+# Question-level engagement + length statistics
+# ============================================================
 # These summarize HOW MUCH people write, not WHAT they write
-qc_by_question <- working_data_long |> 
-  group_by(question_id, question_label) |> 
+qc_by_question <- working_data_long %>% 
+  group_by(question_id, question_label) %>% 
   summarise(
     n_total = n(),                                  # total number of responses
     missing_pct = mean(is_missing) * 100,           # nonresponse rate
@@ -240,9 +499,9 @@ qc_by_question <- working_data_long |>
     .groups = "drop"
   )
 
-# ------------------------------------------------------------
-# Human-readable question labels for tables
-# ------------------------------------------------------------
+# ============================================================
+# Human-readable question names (used in final table)
+# ============================================================
 question_labels <- c(
   "Problem development",
   "Extra stressors",
@@ -258,25 +517,25 @@ question_labels <- c(
   "Therapy goals"
 )
 
-# ------------------------------------------------------------
-# Tokenize responses for lexical diversity analysis
-# ------------------------------------------------------------
-# Goal: quantify how diverse the vocabulary is ACROSS RESPONDENTS per question
-# (not within individual responses)
-tokens_by_question <- working_data_long |> 
-  filter(!is_missing) |>                     # exclude missing responses
-  unnest_tokens(word, text, token = "words") |>  # split into word tokens
+# ============================================================
+# Tokenization for lexical diversity (across respondents per question)
+# ============================================================
+# IMPORTANT: diversity here is computed on the pooled word distribution per question,
+# not within each individual response.
+tokens_by_question <- working_data_long %>% 
+  filter(!is_missing) %>%                     # exclude missing responses
+  unnest_tokens(word, text, token = "words") %>%  # split into word tokens
   filter(!str_detect(word, "^\\d+$"))        # remove pure numbers
 
-# ------------------------------------------------------------
-# Compute Shannon entropy and diversity index per question
-# ------------------------------------------------------------
-# Entropy reflects dispersion of word usage across all responses
-# Diversity index = 2^H = "effective number of equally frequent word types"
-diversity_by_question <- tokens_by_question |> 
-  count(question_id, question_label, word) |>   # word frequencies per question
-  group_by(question_id, question_label) |> 
-  mutate(p = n / sum(n)) |>                     # word probabilities
+# ============================================================
+# Lexical diversity using Shannon entropy
+# ============================================================
+# - Shannon entropy H captures dispersion of word usage
+# - Diversity index = 2^H (effective number of equally frequent word types)
+diversity_by_question <- tokens_by_question %>% 
+  count(question_id, question_label, word) %>%   # word frequencies per question
+  group_by(question_id, question_label) %>% 
+  mutate(p = n / sum(n)) %>%                     # word probabilities
   summarise(
     shannon_entropy = -sum(p * log2(p)),        # Shannon entropy
     diversity_index = 2 ^ shannon_entropy,      # effective vocabulary size
@@ -285,21 +544,21 @@ diversity_by_question <- tokens_by_question |>
     .groups = "drop"
   )
 
-# ------------------------------------------------------------
-# Combine all descriptives into final question-level table
-# ------------------------------------------------------------
+# ============================================================
+# Combine engagement + diversity into one question-level table
+# ============================================================
 # This table triangulates:
 # - engagement (missing, very short)
 # - quantity (word counts)
 # - dispersion (lexical diversity)
-qc_table <- qc_by_question |>
+qc_table <- qc_by_question %>%
   mutate(
     Question = factor(question_id, levels = 1:12, labels = question_labels)
-  ) |>
+  ) %>%
   left_join(
     diversity_by_question,
     by = c("question_id", "question_label")
-  ) |>
+  ) %>%
   select(
     Question,
     n_total,
@@ -316,7 +575,7 @@ qc_table <- qc_by_question |>
 ```{r}
 #| echo: false
 
-qc_table |>
+qc_table %>%
   kable(
     caption = "Table X. Descriptive statistics of open-ended responses by question.",
     align = "lccccccc",
@@ -324,21 +583,29 @@ qc_table |>
   )
 ```
 
-## Descriptive statistics of clinical data
+### Diagnosis
 
 ```{r}
 #| include: false
 
-library(kableExtra)
-
-# --- 1) Build long DSMV data (one row per case x slot) ----
+# ============================================================
+# DSM-5 diagnoses: convert wide "slots" into a tidy long table
+# ============================================================
+# Expected input pattern in working_data:
+#   dsmv_diagnosis_1
+#   dsmv_diagnosis_1_type
+#   dsmv_diagnosis_2
+#   ...
+# up to 7 slots (1–7). Each slot may contain diagnosis label and metadata.
 dsmv_cols <- grep("^dsmv_diagnosis_[1-7](_|$)", names(working_data), value = TRUE)
 
+# Helper: when pivoting, multiple values can occur per cell; keep the first non-empty.
 first_non_empty <- function(x) {
   x <- x[!is.na(x) & x != ""]
   if (length(x) == 0) NA_character_ else x[1]
 }
 
+# 1) Wide -> long: one row per patient × diagnosis slot
 dsmv_long <- working_data %>%
   select(case_nr, all_of(dsmv_cols)) %>%
   mutate(across(-case_nr, as.character)) %>%
@@ -356,16 +623,19 @@ dsmv_long <- working_data %>%
   ) %>%
   filter(!is.na(diagnosis) & diagnosis != "")
 
-# --- 2) translate german diagnostic labels to english ----
-
-lookup <- read_delim("/Volumes/meta_data/processed/working_data/diagnosis_lookup_de_en.csv", delim = ";", show_col_types = FALSE)
+# 2) Translate German diagnosis labels to English using lookup file
+lookup <- read_delim(
+  "/Volumes/meta_data/processed/working_data/diagnosis_lookup_de_en.csv",
+  delim = ";",
+  show_col_types = FALSE
+)
 
 dsmv_long_en <- dsmv_long %>%
   left_join(lookup, by = c("diagnosis" = "diagnosis_de")) %>%
-  mutate(diagnosis = coalesce(diagnosis_en, diagnosis)) %>%  # fallback if missing
+  mutate(diagnosis = coalesce(diagnosis_en, diagnosis)) %>%
   select(-diagnosis_en)
 
-# --- 3) Counts: all vs primary (by type label) ----
+# 3) Count diagnoses overall and primary diagnoses (based on 'type' field)
 all_diag <- dsmv_long_en %>%
   count(diagnosis, name = "n_all")
 
@@ -373,14 +643,14 @@ primary_diag <- dsmv_long_en %>%
   filter(type == "primary diagnosis") %>%
   count(diagnosis, name = "n_primary")
 
-# --- 4) Combine + fill NAs ----
+# 4) Merge counts and replace missing with zeros
 diag_summary <- full_join(all_diag, primary_diag, by = "diagnosis") %>%
   mutate(
-    n_all = replace_na(n_all, 0L),
+    n_all     = replace_na(n_all, 0L),
     n_primary = replace_na(n_primary, 0L)
   )
 
-# --- 5) Collapse Major Depression subtypes (store the result!) ----
+# 5) Collapse Major Depression subtypes into a single display category
 diag_collapsed <- diag_summary %>%
   mutate(
     diagnosis = if_else(
@@ -391,12 +661,12 @@ diag_collapsed <- diag_summary %>%
   ) %>%
   group_by(diagnosis) %>%
   summarise(
-    n_all = sum(n_all),
+    n_all     = sum(n_all),
     n_primary = sum(n_primary),
-    .groups = "drop"
+    .groups   = "drop"
   )
 
-# --- 6) Keep >=10, and add "Other (<10)" from the collapsed table ----
+# 6) Display thresholding: keep diagnoses with >= 10 occurrences, collapse the rest
 diag_main <- diag_collapsed %>%
   filter(n_all >= 10) %>%
   arrange(desc(n_all))
@@ -404,9 +674,9 @@ diag_main <- diag_collapsed %>%
 other_row <- diag_collapsed %>%
   filter(n_all < 10) %>%
   summarise(
-    diagnosis = "Other diagnoses (<10)",
-    n_all = sum(n_all),
-    n_primary = sum(n_primary)
+    diagnosis  = "Other diagnoses (<10)",
+    n_all      = sum(n_all),
+    n_primary  = sum(n_primary)
   )
 
 diag_table_final <- bind_rows(diag_main, other_row)
@@ -415,19 +685,365 @@ diag_table_final <- bind_rows(diag_main, other_row)
 ```{r}
 #| echo: false
 
-diag_table_final %>%
+diag_print <- diag_table_final %>%
   rename(
-    `DSM-5 diagnosis` = diagnosis,
-    `All diagnoses (n)` = n_all,
+    `DSM-5 diagnosis`       = diagnosis,
+    `All diagnoses (n)`     = n_all,
     `Primary diagnoses (n)` = n_primary
+  )
+
+knitr::kable(
+  diag_print,
+  format   = kable_fmt(),                 # uses your helper: html/latex/pipe
+  align    = c("l", "c", "c"),
+  booktabs = knitr::is_latex_output(),
+  caption  = "DSM-5 diagnoses in the sample (absolute frequencies)"
+)
+```
+Diagnoses were collapsed for display. Only diagnoses with ≥10 occurrences are shown individually; remaining diagnoses are summarized as “Other diagnoses (<10)”.
+
+### psychometric measures
+
+Due to substantial dropout and differences in treatment duration, descriptive statistics across therapy phases are based on changing subsamples. In particular, patients continuing into long-term therapy represent a more severe and chronic subgroup. To avoid conflating symptom severity with symptom change, two complementary descriptive tables are reported.
+
+Table 1 presents descriptive statistics for symptom measures at each assessment timepoint. Sample sizes decrease substantially across therapy phases, reflecting treatment completion and dropout. Consequently, means at later timepoints do not represent longitudinal change within individuals and should not be interpreted as symptom worsening.
+
+```{r}
+#| include: false
+
+# ============================================================
+# Psychometric variables
+# ============================================================
+# These are wide-format columns where suffixes encode timepoints, e.g.:
+#   dass_dep_score_KZT2-DUPost
+# We later parse these into instrument / scale / timepoint.
+psy_vars <- c(
+  # BSI
+  "bsi_gsi_DI",
+  "bsi_gsi_KZT1-DU4", "bsi_gsi_KZT1-DUPost", "bsi_gsi_KZT2-DUPost",
+  "bsi_gsi_LZT1-DUPost", "bsi_gsi_LZT2-DUPost", "bsi_gsi_DU-Kat6",
+
+  # BDI
+  "bdi_sum_DU-Prä", "bdi_sum_KZT1-DU4", "bdi_sum_KZT1-DUPost", "bdi_sum_KZT2-DUPost",
+  "bdi_sum_LZT1-DUPost", "bdi_sum_LZT2-DUPost", "bdi_sum_DU-Kat6",
+
+  # DASS
+  "dass_total_score_DU-Prä", "dass_dep_score_DU-Prä", "dass_anx_score_DU-Prä", "dass_str_score_DU-Prä",
+  "dass_total_score_KZT1-DU4", "dass_dep_score_KZT1-DU4", "dass_anx_score_KZT1-DU4", "dass_str_score_KZT1-DU4",
+  "dass_total_score_KZT1-DUPost", "dass_dep_score_KZT1-DUPost", "dass_anx_score_KZT1-DUPost", "dass_str_score_KZT1-DUPost",
+  "dass_total_score_KZT2-DUPost", "dass_dep_score_KZT2-DUPost", "dass_anx_score_KZT2-DUPost", "dass_str_score_KZT2-DUPost",
+  "dass_total_score_LZT1-DUPost", "dass_dep_score_LZT1-DUPost", "dass_anx_score_LZT1-DUPost", "dass_str_score_LZT1-DUPost",
+  "dass_total_score_LZT2-DUPost", "dass_dep_score_LZT2-DUPost", "dass_anx_score_LZT2-DUPost", "dass_str_score_LZT2-DUPost",
+  "dass_total_score_DU-Kat6", "dass_dep_score_DU-Kat6", "dass_anx_score_DU-Kat6", "dass_str_score_DU-Kat6",
+
+  # PMH
+  "pmh_sum_DU-Prä", "pmh_sum_KZT1-DU4", "pmh_sum_KZT1-DUPost", "pmh_sum_KZT2-DUPost",
+  "pmh_sum_LZT1-DUPost", "pmh_sum_LZT2-DUPost", "pmh_sum_DU-Kat6",
+
+  # GAS (patient/therapist means)
+  "gas_pt_mean_KZT1-DUPost", "gas_pt_mean_KZT2-DUPost", "gas_pt_mean_LZT1-DUPost", "gas_pt_mean_LZT2-DUPost", "gas_pt_mean_DU-Kat6",
+  "gas_th_mean_KZT1-DUPost", "gas_th_mean_KZT2-DUPost", "gas_th_mean_LZT1-DUPost", "gas_th_mean_LZT2-DUPost", "gas_th_mean_DU-Kat6",
+
+  # Global ratings
+  "glob_th_satisfaction_LZT2-DUPost", "glob_th_benefit_LZT2-DUPost",
+  "glob_th_satisfaction_LZT1-DUPost", "glob_th_benefit_LZT1-DUPost",
+  "glob_th_satisfaction_KZT2-DUPost", "glob_th_benefit_KZT2-DUPost",
+  "glob_th_satisfaction_KZT1-DUPost", "glob_th_benefit_KZT1-DUPost",
+  "glob_pt_satisfaction_LZT2-DUPost", "glob_pt_benefit_LZT2-DUPost",
+  "glob_pt_satisfaction_LZT1-DUPost", "glob_pt_benefit_LZT1-DUPost",
+  "glob_pt_satisfaction_KZT2-DUPost", "glob_pt_benefit_KZT2-DUPost",
+  "glob_pt_satisfaction_DU-Kat6", "glob_pt_benefit_DU-Kat6",
+  "glob_pt_satisfaction_KZT1-DUPost", "glob_pt_benefit_KZT1-DUPost",
+
+  # CGI improvement (patient/therapist ratings)
+  "cgi_improvement_patient_KZT1-DUPost", "cgi_improvement_patient_KZT2-DUPost",
+  "cgi_improvement_patient_LZT1-DUPost", "cgi_improvement_patient_LZT2-DUPost",
+  "cgi_improvement_patient_DU-Kat6",
+  "cgi_improvement_therapist_KZT1-DUPost", "cgi_improvement_therapist_KZT2-DUPost",
+  "cgi_improvement_therapist_LZT1-DUPost", "cgi_improvement_therapist_LZT2-DUPost",
+  "cgi_improvement_therapist_DU-Kat6"
+)
+
+# ============================================================
+# Helper: robust numeric coercion for messy imported columns
+# ============================================================
+# Problem this solves:
+# - some columns may be list-columns
+# - factors/characters should become numeric safely
+# - sd()/mean() should not crash due to non-numeric types
+to_num <- function(x) {
+  # Sometimes a "column" is accidentally a nested data.frame/tibble:
+  if (is.data.frame(x)) x <- x[[1]]
+
+  # If it's a list-column: replace NULL with NA and coerce to numeric
+  if (is.list(x) && !is.atomic(x)) {
+    return(map_dbl(x, function(.x) {
+      if (is.null(.x) || length(.x) == 0) return(NA_real_)
+      if (length(.x) == 1) return(suppressWarnings(as.numeric(.x)))
+      suppressWarnings(as.numeric(.x[[1]])) # take first element if longer than 1
+    }))
+  }
+
+  # Atomic but non-numeric types
+  if (is.factor(x)) x <- as.character(x)
+  suppressWarnings(as.numeric(x))
+}
+
+# Clean copy of the data for psychometric columns (prevents sd()/var() errors)
+working_data_psy <- working_data %>%
+  mutate(across(all_of(psy_vars), to_num))
+
+# ============================================================
+# Parse variable names into components:
+#   instrument_scale_timepoint
+# ============================================================
+# Example: "dass_dep_score_KZT2-DUPost"
+# - instrument: "dass"
+# - scale:      "dep_score"
+# - timepoint:  "KZT2-DUPost"
+parse_psy_name <- function(x) {
+  instrument <- sub("_.*$", "", x)          # text before first underscore
+  rest <- sub("^[^_]+_", "", x)             # everything after first underscore
+
+  if (str_detect(rest, "_")) {
+    timepoint <- sub("^.*_", "", rest)      # last underscore-separated token
+    scale <- sub("_[^_]+$", "", rest)       # everything before that last token
+  } else {
+    # If there is no underscore left, we treat the whole thing as timepoint/scale
+    timepoint <- rest
+    scale <- rest
+  }
+
+  tibble(var = x, instrument = instrument, scale = scale, timepoint = timepoint)
+}
+
+# Instrument labels for section headers
+instrument_labels <- c(
+  bsi  = "BSI",
+  bdi  = "BDI",
+  dass = "DASS",
+  pmh  = "PMH",
+  gas  = "GAS",
+  glob = "Global ratings",
+  cgi  = "CGI"
+)
+
+# Desired ordering for timepoint columns in output tables
+tp_levels <- c(
+  "DI", "DU-Prä", "KZT1-DU4", "KZT1-DUPost", "KZT2-DUPost",
+  "LZT1-DUPost", "LZT2-DUPost",
+  "DU-Kat6"
+)
+
+# Pretty labels for scale names
+scale_pretty <- function(x) {
+  x %>%
+    str_replace_all("^gsi$", "GSI") %>%
+    str_replace_all("total_score", "Total") %>%
+    str_replace_all("dep_score", "Depression") %>%
+    str_replace_all("anx_score", "Anxiety") %>%
+    str_replace_all("str_score", "Stress") %>%
+    str_replace_all("^sum$", "Sum") %>%
+    str_replace_all("_", " ")
+}
+
+# Build metadata table once: one row per column name
+meta <- map_dfr(psy_vars, parse_psy_name) %>%
+  mutate(
+    instrument = recode(instrument, !!!instrument_labels),
+    timepoint  = factor(timepoint, levels = tp_levels)
+  )
+```
+
+```{r}
+#| include: false
+
+# Column-wise descriptives (mean/sd/n/missing) for one variable
+desc_num <- function(x) {
+  n_valid <- sum(!is.na(x))
+  n_miss  <- sum(is.na(x))
+
+  if (n_valid == 0) {
+    return(tibble(mean = NA_real_, sd = NA_real_, n = 0L, missing = n_miss))
+  }
+
+  tibble(
+    mean = mean(x, na.rm = TRUE),
+    sd   = sd(x, na.rm = TRUE),
+    n    = n_valid,
+    missing = n_miss
+  )
+}
+
+# Cell formatter: show M ± SD and put n on a second line (HTML)
+fmt_cell <- function(mean, sd, n) {
+  if (is.na(mean) | is.na(sd)) return("")
+  sprintf("%.2f ± %.2f%s n = %d", mean, sd, cell_br(), n)
+}
+
+# Long format: one row per (variable column), then widen to timepoints as columns
+psy_desc_long <- meta %>%
+  mutate(stats = map(var, \(v) desc_num(working_data_psy[[v]]))) %>%  # IMPORTANT: use cleaned data!
+  unnest(stats) %>%
+  mutate(cell = pmap_chr(list(mean, sd, n), fmt_cell)) %>%
+  select(instrument, scale, timepoint, cell)
+
+psy_table <- psy_desc_long %>%
+  mutate(timepoint = as.character(timepoint)) %>%
+  pivot_wider(names_from = timepoint, values_from = cell) %>%
+  arrange(instrument, scale) %>%
+  mutate(across(-c(instrument, scale), ~replace_na(.x, ""))) %>%
+  mutate(Scale = scale_pretty(scale)) %>%
+  select(instrument, Scale, all_of(intersect(tp_levels, names(.))))
+
+# Render with instrument headers
+render_df <- psy_table %>% mutate(instrument = as.character(instrument))
+
+table_for_print <- function(df) {
+  df %>%
+    dplyr::mutate(dplyr::across(dplyr::everything(), as.character)) %>%
+    dplyr::mutate(dplyr::across(dplyr::everything(), ~ dplyr::if_else(is.na(.x), "", .x)))
+}
+
+psy_tab1_df <- render_df %>%
+  mutate(instrument = as.character(instrument)) %>%
+  add_section_rows(section_col = "instrument", label_col = "Scale") %>%
+  select(-instrument)
+
+psy_tab_1 <- knitr::kable(
+  table_for_print(psy_tab1_df),
+  format   = kable_fmt(),
+  escape   = FALSE,
+  booktabs = knitr::is_latex_output(),
+  longtable = knitr::is_latex_output(),
+  align    = c("l", rep("c", ncol(psy_tab1_df) - 1)),
+  col.names = c("Scale", intersect(tp_levels, names(render_df)))
+)
+```
+
+
+```{r}
+#| echo: false
+
+psy_tab_1
+```
+
+
+Table 2 reports descriptive statistics restricted to patients with complete data at both pre-treatment and post-treatment assessments. For complete-case descriptive analyses, the post-treatment endpoint was defined as the assessment at the end of the second short-term therapy phase (KZT2-DUPost), as this represents the last common assessment across the majority of patients. This table provides a descriptive approximation of within-person change, independent of selective dropout.
+
+```{r}
+#| include: false
+
+# Choose baseline and endpoint timepoints for complete-case table:
+# Baseline: prefer Pre-treatment; if not available, fall back to DI.
+baseline_priority <- c("DU-Prä", "DI")
+
+# Endpoint: fixed to KZT2-DUPost as the last "common" assessment
+endpoint_priority <- c("KZT2-DUPost")
+
+pick_first_present <- function(tps, priority) {
+  hit <- priority[priority %in% tps]
+  if (length(hit) == 0) NA_character_ else hit[1]
+}
+
+# For each (instrument, scale), select baseline + endpoint variable names
+pairs <- meta %>%
+  group_by(instrument, scale) %>%
+  summarise(available_tps = list(unique(as.character(timepoint))), .groups = "drop") %>%
+  mutate(
+    baseline_tp = map_chr(available_tps, pick_first_present, priority = baseline_priority),
+    endpoint_tp = map_chr(available_tps, pick_first_present, priority = endpoint_priority)
   ) %>%
-  kable(
-    align = c("l", "c", "c"),
-    booktabs = TRUE,
-    caption = "DSM-5 diagnoses in the sample (absolute frequencies)"
+  filter(!is.na(baseline_tp), !is.na(endpoint_tp), baseline_tp != endpoint_tp) %>%
+  left_join(meta %>% mutate(timepoint = as.character(timepoint)), by = c("instrument", "scale")) %>%
+  summarise(
+    baseline_var = var[timepoint == first(baseline_tp)][1],
+    endpoint_var = var[timepoint == first(endpoint_tp)][1],
+    baseline_tp  = first(baseline_tp),
+    endpoint_tp  = first(endpoint_tp),
+    .by = c(instrument, scale)
   ) %>%
-  kable_styling(full_width = FALSE, position = "left") %>%
-  footnote(general = "Diagnoses were collapsed for display. Only diagnoses with ≥10 occurrences are shown individually; remaining diagnoses are summarized as 'Other diagnoses (<10)'.")
+  distinct(instrument, scale, .keep_all = TRUE) # safety: one row per scale
+
+# Vectorized formatter for mean ± sd
+fmt_mean_sd <- function(m, s) {
+  out <- sprintf("%.2f \u00B1 %.2f", m, s)
+  out[is.na(m) | is.na(s)] <- ""
+  out
+}
+
+# Compute complete-case stats for one scale:
+# only participants with both baseline and endpoint non-missing
+complete_case_stats <- function(data, pre_col, post_col) {
+  pre  <- data[[pre_col]]
+  post <- data[[post_col]]
+
+  ok <- !is.na(pre) & !is.na(post)
+  n <- sum(ok)
+
+  if (n == 0) {
+    return(tibble(
+      n = 0L,
+      pre_mean = NA_real_, pre_sd = NA_real_,
+      post_mean = NA_real_, post_sd = NA_real_,
+      delta_mean = NA_real_
+    ))
+  }
+
+  tibble(
+    n = n,
+    pre_mean  = mean(pre[ok], na.rm = TRUE),
+    pre_sd    = sd(pre[ok], na.rm = TRUE),
+    post_mean = mean(post[ok], na.rm = TRUE),
+    post_sd   = sd(post[ok], na.rm = TRUE),
+    delta_mean = mean(post[ok] - pre[ok], na.rm = TRUE)  # average within-person change
+  )
+}
+
+# Build Table 2
+table2 <- pairs %>%
+  mutate(stats = pmap(list(baseline_var, endpoint_var),
+                      \(b, e) complete_case_stats(working_data_psy, b, e))) %>%
+  unnest(stats) %>%
+  mutate(
+    Scale = scale_pretty(scale),
+    Baseline = baseline_tp,
+    Endpoint = endpoint_tp,
+    `Baseline M ± SD` = fmt_mean_sd(pre_mean, pre_sd),
+    `Endpoint M ± SD` = fmt_mean_sd(post_mean, post_sd),
+    `ΔM (End − Base)` = ifelse(is.na(delta_mean), "", sprintf("%.2f", delta_mean)),
+    n = as.integer(n)
+  ) %>%
+  select(instrument, Scale, Baseline, Endpoint, `Baseline M ± SD`, `Endpoint M ± SD`, `ΔM (End − Base)`, n) %>%
+  arrange(instrument, Scale)
+
+# Render with instrument headers
+render_df <- table2 %>% mutate(instrument = as.character(instrument))
+
+psy_tab2_df <- render_df %>%
+  mutate(instrument = as.character(instrument)) %>%
+  add_section_rows(section_col = "instrument", label_col = "Scale") %>%
+  select(-instrument)
+
+psy_tab_2 <- knitr::kable(
+  table_for_print(psy_tab2_df),
+  format   = kable_fmt(),
+  escape   = FALSE,
+  booktabs = knitr::is_latex_output(),
+  longtable = knitr::is_latex_output(),
+  align    = c("l", rep("c", ncol(psy_tab2_df) - 1)),
+  col.names = c(
+    "Scale", "Baseline", "Endpoint",
+    "Baseline M ± SD", "Endpoint M ± SD",
+    "ΔM (End − Base)", "n (complete)"
+  )
+)
+```
+
+```{r}
+#| echo: false
+
+psy_tab_2
 ```
 
 ::: {pagebreak}
