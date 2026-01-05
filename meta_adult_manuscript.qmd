@@ -127,7 +127,7 @@ For each patient, an overall goal attainment score was computed as the mean rati
 ## Measurement time points
 
 | Timepoint | DU-DI | DU-Prä | KZT1-DU4 | KZT1-DUPost | KZT2-DUPost | LZT1-DUPost | LZT2-DUPost | Kat6 |
-|--------|--------|--------|--------|--------|--------|--------|--------|--------|
+|----|----|----|----|----|----|----|----|----|
 | **Explanation** | Pre-therapy, 4th contact | Pre-therapy, 6th contact | 4th therapy session | 12th therapy session | 24th therapy session | 45th therapy session | 60th therapy session | 6 month after therapy |
 | **Diagnosis** | X |  |  |  |  |  |  |  |
 | **Demographics** |  | X |  |  |  |  |  |  |
@@ -417,7 +417,7 @@ diag_table_final <- bind_rows(diag_main, other_row)
 
 diag_table_final %>%
   rename(
-    `DSM-V diagnosis` = diagnosis,
+    `DSM-5 diagnosis` = diagnosis,
     `All diagnoses (n)` = n_all,
     `Primary diagnoses (n)` = n_primary
   ) %>%

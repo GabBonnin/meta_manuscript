@@ -361,7 +361,7 @@
 <span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>    question_answers <span class="op">=</span> robust_extract_questions(text, expected_markers)</span>
 <span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Ergebnis speichern</span></span>
-<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>    entry <span class="op">=</span> {<span class="st">"file_path"</span>: audio_path, <span class="st">"code"</span>: code}</span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>    entry <span class="op">=</span> {<span class="st">"file_path"</span>: audio_path, <span class="st">"code"</span>: code, <span class="st">"full_transcript"</span>: text}</span>
 <span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>    entry.update({<span class="ss">f"q</span><span class="sc">{</span>m<span class="sc">.</span>split()[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>: question_answers.get(m) <span class="cf">for</span> m <span class="kw">in</span> expected_markers})</span>
 <span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>    data.append(entry)</span>
 <span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a></span>

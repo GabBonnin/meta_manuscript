@@ -1179,71 +1179,84 @@ chr (14): path_audiofile, patient_chiffre, txt1_problem_development, txt2_ex...
 ℹ Use `spec()` to retrieve the full column specification for this data.
 ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>merged_text_raw <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(transcription_hattingen_2017_2018_2019_corrected, transcription_hattingen_2020_2021_corrected, transcription_hattingen_2022_corrected)</span>
-<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>merged_text <span class="ot">&lt;-</span> merged_text_raw <span class="sc">|&gt;</span></span>
-<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="co"># extract treatment_center, year of the treatment end from audiofile path</span></span>
-<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_center       =</span> <span class="fu">str_match</span>(path_audiofile, <span class="st">"raw_audio/([^/]+)/"</span>)[, <span class="dv">2</span>],</span>
-<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_end_year_text =</span> <span class="fu">str_match</span>(path_audiofile, <span class="st">"raw_audio/[^/]+/(</span><span class="sc">\\</span><span class="st">d{4})"</span>)[, <span class="dv">2</span>],</span>
-<span id="cb65-7"><a href="#cb65-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">folder                 =</span> <span class="fu">dirname</span>(path_audiofile),</span>
-<span id="cb65-8"><a href="#cb65-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">zoom_nr                =</span> <span class="fu">str_extract</span>(path_audiofile, <span class="st">"(?&lt;=ZOOM)</span><span class="sc">\\</span><span class="st">d+"</span>),</span>
-<span id="cb65-9"><a href="#cb65-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">zoom_nr                =</span> <span class="fu">as.integer</span>(zoom_nr)</span>
-<span id="cb65-10"><a href="#cb65-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb65-11"><a href="#cb65-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(patient_chiffre, folder) <span class="sc">|&gt;</span></span>
-<span id="cb65-12"><a href="#cb65-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(zoom_nr, <span class="at">n =</span> <span class="dv">1</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> <span class="co"># remove the older zoom_nr for each group of patient and folder</span></span>
-<span id="cb65-13"><a href="#cb65-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
-<span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb65-15"><a href="#cb65-15" aria-hidden="true" tabindex="-1"></a>    patient_chiffre,</span>
-<span id="cb65-16"><a href="#cb65-16" aria-hidden="true" tabindex="-1"></a>    treatment_center,</span>
-<span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a>    treatment_end_year_text,</span>
-<span id="cb65-18"><a href="#cb65-18" aria-hidden="true" tabindex="-1"></a>    txt1_problem_development,</span>
-<span id="cb65-19"><a href="#cb65-19" aria-hidden="true" tabindex="-1"></a>    txt2_extra_stressors,</span>
-<span id="cb65-20"><a href="#cb65-20" aria-hidden="true" tabindex="-1"></a>    txt3_pre_onset_changes,</span>
-<span id="cb65-21"><a href="#cb65-21" aria-hidden="true" tabindex="-1"></a>    txt4_event_connection,</span>
-<span id="cb65-22"><a href="#cb65-22" aria-hidden="true" tabindex="-1"></a>    txt5_physical_symptoms,</span>
-<span id="cb65-23"><a href="#cb65-23" aria-hidden="true" tabindex="-1"></a>    txt6_problem_causes,</span>
-<span id="cb65-24"><a href="#cb65-24" aria-hidden="true" tabindex="-1"></a>    txt7_expected_improvements,</span>
-<span id="cb65-25"><a href="#cb65-25" aria-hidden="true" tabindex="-1"></a>    txt8_environment_response,</span>
-<span id="cb65-26"><a href="#cb65-26" aria-hidden="true" tabindex="-1"></a>    txt9_no_change_requested,</span>
-<span id="cb65-27"><a href="#cb65-27" aria-hidden="true" tabindex="-1"></a>    txt10_problem_description,</span>
-<span id="cb65-28"><a href="#cb65-28" aria-hidden="true" tabindex="-1"></a>    txt11_impacted_life_areas,</span>
-<span id="cb65-29"><a href="#cb65-29" aria-hidden="true" tabindex="-1"></a>    txt12_therapy_goals</span>
-<span id="cb65-30"><a href="#cb65-30" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb65-31"><a href="#cb65-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb65-32"><a href="#cb65-32" aria-hidden="true" tabindex="-1"></a>merged_text_clean <span class="ot">&lt;-</span> merged_text <span class="sc">|&gt;</span></span>
-<span id="cb65-33"><a href="#cb65-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(</span>
-<span id="cb65-34"><a href="#cb65-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.na</span>(patient_chiffre) <span class="sc">|</span></span>
-<span id="cb65-35"><a href="#cb65-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">if_all</span>(<span class="fu">contains</span>(<span class="st">"txt"</span>), is.na)</span>
-<span id="cb65-36"><a href="#cb65-36" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>transcription_hattingen_2023_corrected <span class="ot">&lt;-</span> <span class="fu">read_delim</span>(<span class="st">"/Volumes/meta_data/processed/processed_transcriptions/corrected/transcription_hattingen_2023_corrected.csv"</span>,</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>                                                     <span class="at">delim =</span> <span class="st">","</span>,</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">col_names =</span> <span class="fu">c</span>(<span class="st">"path_audiofile"</span>,<span class="st">"patient_chiffre"</span>,<span class="st">"txt1_problem_development"</span>,<span class="st">"txt2_extra_stressors"</span>,<span class="st">"txt3_pre_onset_changes"</span>,<span class="st">"txt4_event_connection"</span>,<span class="st">"txt5_physical_symptoms"</span>,<span class="st">"txt6_problem_causes"</span>,<span class="st">"txt7_expected_improvements"</span>,<span class="st">"txt8_environment_response"</span>,<span class="st">"txt9_no_change_requested"</span>, <span class="st">"txt10_problem_description"</span>,<span class="st">"txt11_impacted_life_areas"</span>,<span class="st">"txt12_therapy_goals"</span>),</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>                     <span class="at">skip =</span> <span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 98 Columns: 14
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr (14): path_audiofile, patient_chiffre, txt1_problem_development, txt2_ex...
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>merged_text_raw <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(transcription_hattingen_2017_2018_2019_corrected, transcription_hattingen_2020_2021_corrected, transcription_hattingen_2022_corrected, transcription_hattingen_2023_corrected)</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>merged_text <span class="ot">&lt;-</span> merged_text_raw <span class="sc">|&gt;</span></span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>( <span class="co"># extract treatment_center, year of the treatment end from audiofile path</span></span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_center       =</span> <span class="fu">str_match</span>(path_audiofile, <span class="st">"raw_audio/([^/]+)/"</span>)[, <span class="dv">2</span>],</span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">treatment_end_year_text =</span> <span class="fu">str_match</span>(path_audiofile, <span class="st">"raw_audio/[^/]+/(</span><span class="sc">\\</span><span class="st">d{4})"</span>)[, <span class="dv">2</span>],</span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">folder                 =</span> <span class="fu">dirname</span>(path_audiofile),</span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">zoom_nr                =</span> <span class="fu">str_extract</span>(path_audiofile, <span class="st">"(?&lt;=ZOOM)</span><span class="sc">\\</span><span class="st">d+"</span>),</span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">zoom_nr                =</span> <span class="fu">as.integer</span>(zoom_nr)</span>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(patient_chiffre, folder) <span class="sc">|&gt;</span></span>
+<span id="cb67-12"><a href="#cb67-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(zoom_nr, <span class="at">n =</span> <span class="dv">1</span>, <span class="at">with_ties =</span> <span class="cn">FALSE</span>) <span class="sc">|&gt;</span> <span class="co"># remove the older zoom_nr for each group of patient and folder</span></span>
+<span id="cb67-13"><a href="#cb67-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ungroup</span>() <span class="sc">|&gt;</span></span>
+<span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb67-15"><a href="#cb67-15" aria-hidden="true" tabindex="-1"></a>    patient_chiffre,</span>
+<span id="cb67-16"><a href="#cb67-16" aria-hidden="true" tabindex="-1"></a>    treatment_center,</span>
+<span id="cb67-17"><a href="#cb67-17" aria-hidden="true" tabindex="-1"></a>    treatment_end_year_text,</span>
+<span id="cb67-18"><a href="#cb67-18" aria-hidden="true" tabindex="-1"></a>    txt1_problem_development,</span>
+<span id="cb67-19"><a href="#cb67-19" aria-hidden="true" tabindex="-1"></a>    txt2_extra_stressors,</span>
+<span id="cb67-20"><a href="#cb67-20" aria-hidden="true" tabindex="-1"></a>    txt3_pre_onset_changes,</span>
+<span id="cb67-21"><a href="#cb67-21" aria-hidden="true" tabindex="-1"></a>    txt4_event_connection,</span>
+<span id="cb67-22"><a href="#cb67-22" aria-hidden="true" tabindex="-1"></a>    txt5_physical_symptoms,</span>
+<span id="cb67-23"><a href="#cb67-23" aria-hidden="true" tabindex="-1"></a>    txt6_problem_causes,</span>
+<span id="cb67-24"><a href="#cb67-24" aria-hidden="true" tabindex="-1"></a>    txt7_expected_improvements,</span>
+<span id="cb67-25"><a href="#cb67-25" aria-hidden="true" tabindex="-1"></a>    txt8_environment_response,</span>
+<span id="cb67-26"><a href="#cb67-26" aria-hidden="true" tabindex="-1"></a>    txt9_no_change_requested,</span>
+<span id="cb67-27"><a href="#cb67-27" aria-hidden="true" tabindex="-1"></a>    txt10_problem_description,</span>
+<span id="cb67-28"><a href="#cb67-28" aria-hidden="true" tabindex="-1"></a>    txt11_impacted_life_areas,</span>
+<span id="cb67-29"><a href="#cb67-29" aria-hidden="true" tabindex="-1"></a>    txt12_therapy_goals</span>
+<span id="cb67-30"><a href="#cb67-30" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb67-31"><a href="#cb67-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-32"><a href="#cb67-32" aria-hidden="true" tabindex="-1"></a>merged_text_clean <span class="ot">&lt;-</span> merged_text <span class="sc">|&gt;</span></span>
+<span id="cb67-33"><a href="#cb67-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>(</span>
+<span id="cb67-34"><a href="#cb67-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">is.na</span>(patient_chiffre) <span class="sc">|</span></span>
+<span id="cb67-35"><a href="#cb67-35" aria-hidden="true" tabindex="-1"></a>    <span class="fu">if_all</span>(<span class="fu">contains</span>(<span class="st">"txt"</span>), is.na)</span>
+<span id="cb67-36"><a href="#cb67-36" aria-hidden="true" tabindex="-1"></a>  ))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 <section id="merge-text-and-self-rating-scales" class="level2">
 <h2 class="anchored" data-anchor-id="merge-text-and-self-rating-scales">merge text and self-rating scales</h2>
 <div class="cell-container"><div class="cell-decorator"><pre>In [14]:</pre></div><div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>df_merged_self_rating <span class="ot">&lt;-</span> dsmv_filtered_wider_labeled <span class="sc">|&gt;</span></span>
-<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(patient_kodap_pre_demographics_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(therapist_kodap_pre_context_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bdi_wider_complete, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bsi_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-6"><a href="#cb66-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(dass_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-7"><a href="#cb66-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(pmh_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-8"><a href="#cb66-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gas_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-9"><a href="#cb66-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(glob_th_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-10"><a href="#cb66-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(glob_pt_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-11"><a href="#cb66-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(patient_cgi_improvement_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-12"><a href="#cb66-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(therapist_cgi_improvement_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) </span>
-<span id="cb66-13"><a href="#cb66-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb66-14"><a href="#cb66-14" aria-hidden="true" tabindex="-1"></a>df_merged <span class="ot">&lt;-</span> merged_text_clean <span class="sc">|&gt;</span></span>
-<span id="cb66-15"><a href="#cb66-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_merged_self_rating, <span class="at">by =</span> <span class="st">"patient_chiffre"</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb66-16"><a href="#cb66-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, patient_dateofbirth, patient_age_therapy_start, patient_sex, marital_status, in_relationship, general_education, vocational_qualification, work_ability_status, previous_psychotherapy, assessment_date_DI, icd10_code, CGI_severity, therapist_dateofbirth, therapist_age_therapy_start, therapist_sex, <span class="fu">everything</span>(), <span class="sc">-</span>patient_chiffre, <span class="sc">-</span>icd10_code) <span class="co">#remove chiffre and icd code for export</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>df_merged_self_rating <span class="ot">&lt;-</span> dsmv_filtered_wider_labeled <span class="sc">|&gt;</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(patient_kodap_pre_demographics_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(therapist_kodap_pre_context_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bdi_wider_complete, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(bsi_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(dass_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-7"><a href="#cb68-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(pmh_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(gas_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(glob_th_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-10"><a href="#cb68-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(glob_pt_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-11"><a href="#cb68-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(patient_cgi_improvement_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-12"><a href="#cb68-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(therapist_cgi_improvement_wider, <span class="at">by =</span> <span class="st">"case_nr"</span>) </span>
+<span id="cb68-13"><a href="#cb68-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb68-14"><a href="#cb68-14" aria-hidden="true" tabindex="-1"></a>df_merged <span class="ot">&lt;-</span> merged_text_clean <span class="sc">|&gt;</span></span>
+<span id="cb68-15"><a href="#cb68-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(df_merged_self_rating, <span class="at">by =</span> <span class="st">"patient_chiffre"</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb68-16"><a href="#cb68-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(case_nr, patient_dateofbirth, patient_age_therapy_start, patient_sex, marital_status, in_relationship, general_education, vocational_qualification, work_ability_status, previous_psychotherapy, assessment_date_DI, icd10_code, CGI_severity, therapist_dateofbirth, therapist_age_therapy_start, therapist_sex, <span class="fu">everything</span>(), <span class="sc">-</span>patient_chiffre, <span class="sc">-</span>icd10_code) <span class="co">#remove chiffre and icd code for export</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning in left_join(merged_text_clean, df_merged_self_rating, by = "patient_chiffre"): Detected an unexpected many-to-many relationship between `x` and `y`.
-ℹ Row 10 of `x` matches multiple rows in `y`.
+ℹ Row 12 of `x` matches multiple rows in `y`.
 ℹ Row 521 of `y` matches multiple rows in `x`.
 ℹ If a many-to-many relationship is expected, set `relationship =
   "many-to-many"` to silence this warning.</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(df_merged, <span class="st">"/Volumes/meta_data/processed/working_data/merged_data.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(df_merged, <span class="st">"/Volumes/meta_data/processed/working_data/merged_data.rds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 </section>
 </section>
