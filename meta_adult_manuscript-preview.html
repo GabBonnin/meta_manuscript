@@ -648,82 +648,76 @@ Note
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringi)     <span class="co"># robust word counts (stri_count_words)</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)       <span class="co"># kable() table rendering</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidytext)    <span class="co"># unnest_tokens() for tokenization</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)       <span class="co"># map() helpers</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Output helpers (to support pdf + html + docx via Quarto/Pandoc)</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Print a note below a table in a way that survives multiple output formats.</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>print_note <span class="ot">&lt;-</span> <span class="cf">function</span>(text) {</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cat</span>(<span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>, <span class="st">"Note:"</span>, text, <span class="st">"</span><span class="sc">\n\n</span><span class="st">"</span>)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Indent labels in tables. We use LaTeX spacing for PDF and inline HTML for HTML/docx.</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>indent_label <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">level =</span> <span class="dv">1</span>) {</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_latex_output</span>()) {</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="fu">strrep</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">hspace{1em}"</span>, level), x)</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>      <span class="st">"&lt;span style='padding-left:"</span>, <span class="fl">1.2</span> <span class="sc">*</span> level, <span class="st">"em; display:inline-block;'&gt;"</span>,</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>      x,</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      <span class="st">"&lt;/span&gt;"</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Decide kable() format based on output target.</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co"># - latex for PDF</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co"># - html for HTML</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co"># - pipe for Word/docx via pandoc</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>kable_fmt <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_latex_output</span>()) <span class="st">"latex"</span></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_html_output</span>()) <span class="st">"html"</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="st">"pipe"</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Output helpers (to support pdf + html + docx via Quarto/Pandoc)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Indent labels in tables. Use LaTeX spacing for PDF and inline HTML for HTML/docx.</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>indent_label <span class="ot">&lt;-</span> <span class="cf">function</span>(x, <span class="at">level =</span> <span class="dv">1</span>) {</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is_latex_output</span>()) {</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(<span class="fu">strrep</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">hspace{1em}"</span>, level), x)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">paste0</span>(</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">"&lt;span style='padding-left:"</span>, <span class="fl">1.2</span> <span class="sc">*</span> level, <span class="st">"em; display:inline-block;'&gt;"</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>      x,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">"&lt;/span&gt;"</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># Decide kable() format based on output target.</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># - latex for PDF</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="co"># - html for HTML</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co"># - pipe for Word/docx via pandoc</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>kable_fmt <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is_latex_output</span>()) <span class="st">"latex"</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is_html_output</span>()) <span class="st">"html"</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="st">"pipe"</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Line break that works inside a table cell for each output type.</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>cell_br <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is_latex_output</span>()) <span class="st">"</span><span class="sc">\\\\</span><span class="st">"</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="st">"&lt;br&gt;"</span></span>
 <span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Line break that works inside a table cell for each output type.</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>cell_br <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_latex_output</span>()) <span class="st">"</span><span class="sc">\\\\</span><span class="st">"</span></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="st">"&lt;br&gt;"</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Bold text in a way that works across formats inside kable.</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>fmt_bold <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is_latex_output</span>()) <span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">textbf{"</span>, x, <span class="st">"}"</span>)</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="fu">paste0</span>(<span class="st">"&lt;strong&gt;"</span>, x, <span class="st">"&lt;/strong&gt;"</span>)</span>
 <span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="co"># Bold text in a way that works across formats.</span></span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>fmt_bold <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (knitr<span class="sc">::</span><span class="fu">is_latex_output</span>()) <span class="fu">paste0</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">textbf{"</span>, x, <span class="st">"}"</span>)</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="fu">paste0</span>(<span class="st">"&lt;strong&gt;"</span>, x, <span class="st">"&lt;/strong&gt;"</span>)</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a><span class="co"># Table helper: add "section header rows" for grouped printing</span></span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a lightweight alternative to kableExtra::pack_rows</span></span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a><span class="co"># It inserts a bold header row before each section (e.g., instrument).</span></span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>add_section_rows <span class="ot">&lt;-</span> <span class="cf">function</span>(df, <span class="at">section_col =</span> <span class="st">"instrument"</span>, <span class="at">label_col =</span> <span class="st">"Scale"</span>) {</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  sections <span class="ot">&lt;-</span> <span class="fu">unique</span>(df[[section_col]])</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="co"># Table helper: add "section header rows" for grouped printing</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a><span class="co"># This is a lightweight alternative to kableExtra::pack_rows</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="co"># It inserts a bold header row before each section (e.g., instrument).</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>add_section_rows <span class="ot">&lt;-</span> <span class="cf">function</span>(df, <span class="at">section_col =</span> <span class="st">"instrument"</span>, <span class="at">label_col =</span> <span class="st">"Scale"</span>) {</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>  sections <span class="ot">&lt;-</span> <span class="fu">unique</span>(df[[section_col]])</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create an "empty row" with correct column types so bind_rows() is safe.</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>  typed_na_row <span class="ot">&lt;-</span> <span class="cf">function</span>(template_df) {</span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    <span class="fu">slice</span>(template_df, <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> .x[<span class="cn">NA_integer_</span>]))</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Create an "empty row" with correct column types so bind_rows() is safe.</span></span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>  typed_na_row <span class="ot">&lt;-</span> <span class="cf">function</span>(template_df) {</span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">slice</span>(template_df, <span class="dv">1</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>      dplyr<span class="sc">::</span><span class="fu">mutate</span>(dplyr<span class="sc">::</span><span class="fu">across</span>(dplyr<span class="sc">::</span><span class="fu">everything</span>(), <span class="sc">~</span> .x[<span class="cn">NA_integer_</span>]))</span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(<span class="fu">lapply</span>(sections, <span class="cf">function</span>(s) {</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># rows belonging to this section</span></span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    block <span class="ot">&lt;-</span> df[df[[section_col]] <span class="sc">==</span> s, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># header row: same structure as block but label column is bold section title</span></span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    header <span class="ot">&lt;-</span> <span class="fu">typed_na_row</span>(block)</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    header[[label_col]] <span class="ot">&lt;-</span> <span class="fu">fmt_bold</span>(s)</span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    <span class="co"># indent all scale labels under this header for readability</span></span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    block[[label_col]] <span class="ot">&lt;-</span> <span class="fu">indent_label</span>(block[[label_col]], <span class="at">level =</span> <span class="dv">1</span>)</span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(header, block)</span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>  }))</span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(<span class="fu">lapply</span>(sections, <span class="cf">function</span>(s) {</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="co"># rows belonging to this section</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    block <span class="ot">&lt;-</span> df[df[[section_col]] <span class="sc">==</span> s, , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>    <span class="co"># header row: same structure as block but label column is bold section title</span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>    header <span class="ot">&lt;-</span> <span class="fu">typed_na_row</span>(block)</span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>    header[[label_col]] <span class="ot">&lt;-</span> <span class="fu">fmt_bold</span>(s)</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    <span class="co"># indent all scale labels under this header for readability</span></span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    block[[label_col]] <span class="ot">&lt;-</span> <span class="fu">indent_label</span>(block[[label_col]], <span class="at">level =</span> <span class="dv">1</span>)</span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">bind_rows</span>(header, block)</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>  }))</span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <section id="demographics-and-context-factors" class="level3">
 <h3 class="anchored" data-anchor-id="demographics-and-context-factors">Demographics and context factors</h3>
@@ -775,17 +769,17 @@ Note
 <span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a><span class="co"># - categorical vars: one header row + one row per category level</span></span>
 <span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
 <span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>make_section <span class="ot">&lt;-</span> <span class="cf">function</span>(data, vars, section_title, pretty_names) {</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(dplyr<span class="sc">::</span><span class="fu">all_of</span>(vars))</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>  df <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="fu">all_of</span>(vars))</span>
 <span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>  num_vars <span class="ot">&lt;-</span> <span class="fu">names</span>(df)[<span class="fu">vapply</span>(df, is.numeric, <span class="fu">logical</span>(<span class="dv">1</span>))]</span>
 <span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>  cat_vars <span class="ot">&lt;-</span> <span class="fu">setdiff</span>(<span class="fu">names</span>(df), num_vars)</span>
 <span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ----------------------------</span></span>
 <span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Numeric rows (one per variable)</span></span>
 <span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ----------------------------</span></span>
-<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>  num_tab <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(<span class="at">Variable_raw =</span> num_vars) <span class="sc">%&gt;%</span></span>
-<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>  num_tab <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">Variable_raw =</span> num_vars) <span class="sc">%&gt;%</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
 <span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>      <span class="at">Section =</span> section_title,</span>
-<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>      <span class="at">Variable =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(Variable_raw, <span class="sc">!!!</span>pretty_names),</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>      <span class="at">Variable =</span> <span class="fu">recode</span>(Variable_raw, <span class="sc">!!!</span>pretty_names),</span>
 <span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>      <span class="at">is_header =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>      <span class="at">Level =</span> <span class="st">""</span>,</span>
 <span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>      <span class="at">Valid_n   =</span> <span class="fu">sapply</span>(df[num_vars], \(x) <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(x))),</span>
@@ -798,21 +792,21 @@ Note
 <span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Categorical rows (header + levels)</span></span>
 <span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ----------------------------</span></span>
 <span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>  cat_long <span class="ot">&lt;-</span> df <span class="sc">%&gt;%</span></span>
-<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>    tidyr<span class="sc">::</span><span class="fu">pivot_longer</span>(dplyr<span class="sc">::</span><span class="fu">all_of</span>(cat_vars), <span class="at">names_to =</span> <span class="st">"Variable_raw"</span>, <span class="at">values_to =</span> <span class="st">"Value"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pivot_longer</span>(<span class="fu">all_of</span>(cat_vars), <span class="at">names_to =</span> <span class="st">"Variable_raw"</span>, <span class="at">values_to =</span> <span class="st">"Value"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
 <span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>      <span class="at">Section =</span> section_title,</span>
-<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>      <span class="at">Variable =</span> dplyr<span class="sc">::</span><span class="fu">recode</span>(Variable_raw, <span class="sc">!!!</span>pretty_names)</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>      <span class="at">Variable =</span> <span class="fu">recode</span>(Variable_raw, <span class="sc">!!!</span>pretty_names)</span>
 <span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>    )</span>
 <span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Header row per categorical variable: reports valid/missing counts</span></span>
 <span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>  cat_header <span class="ot">&lt;-</span> cat_long <span class="sc">%&gt;%</span></span>
-<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">group_by</span>(Section, Variable_raw, Variable) <span class="sc">%&gt;%</span></span>
-<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">summarise</span>(</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Section, Variable_raw, Variable) <span class="sc">%&gt;%</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarise</span>(</span>
 <span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>      <span class="at">Valid_n   =</span> <span class="fu">sum</span>(<span class="sc">!</span><span class="fu">is.na</span>(Value)),</span>
 <span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>      <span class="at">Missing_n =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(Value)),</span>
 <span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>      <span class="at">.groups =</span> <span class="st">"drop"</span></span>
 <span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
 <span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>      <span class="at">is_header =</span> <span class="cn">TRUE</span>,</span>
 <span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>      <span class="at">Level =</span> <span class="st">""</span>,</span>
 <span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">Mean ± SD</span><span class="st">`</span> <span class="ot">=</span> <span class="st">""</span>,</span>
@@ -821,16 +815,16 @@ Note
 <span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Level rows: counts within each categorical variable</span></span>
 <span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>  cat_levels <span class="ot">&lt;-</span> cat_long <span class="sc">%&gt;%</span></span>
-<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Value)) <span class="sc">%&gt;%</span></span>
-<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">group_by</span>(Section, Variable_raw, Variable) <span class="sc">%&gt;%</span></span>
-<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
-<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>      <span class="at">Valid_n =</span> dplyr<span class="sc">::</span><span class="fu">n</span>(),</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(Value)) <span class="sc">%&gt;%</span></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(Section, Variable_raw, Variable) <span class="sc">%&gt;%</span></span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>      <span class="at">Valid_n =</span> <span class="fu">n</span>(),</span>
 <span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Preserve original level order as much as possible</span></span>
 <span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>      <span class="at">Value_f =</span> <span class="cf">if</span> (<span class="fu">is.factor</span>(Value)) Value <span class="cf">else</span> <span class="fu">factor</span>(<span class="fu">as.character</span>(Value), <span class="at">levels =</span> <span class="fu">unique</span>(<span class="fu">as.character</span>(Value)))</span>
 <span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">count</span>(Section, Variable_raw, Variable, Value_f, Valid_n, <span class="at">name =</span> <span class="st">"n"</span>, <span class="at">sort =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>    <span class="fu">count</span>(Section, Variable_raw, Variable, Value_f, Valid_n, <span class="at">name =</span> <span class="st">"n"</span>, <span class="at">sort =</span> <span class="cn">FALSE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
 <span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a>      <span class="at">is_header =</span> <span class="cn">FALSE</span>,</span>
 <span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>      <span class="at">Missing_n =</span> <span class="cn">NA_integer_</span>,</span>
 <span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>      <span class="at">level_order =</span> <span class="fu">as.integer</span>(Value_f),</span>
@@ -838,29 +832,29 @@ Note
 <span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">Mean ± SD</span><span class="st">`</span> <span class="ot">=</span> <span class="st">""</span>,</span>
 <span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>      <span class="st">`</span><span class="at">n (%)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">sprintf</span>(<span class="st">"%d (%s)"</span>, n, <span class="fu">fmt_pct</span>(n <span class="sc">/</span> Valid_n))</span>
 <span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(Section, Variable_raw, Variable, is_header, Level, level_order,</span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(Section, Variable_raw, Variable, is_header, Level, level_order,</span>
 <span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>                  Valid_n, Missing_n, <span class="st">`</span><span class="at">Mean ± SD</span><span class="st">`</span>, <span class="st">`</span><span class="at">n (%)</span><span class="st">`</span>)</span>
 <span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ----------------------------</span></span>
 <span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Combine numeric + categorical blocks and order nicely</span></span>
 <span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ----------------------------  </span></span>
-<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">bind_rows</span>(</span>
-<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>    num_tab <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">level_order =</span> <span class="cn">NA_integer_</span>),</span>
-<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>    cat_header <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">mutate</span>(<span class="at">level_order =</span> <span class="cn">NA_integer_</span>),</span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">bind_rows</span>(</span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a>    num_tab <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">level_order =</span> <span class="cn">NA_integer_</span>),</span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>    cat_header <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">level_order =</span> <span class="cn">NA_integer_</span>),</span>
 <span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a>    cat_levels</span>
 <span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
 <span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>      <span class="at">var_order  =</span> <span class="fu">match</span>(Variable_raw, vars),</span>
 <span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a>      <span class="at">row_order  =</span> <span class="fu">ifelse</span>(is_header, <span class="dv">0</span>L, <span class="dv">1</span>L),</span>
 <span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>      <span class="at">level_order =</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(level_order), <span class="dv">0</span>L, level_order)</span>
 <span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">arrange</span>(var_order, row_order, level_order) <span class="sc">%&gt;%</span></span>
-<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(</span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(var_order, row_order, level_order) <span class="sc">%&gt;%</span></span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
 <span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>      <span class="at">Variable  =</span> <span class="fu">ifelse</span>(is_header, <span class="fu">paste0</span>(<span class="st">"**"</span>, Variable, <span class="st">"**"</span>), <span class="st">""</span>),</span>
 <span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a>      <span class="at">Valid_n   =</span> <span class="fu">ifelse</span>(is_header, <span class="fu">as.character</span>(Valid_n), <span class="st">""</span>),</span>
 <span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a>      <span class="at">Missing_n =</span> <span class="fu">ifelse</span>(is_header, <span class="fu">as.character</span>(Missing_n), <span class="st">""</span>)</span>
 <span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">select</span>(Section, Variable, Valid_n, Missing_n, Level, <span class="st">`</span><span class="at">Mean ± SD</span><span class="st">`</span>, <span class="st">`</span><span class="at">n (%)</span><span class="st">`</span>)</span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(Section, Variable, Valid_n, Missing_n, Level, <span class="st">`</span><span class="at">Mean ± SD</span><span class="st">`</span>, <span class="st">`</span><span class="at">n (%)</span><span class="st">`</span>)</span>
 <span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a><span class="co"># Build patient and therapist sections, then split into two printed tables</span></span>
@@ -869,11 +863,11 @@ Note
 <span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a>final_tab_print <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(patient_section, therapist_section)</span>
 <span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> final_tab_print <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(Section <span class="sc">==</span> <span class="st">"Patient"</span>) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Section)</span>
-<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>th <span class="ot">&lt;-</span> final_tab_print <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">filter</span>(Section <span class="sc">==</span> <span class="st">"Therapist"</span>) <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>Section)</span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> final_tab_print <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Section <span class="sc">==</span> <span class="st">"Patient"</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Section)</span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a>th <span class="ot">&lt;-</span> final_tab_print <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Section <span class="sc">==</span> <span class="st">"Therapist"</span>) <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>Section)</span>
 <span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> pt <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="st">`</span><span class="at">Valid n</span><span class="st">`</span> <span class="ot">=</span> Valid_n, <span class="st">`</span><span class="at">Missing n</span><span class="st">`</span> <span class="ot">=</span> Missing_n)</span>
-<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a>th <span class="ot">&lt;-</span> th <span class="sc">%&gt;%</span> dplyr<span class="sc">::</span><span class="fu">rename</span>(<span class="st">`</span><span class="at">Valid n</span><span class="st">`</span> <span class="ot">=</span> Valid_n, <span class="st">`</span><span class="at">Missing n</span><span class="st">`</span> <span class="ot">=</span> Missing_n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a>pt <span class="ot">&lt;-</span> pt <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="st">`</span><span class="at">Valid n</span><span class="st">`</span> <span class="ot">=</span> Valid_n, <span class="st">`</span><span class="at">Missing n</span><span class="st">`</span> <span class="ot">=</span> Missing_n)</span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a>th <span class="ot">&lt;-</span> th <span class="sc">%&gt;%</span> <span class="fu">rename</span>(<span class="st">`</span><span class="at">Valid n</span><span class="st">`</span> <span class="ot">=</span> Valid_n, <span class="st">`</span><span class="at">Missing n</span><span class="st">`</span> <span class="ot">=</span> Missing_n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(</span>
@@ -906,16 +900,16 @@ Note
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><strong>Age at therapy start</strong></td>
-<td style="text-align: center;">586</td>
-<td style="text-align: center;">225</td>
+<td style="text-align: center;">584</td>
+<td style="text-align: center;">227</td>
 <td style="text-align: left;"></td>
-<td style="text-align: center;">41.25 ± 14.34</td>
+<td style="text-align: center;">41.21 ± 14.28</td>
 <td style="text-align: center;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><strong>Sex</strong></td>
-<td style="text-align: center;">586</td>
-<td style="text-align: center;">225</td>
+<td style="text-align: center;">584</td>
+<td style="text-align: center;">227</td>
 <td style="text-align: left;"></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
@@ -926,7 +920,7 @@ Note
 <td style="text-align: center;"></td>
 <td style="text-align: left;">male</td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">239 (40.8%)</td>
+<td style="text-align: center;">237 (40.6%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"></td>
@@ -934,7 +928,7 @@ Note
 <td style="text-align: center;"></td>
 <td style="text-align: left;">female</td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">347 (59.2%)</td>
+<td style="text-align: center;">347 (59.4%)</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>In relationship</strong></td>
@@ -1323,16 +1317,16 @@ Note
 <tbody>
 <tr class="odd">
 <td style="text-align: left;"><strong>Age at therapy start</strong></td>
-<td style="text-align: center;">586</td>
-<td style="text-align: center;">225</td>
+<td style="text-align: center;">584</td>
+<td style="text-align: center;">227</td>
 <td style="text-align: left;"></td>
-<td style="text-align: center;">28.56 ± 4.33</td>
+<td style="text-align: center;">28.55 ± 4.33</td>
 <td style="text-align: center;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><strong>Sex</strong></td>
-<td style="text-align: center;">586</td>
-<td style="text-align: center;">225</td>
+<td style="text-align: center;">584</td>
+<td style="text-align: center;">227</td>
 <td style="text-align: left;"></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
@@ -1343,7 +1337,7 @@ Note
 <td style="text-align: center;"></td>
 <td style="text-align: left;">male</td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">84 (14.3%)</td>
+<td style="text-align: center;">84 (14.4%)</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"></td>
@@ -1351,7 +1345,7 @@ Note
 <td style="text-align: center;"></td>
 <td style="text-align: left;">female</td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">502 (85.7%)</td>
+<td style="text-align: center;">500 (85.6%)</td>
 </tr>
 </tbody>
 </table>
@@ -1382,7 +1376,7 @@ Note
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract numeric question ID (1–12) from column name</span></span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">question_id =</span> <span class="fu">str_extract</span>(question_raw, <span class="st">"</span><span class="sc">\\</span><span class="st">d+"</span>) <span class="sc">%&gt;%</span> <span class="fu">as.integer</span>(),</span>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract human-readable question label from column name</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Extract question label from column name</span></span>
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">question_label =</span> <span class="fu">str_remove</span>(question_raw, <span class="st">"^txt</span><span class="sc">\\</span><span class="st">d+_"</span>),</span>
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Normalize whitespace in text</span></span>
@@ -1440,55 +1434,54 @@ Note
 <span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
 <span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a><span class="co"># Tokenization for lexical diversity (across respondents per question)</span></span>
 <span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANT: diversity here is computed on the pooled word distribution per question,</span></span>
-<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a><span class="co"># not within each individual response.</span></span>
-<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>tokens_by_question <span class="ot">&lt;-</span> working_data_long <span class="sc">%&gt;%</span> </span>
-<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>is_missing) <span class="sc">%&gt;%</span>                     <span class="co"># exclude missing responses</span></span>
-<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text, <span class="at">token =</span> <span class="st">"words"</span>) <span class="sc">%&gt;%</span>  <span class="co"># split into word tokens</span></span>
-<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(word, <span class="st">"^</span><span class="sc">\\</span><span class="st">d+$"</span>))        <span class="co"># remove pure numbers</span></span>
-<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a><span class="co"># Lexical diversity using Shannon entropy</span></span>
-<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a><span class="co"># - Shannon entropy H captures dispersion of word usage</span></span>
-<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a><span class="co"># - Diversity index = 2^H (effective number of equally frequent word types)</span></span>
-<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>diversity_by_question <span class="ot">&lt;-</span> tokens_by_question <span class="sc">%&gt;%</span> </span>
-<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(question_id, question_label, word) <span class="sc">%&gt;%</span>   <span class="co"># word frequencies per question</span></span>
-<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(question_id, question_label) <span class="sc">%&gt;%</span> </span>
-<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">%&gt;%</span>                     <span class="co"># word probabilities</span></span>
-<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
-<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>    <span class="at">shannon_entropy =</span> <span class="sc">-</span><span class="fu">sum</span>(p <span class="sc">*</span> <span class="fu">log2</span>(p)),        <span class="co"># Shannon entropy</span></span>
-<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">diversity_index =</span> <span class="dv">2</span> <span class="sc">^</span> shannon_entropy,      <span class="co"># effective vocabulary size</span></span>
-<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_tokens =</span> <span class="fu">sum</span>(n),                      <span class="co"># total words (for context)</span></span>
-<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>    <span class="at">vocab_size =</span> <span class="fu">n_distinct</span>(word),              <span class="co"># raw vocabulary size</span></span>
-<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
-<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine engagement + diversity into one question-level table</span></span>
-<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a><span class="co"># This table triangulates:</span></span>
-<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a><span class="co"># - engagement (missing, very short)</span></span>
-<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a><span class="co"># - quantity (word counts)</span></span>
-<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a><span class="co"># - dispersion (lexical diversity)</span></span>
-<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>qc_table <span class="ot">&lt;-</span> qc_by_question <span class="sc">%&gt;%</span></span>
-<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">Question =</span> <span class="fu">factor</span>(question_id, <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">labels =</span> question_labels)</span>
-<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
-<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>    diversity_by_question,</span>
-<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"question_id"</span>, <span class="st">"question_label"</span>)</span>
-<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
-<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
-<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>    Question,</span>
-<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>    n_total,</span>
-<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>    missing_pct,</span>
-<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>    very_short_pct,</span>
-<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a>    median_words,</span>
-<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>    p10_words,</span>
-<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>    p90_words,</span>
-<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>    diversity_index</span>
-<span id="cb7-127"><a href="#cb7-127" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a><span class="co"># IMPORTANT: diversity here is computed on the pooled word distribution per question, not within each individual response.</span></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a>tokens_by_question <span class="ot">&lt;-</span> working_data_long <span class="sc">%&gt;%</span> </span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span>is_missing) <span class="sc">%&gt;%</span>                     <span class="co"># exclude missing responses</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest_tokens</span>(word, text, <span class="at">token =</span> <span class="st">"words"</span>) <span class="sc">%&gt;%</span>  <span class="co"># split into word tokens</span></span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">str_detect</span>(word, <span class="st">"^</span><span class="sc">\\</span><span class="st">d+$"</span>))        <span class="co"># remove pure numbers</span></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a><span class="co"># Lexical diversity using Shannon entropy</span></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="co"># - Shannon entropy H captures dispersion of word usage</span></span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a><span class="co"># - Diversity index = 2^H (effective number of equally frequent word types)</span></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>diversity_by_question <span class="ot">&lt;-</span> tokens_by_question <span class="sc">%&gt;%</span> </span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(question_id, question_label, word) <span class="sc">%&gt;%</span>   <span class="co"># word frequencies per question</span></span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(question_id, question_label) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">p =</span> n <span class="sc">/</span> <span class="fu">sum</span>(n)) <span class="sc">%&gt;%</span>                     <span class="co"># word probabilities</span></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a>    <span class="at">shannon_entropy =</span> <span class="sc">-</span><span class="fu">sum</span>(p <span class="sc">*</span> <span class="fu">log2</span>(p)),        <span class="co"># Shannon entropy</span></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a>    <span class="at">diversity_index =</span> <span class="dv">2</span> <span class="sc">^</span> shannon_entropy,      <span class="co"># effective vocabulary size</span></span>
+<span id="cb7-97"><a href="#cb7-97" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_tokens =</span> <span class="fu">sum</span>(n),                      <span class="co"># total words (for context)</span></span>
+<span id="cb7-98"><a href="#cb7-98" aria-hidden="true" tabindex="-1"></a>    <span class="at">vocab_size =</span> <span class="fu">n_distinct</span>(word),              <span class="co"># raw vocabulary size</span></span>
+<span id="cb7-99"><a href="#cb7-99" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb7-100"><a href="#cb7-100" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb7-101"><a href="#cb7-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-102"><a href="#cb7-102" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
+<span id="cb7-103"><a href="#cb7-103" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine engagement + diversity into one question-level table</span></span>
+<span id="cb7-104"><a href="#cb7-104" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
+<span id="cb7-105"><a href="#cb7-105" aria-hidden="true" tabindex="-1"></a><span class="co"># This table triangulates:</span></span>
+<span id="cb7-106"><a href="#cb7-106" aria-hidden="true" tabindex="-1"></a><span class="co"># - engagement (missing, very short)</span></span>
+<span id="cb7-107"><a href="#cb7-107" aria-hidden="true" tabindex="-1"></a><span class="co"># - quantity (word counts)</span></span>
+<span id="cb7-108"><a href="#cb7-108" aria-hidden="true" tabindex="-1"></a><span class="co"># - dispersion (lexical diversity)</span></span>
+<span id="cb7-109"><a href="#cb7-109" aria-hidden="true" tabindex="-1"></a>qc_table <span class="ot">&lt;-</span> qc_by_question <span class="sc">%&gt;%</span></span>
+<span id="cb7-110"><a href="#cb7-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb7-111"><a href="#cb7-111" aria-hidden="true" tabindex="-1"></a>    <span class="at">Question =</span> <span class="fu">factor</span>(question_id, <span class="at">levels =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>, <span class="at">labels =</span> question_labels)</span>
+<span id="cb7-112"><a href="#cb7-112" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-113"><a href="#cb7-113" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(</span>
+<span id="cb7-114"><a href="#cb7-114" aria-hidden="true" tabindex="-1"></a>    diversity_by_question,</span>
+<span id="cb7-115"><a href="#cb7-115" aria-hidden="true" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"question_id"</span>, <span class="st">"question_label"</span>)</span>
+<span id="cb7-116"><a href="#cb7-116" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
+<span id="cb7-117"><a href="#cb7-117" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(</span>
+<span id="cb7-118"><a href="#cb7-118" aria-hidden="true" tabindex="-1"></a>    Question,</span>
+<span id="cb7-119"><a href="#cb7-119" aria-hidden="true" tabindex="-1"></a>    n_total,</span>
+<span id="cb7-120"><a href="#cb7-120" aria-hidden="true" tabindex="-1"></a>    missing_pct,</span>
+<span id="cb7-121"><a href="#cb7-121" aria-hidden="true" tabindex="-1"></a>    very_short_pct,</span>
+<span id="cb7-122"><a href="#cb7-122" aria-hidden="true" tabindex="-1"></a>    median_words,</span>
+<span id="cb7-123"><a href="#cb7-123" aria-hidden="true" tabindex="-1"></a>    p10_words,</span>
+<span id="cb7-124"><a href="#cb7-124" aria-hidden="true" tabindex="-1"></a>    p90_words,</span>
+<span id="cb7-125"><a href="#cb7-125" aria-hidden="true" tabindex="-1"></a>    diversity_index</span>
+<span id="cb7-126"><a href="#cb7-126" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [6]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>qc_table <span class="sc">%&gt;%</span></span>
@@ -1752,21 +1745,25 @@ Note
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Primary diagnoses (n)</span><span class="st">`</span> <span class="ot">=</span> n_primary</span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  )</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(</span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  diag_print,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">format   =</span> <span class="fu">kable_fmt</span>(),                 <span class="co"># uses your helper: html/latex/pipe</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">align    =</span> <span class="fu">c</span>(<span class="st">"l"</span>, <span class="st">"c"</span>, <span class="st">"c"</span>),</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">booktabs =</span> knitr<span class="sc">::</span><span class="fu">is_latex_output</span>(),</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption  =</span> <span class="st">"DSM-5 diagnoses in the sample (absolute frequencies)"</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">align    =</span> <span class="fu">c</span>(<span class="st">"l"</span>, <span class="st">"c"</span>, <span class="st">"c"</span>),</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">booktabs =</span> <span class="fu">is_latex_output</span>(),</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption  =</span> <span class="st">"DSM-5 diagnoses in the sample (absolute frequencies)"</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>DSM-5 diagnoses in the sample (absolute frequencies)</caption>
+<colgroup>
+<col style="width: 57%">
+<col style="width: 19%">
+<col style="width: 23%">
+</colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;" data-quarto-table-cell-role="th">DSM-5 diagnosis</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">All diagnoses (n)</th>
-<th style="text-align: center;" data-quarto-table-cell-role="th">Primary diagnoses (n)</th>
+<th style="text-align: left;">DSM-5 diagnosis</th>
+<th style="text-align: center;">All diagnoses (n)</th>
+<th style="text-align: center;">Primary diagnoses (n)</th>
 </tr>
 </thead>
 <tbody>
@@ -1782,7 +1779,7 @@ Note
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Social Anxiety Disorder (Social Phobia)</td>
-<td style="text-align: center;">86</td>
+<td style="text-align: center;">85</td>
 <td style="text-align: center;">45</td>
 </tr>
 <tr class="even">
@@ -1807,8 +1804,8 @@ Note
 </tr>
 <tr class="even">
 <td style="text-align: left;">Generalized Anxiety Disorder</td>
-<td style="text-align: center;">32</td>
-<td style="text-align: center;">20</td>
+<td style="text-align: center;">31</td>
+<td style="text-align: center;">19</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Borderline Personality Disorder</td>
@@ -1827,8 +1824,8 @@ Note
 </tr>
 <tr class="even">
 <td style="text-align: left;">Adjustment Disorder with Mixed Anxiety and Depressed Mood</td>
-<td style="text-align: center;">17</td>
-<td style="text-align: center;">17</td>
+<td style="text-align: center;">16</td>
+<td style="text-align: center;">16</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Insomnia Disorder</td>
@@ -1881,7 +1878,7 @@ Note
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># These are wide-format columns where suffixes encode timepoints, e.g.:</span></span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#   dass_dep_score_KZT2-DUPost</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># We later parse these into instrument / scale / timepoint.</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># I later parse these into instrument / scale / timepoint.</span></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>psy_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
 <span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="co"># BSI</span></span>
 <span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"bsi_gsi_DI"</span>,</span>
@@ -1930,94 +1927,65 @@ Note
 <span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Helper: robust numeric coercion for messy imported columns</span></span>
-<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a><span class="co"># Problem this solves:</span></span>
-<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a><span class="co"># - some columns may be list-columns</span></span>
-<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a><span class="co"># - factors/characters should become numeric safely</span></span>
-<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a><span class="co"># - sd()/mean() should not crash due to non-numeric types</span></span>
-<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>to_num <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Sometimes a "column" is accidentally a nested data.frame/tibble:</span></span>
-<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.data.frame</span>(x)) x <span class="ot">&lt;-</span> x[[<span class="dv">1</span>]]</span>
-<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>  <span class="co"># If it's a list-column: replace NULL with NA and coerce to numeric</span></span>
-<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.list</span>(x) <span class="sc">&amp;&amp;</span> <span class="sc">!</span><span class="fu">is.atomic</span>(x)) {</span>
-<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span>(<span class="fu">map_dbl</span>(x, <span class="cf">function</span>(.x) {</span>
-<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">is.null</span>(.x) <span class="sc">||</span> <span class="fu">length</span>(.x) <span class="sc">==</span> <span class="dv">0</span>) <span class="fu">return</span>(<span class="cn">NA_real_</span>)</span>
-<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">length</span>(.x) <span class="sc">==</span> <span class="dv">1</span>) <span class="fu">return</span>(<span class="fu">suppressWarnings</span>(<span class="fu">as.numeric</span>(.x)))</span>
-<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a>      <span class="fu">suppressWarnings</span>(<span class="fu">as.numeric</span>(.x[[<span class="dv">1</span>]])) <span class="co"># take first element if longer than 1</span></span>
-<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>    }))</span>
-<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Atomic but non-numeric types</span></span>
-<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.factor</span>(x)) x <span class="ot">&lt;-</span> <span class="fu">as.character</span>(x)</span>
-<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a>  <span class="fu">suppressWarnings</span>(<span class="fu">as.numeric</span>(x))</span>
-<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a><span class="co"># Clean copy of the data for psychometric columns (prevents sd()/var() errors)</span></span>
-<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a>working_data_psy <span class="ot">&lt;-</span> working_data <span class="sc">%&gt;%</span></span>
-<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(psy_vars), to_num))</span>
-<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Parse variable names into components:</span></span>
-<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a><span class="co">#   instrument_scale_timepoint</span></span>
-<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
-<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: "dass_dep_score_KZT2-DUPost"</span></span>
-<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a><span class="co"># - instrument: "dass"</span></span>
-<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a><span class="co"># - scale:      "dep_score"</span></span>
-<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a><span class="co"># - timepoint:  "KZT2-DUPost"</span></span>
-<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a>parse_psy_name <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a>  instrument <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"_.*$"</span>, <span class="st">""</span>, x)          <span class="co"># text before first underscore</span></span>
-<span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a>  rest <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"^[^_]+_"</span>, <span class="st">""</span>, x)             <span class="co"># everything after first underscore</span></span>
-<span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">str_detect</span>(rest, <span class="st">"_"</span>)) {</span>
-<span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a>    timepoint <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"^.*_"</span>, <span class="st">""</span>, rest)      <span class="co"># last underscore-separated token</span></span>
-<span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a>    scale <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"_[^_]+$"</span>, <span class="st">""</span>, rest)       <span class="co"># everything before that last token</span></span>
-<span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
-<span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If there is no underscore left, we treat the whole thing as timepoint/scale</span></span>
-<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a>    timepoint <span class="ot">&lt;-</span> rest</span>
-<span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a>    scale <span class="ot">&lt;-</span> rest</span>
-<span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">var =</span> x, <span class="at">instrument =</span> instrument, <span class="at">scale =</span> scale, <span class="at">timepoint =</span> timepoint)</span>
-<span id="cb11-105"><a href="#cb11-105" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a><span class="co"># Instrument labels for section headers</span></span>
-<span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a>instrument_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb11-109"><a href="#cb11-109" aria-hidden="true" tabindex="-1"></a>  <span class="at">bsi  =</span> <span class="st">"BSI"</span>,</span>
-<span id="cb11-110"><a href="#cb11-110" aria-hidden="true" tabindex="-1"></a>  <span class="at">bdi  =</span> <span class="st">"BDI"</span>,</span>
-<span id="cb11-111"><a href="#cb11-111" aria-hidden="true" tabindex="-1"></a>  <span class="at">dass =</span> <span class="st">"DASS"</span>,</span>
-<span id="cb11-112"><a href="#cb11-112" aria-hidden="true" tabindex="-1"></a>  <span class="at">pmh  =</span> <span class="st">"PMH"</span>,</span>
-<span id="cb11-113"><a href="#cb11-113" aria-hidden="true" tabindex="-1"></a>  <span class="at">gas  =</span> <span class="st">"GAS"</span>,</span>
-<span id="cb11-114"><a href="#cb11-114" aria-hidden="true" tabindex="-1"></a>  <span class="at">glob =</span> <span class="st">"Global ratings"</span>,</span>
-<span id="cb11-115"><a href="#cb11-115" aria-hidden="true" tabindex="-1"></a>  <span class="at">cgi  =</span> <span class="st">"CGI"</span></span>
-<span id="cb11-116"><a href="#cb11-116" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb11-117"><a href="#cb11-117" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-118"><a href="#cb11-118" aria-hidden="true" tabindex="-1"></a><span class="co"># Desired ordering for timepoint columns in output tables</span></span>
-<span id="cb11-119"><a href="#cb11-119" aria-hidden="true" tabindex="-1"></a>tp_levels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
-<span id="cb11-120"><a href="#cb11-120" aria-hidden="true" tabindex="-1"></a>  <span class="st">"DI"</span>, <span class="st">"DU-Prä"</span>, <span class="st">"KZT1-DU4"</span>, <span class="st">"KZT1-DUPost"</span>, <span class="st">"KZT2-DUPost"</span>,</span>
-<span id="cb11-121"><a href="#cb11-121" aria-hidden="true" tabindex="-1"></a>  <span class="st">"LZT1-DUPost"</span>, <span class="st">"LZT2-DUPost"</span>,</span>
-<span id="cb11-122"><a href="#cb11-122" aria-hidden="true" tabindex="-1"></a>  <span class="st">"DU-Kat6"</span></span>
-<span id="cb11-123"><a href="#cb11-123" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb11-124"><a href="#cb11-124" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-125"><a href="#cb11-125" aria-hidden="true" tabindex="-1"></a><span class="co"># Pretty labels for scale names</span></span>
-<span id="cb11-126"><a href="#cb11-126" aria-hidden="true" tabindex="-1"></a>scale_pretty <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
-<span id="cb11-127"><a href="#cb11-127" aria-hidden="true" tabindex="-1"></a>  x <span class="sc">%&gt;%</span></span>
-<span id="cb11-128"><a href="#cb11-128" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"^gsi$"</span>, <span class="st">"GSI"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-129"><a href="#cb11-129" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"total_score"</span>, <span class="st">"Total"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-130"><a href="#cb11-130" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"dep_score"</span>, <span class="st">"Depression"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-131"><a href="#cb11-131" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"anx_score"</span>, <span class="st">"Anxiety"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-132"><a href="#cb11-132" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"str_score"</span>, <span class="st">"Stress"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-133"><a href="#cb11-133" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"^sum$"</span>, <span class="st">"Sum"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb11-134"><a href="#cb11-134" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"_"</span>, <span class="st">" "</span>)</span>
-<span id="cb11-135"><a href="#cb11-135" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb11-136"><a href="#cb11-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-137"><a href="#cb11-137" aria-hidden="true" tabindex="-1"></a><span class="co"># Build metadata table once: one row per column name</span></span>
-<span id="cb11-138"><a href="#cb11-138" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(psy_vars, parse_psy_name) <span class="sc">%&gt;%</span></span>
-<span id="cb11-139"><a href="#cb11-139" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb11-140"><a href="#cb11-140" aria-hidden="true" tabindex="-1"></a>    <span class="at">instrument =</span> <span class="fu">recode</span>(instrument, <span class="sc">!!!</span>instrument_labels),</span>
-<span id="cb11-141"><a href="#cb11-141" aria-hidden="true" tabindex="-1"></a>    <span class="at">timepoint  =</span> <span class="fu">factor</span>(timepoint, <span class="at">levels =</span> tp_levels)</span>
-<span id="cb11-142"><a href="#cb11-142" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a><span class="co"># Parse variable names into components:</span></span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a><span class="co">#   instrument_scale_timepoint</span></span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a><span class="co"># ============================================================</span></span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a><span class="co"># Example: "dass_dep_score_KZT2-DUPost"</span></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a><span class="co"># - instrument: "dass"</span></span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a><span class="co"># - scale:      "dep_score"</span></span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a><span class="co"># - timepoint:  "KZT2-DUPost"</span></span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>parse_psy_name <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>  instrument <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"_.*$"</span>, <span class="st">""</span>, x)          <span class="co"># text before first underscore</span></span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>  rest <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"^[^_]+_"</span>, <span class="st">""</span>, x)             <span class="co"># everything after first underscore</span></span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">str_detect</span>(rest, <span class="st">"_"</span>)) {</span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a>    timepoint <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"^.*_"</span>, <span class="st">""</span>, rest)      <span class="co"># last underscore-separated token</span></span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>    scale <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"_[^_]+$"</span>, <span class="st">""</span>, rest)       <span class="co"># everything before that last token</span></span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If there is no underscore left, I treat the whole thing as timepoint/scale</span></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>    timepoint <span class="ot">&lt;-</span> rest</span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a>    scale <span class="ot">&lt;-</span> rest</span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tibble</span>(<span class="at">var =</span> x, <span class="at">instrument =</span> instrument, <span class="at">scale =</span> scale, <span class="at">timepoint =</span> timepoint)</span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a><span class="co"># Instrument labels for section headers</span></span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a>instrument_labels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a>  <span class="at">bsi  =</span> <span class="st">"BSI"</span>,</span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a>  <span class="at">bdi  =</span> <span class="st">"BDI"</span>,</span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a>  <span class="at">dass =</span> <span class="st">"DASS"</span>,</span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a>  <span class="at">pmh  =</span> <span class="st">"PMH"</span>,</span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a>  <span class="at">gas  =</span> <span class="st">"GAS"</span>,</span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a>  <span class="at">glob =</span> <span class="st">"Global ratings"</span>,</span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a>  <span class="at">cgi  =</span> <span class="st">"CGI"</span></span>
+<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a><span class="co"># Desired ordering for timepoint columns in output tables</span></span>
+<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a>tp_levels <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a>  <span class="st">"DI"</span>, <span class="st">"DU-Prä"</span>, <span class="st">"KZT1-DU4"</span>, <span class="st">"KZT1-DUPost"</span>, <span class="st">"KZT2-DUPost"</span>,</span>
+<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a>  <span class="st">"LZT1-DUPost"</span>, <span class="st">"LZT2-DUPost"</span>,</span>
+<span id="cb11-93"><a href="#cb11-93" aria-hidden="true" tabindex="-1"></a>  <span class="st">"DU-Kat6"</span></span>
+<span id="cb11-94"><a href="#cb11-94" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-95"><a href="#cb11-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-96"><a href="#cb11-96" aria-hidden="true" tabindex="-1"></a><span class="co"># Pretty labels for scale names</span></span>
+<span id="cb11-97"><a href="#cb11-97" aria-hidden="true" tabindex="-1"></a>scale_pretty <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb11-98"><a href="#cb11-98" aria-hidden="true" tabindex="-1"></a>  x <span class="sc">%&gt;%</span></span>
+<span id="cb11-99"><a href="#cb11-99" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"^gsi$"</span>, <span class="st">"GSI"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-100"><a href="#cb11-100" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"total_score"</span>, <span class="st">"Total"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-101"><a href="#cb11-101" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"dep_score"</span>, <span class="st">"Depression"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-102"><a href="#cb11-102" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"anx_score"</span>, <span class="st">"Anxiety"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-103"><a href="#cb11-103" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"str_score"</span>, <span class="st">"Stress"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-104"><a href="#cb11-104" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"^sum$"</span>, <span class="st">"Sum"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb11-105"><a href="#cb11-105" aria-hidden="true" tabindex="-1"></a>    <span class="fu">str_replace_all</span>(<span class="st">"_"</span>, <span class="st">" "</span>)</span>
+<span id="cb11-106"><a href="#cb11-106" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-107"><a href="#cb11-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-108"><a href="#cb11-108" aria-hidden="true" tabindex="-1"></a><span class="co"># Build metadata table once: one row per column name</span></span>
+<span id="cb11-109"><a href="#cb11-109" aria-hidden="true" tabindex="-1"></a>meta <span class="ot">&lt;-</span> <span class="fu">map_dfr</span>(psy_vars, parse_psy_name) <span class="sc">%&gt;%</span></span>
+<span id="cb11-110"><a href="#cb11-110" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb11-111"><a href="#cb11-111" aria-hidden="true" tabindex="-1"></a>    <span class="at">instrument =</span> <span class="fu">recode</span>(instrument, <span class="sc">!!!</span>instrument_labels),</span>
+<span id="cb11-112"><a href="#cb11-112" aria-hidden="true" tabindex="-1"></a>    <span class="at">timepoint  =</span> <span class="fu">factor</span>(timepoint, <span class="at">levels =</span> tp_levels)</span>
+<span id="cb11-113"><a href="#cb11-113" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [10]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Column-wise descriptives (mean/sd/n/missing) for one variable</span></span>
@@ -2045,7 +2013,7 @@ Note
 <span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Long format: one row per (variable column), then widen to timepoints as columns</span></span>
 <span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>psy_desc_long <span class="ot">&lt;-</span> meta <span class="sc">%&gt;%</span></span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stats =</span> <span class="fu">map</span>(var, \(v) <span class="fu">desc_num</span>(working_data_psy[[v]]))) <span class="sc">%&gt;%</span>  <span class="co"># IMPORTANT: use cleaned data!</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stats =</span> <span class="fu">map</span>(var, \(v) <span class="fu">desc_num</span>(working_data[[v]]))) <span class="sc">%&gt;%</span></span>
 <span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(stats) <span class="sc">%&gt;%</span></span>
 <span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cell =</span> <span class="fu">pmap_chr</span>(<span class="fu">list</span>(mean, sd, n), fmt_cell)) <span class="sc">%&gt;%</span></span>
 <span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(instrument, scale, timepoint, cell)</span>
@@ -2058,29 +2026,26 @@ Note
 <span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Scale =</span> <span class="fu">scale_pretty</span>(scale)) <span class="sc">%&gt;%</span></span>
 <span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(instrument, Scale, <span class="fu">all_of</span>(<span class="fu">intersect</span>(tp_levels, <span class="fu">names</span>(.))))</span>
 <span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a><span class="co"># Render with instrument headers</span></span>
-<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>render_df <span class="ot">&lt;-</span> psy_table <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">instrument =</span> <span class="fu">as.character</span>(instrument))</span>
-<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>table_for_print <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
-<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span></span>
-<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(dplyr<span class="sc">::</span><span class="fu">across</span>(dplyr<span class="sc">::</span><span class="fu">everything</span>(), as.character)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>    dplyr<span class="sc">::</span><span class="fu">mutate</span>(dplyr<span class="sc">::</span><span class="fu">across</span>(dplyr<span class="sc">::</span><span class="fu">everything</span>(), <span class="sc">~</span> dplyr<span class="sc">::</span><span class="fu">if_else</span>(<span class="fu">is.na</span>(.x), <span class="st">""</span>, .x)))</span>
-<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>psy_tab1_df <span class="ot">&lt;-</span> render_df <span class="sc">%&gt;%</span></span>
-<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">instrument =</span> <span class="fu">as.character</span>(instrument)) <span class="sc">%&gt;%</span></span>
-<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_section_rows</span>(<span class="at">section_col =</span> <span class="st">"instrument"</span>, <span class="at">label_col =</span> <span class="st">"Scale"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>instrument)</span>
-<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>psy_tab_1 <span class="ot">&lt;-</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
-<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table_for_print</span>(psy_tab1_df),</span>
-<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>  <span class="at">format   =</span> <span class="fu">kable_fmt</span>(),</span>
-<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">escape   =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">booktabs =</span> knitr<span class="sc">::</span><span class="fu">is_latex_output</span>(),</span>
-<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>  <span class="at">longtable =</span> knitr<span class="sc">::</span><span class="fu">is_latex_output</span>(),</span>
-<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>  <span class="at">align    =</span> <span class="fu">c</span>(<span class="st">"l"</span>, <span class="fu">rep</span>(<span class="st">"c"</span>, <span class="fu">ncol</span>(psy_tab1_df) <span class="sc">-</span> <span class="dv">1</span>)),</span>
-<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Scale"</span>, <span class="fu">intersect</span>(tp_levels, <span class="fu">names</span>(render_df)))</span>
-<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>table_for_print <span class="ot">&lt;-</span> <span class="cf">function</span>(df) {</span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>  df <span class="sc">%&gt;%</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), as.character)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span> <span class="fu">if_else</span>(<span class="fu">is.na</span>(.x), <span class="st">""</span>, .x)))</span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>psy_tab1_df <span class="ot">&lt;-</span> psy_table <span class="sc">%&gt;%</span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">instrument =</span> <span class="fu">as.character</span>(instrument)) <span class="sc">%&gt;%</span></span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_section_rows</span>(<span class="at">section_col =</span> <span class="st">"instrument"</span>, <span class="at">label_col =</span> <span class="st">"Scale"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>instrument)</span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>psy_tab_1 <span class="ot">&lt;-</span> <span class="fu">kable</span>(</span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table_for_print</span>(psy_tab1_df),</span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>  <span class="at">format   =</span> <span class="fu">kable_fmt</span>(),</span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>  <span class="at">escape   =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>  <span class="at">booktabs =</span> <span class="fu">is_latex_output</span>(),</span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>  <span class="at">longtable =</span> <span class="fu">is_latex_output</span>(),</span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>  <span class="at">align    =</span> <span class="fu">c</span>(<span class="st">"l"</span>, <span class="fu">rep</span>(<span class="st">"c"</span>, <span class="fu">ncol</span>(psy_tab1_df) <span class="sc">-</span> <span class="dv">1</span>)),</span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">"Scale"</span>, <span class="fu">intersect</span>(tp_levels, <span class="fu">names</span>(psy_table)))</span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [11]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>psy_tab_1</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2125,20 +2090,20 @@ Note
 <tr class="even">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Sum</span></td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">23.50 ± 12.59<br>
-n = 510</td>
-<td style="text-align: center;">19.28 ± 11.35<br>
-n = 242</td>
-<td style="text-align: center;">16.63 ± 12.12<br>
-n = 329</td>
-<td style="text-align: center;">15.11 ± 12.58<br>
-n = 248</td>
-<td style="text-align: center;">15.62 ± 12.62<br>
-n = 103</td>
+<td style="text-align: center;">23.53 ± 12.60<br>
+n = 508</td>
+<td style="text-align: center;">19.23 ± 11.35<br>
+n = 241</td>
+<td style="text-align: center;">16.67 ± 12.14<br>
+n = 327</td>
+<td style="text-align: center;">15.17 ± 12.57<br>
+n = 247</td>
+<td style="text-align: center;">15.67 ± 12.67<br>
+n = 102</td>
 <td style="text-align: center;">18.33 ± 13.01<br>
 n = 21</td>
-<td style="text-align: center;">13.07 ± 11.43<br>
-n = 181</td>
+<td style="text-align: center;">13.12 ± 11.48<br>
+n = 179</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>BSI</strong></td>
@@ -2154,20 +2119,20 @@ n = 181</td>
 <tr class="even">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">GSI</span></td>
 <td style="text-align: center;">1.24 ± 0.70<br>
-n = 428</td>
+n = 426</td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">1.08 ± 0.66<br>
-n = 245</td>
+<td style="text-align: center;">1.08 ± 0.67<br>
+n = 244</td>
 <td style="text-align: center;">1.02 ± 0.67<br>
-n = 343</td>
+n = 341</td>
 <td style="text-align: center;">0.85 ± 0.68<br>
-n = 262</td>
-<td style="text-align: center;">1.07 ± 0.74<br>
-n = 109</td>
+n = 261</td>
+<td style="text-align: center;">1.08 ± 0.74<br>
+n = 108</td>
 <td style="text-align: center;">1.03 ± 0.55<br>
 n = 22</td>
 <td style="text-align: center;">0.85 ± 0.70<br>
-n = 199</td>
+n = 197</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>CGI</strong></td>
@@ -2186,27 +2151,27 @@ n = 199</td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;">2.38 ± 1.14<br>
-n = 297</td>
+n = 296</td>
 <td style="text-align: center;">2.18 ± 1.08<br>
 n = 221</td>
-<td style="text-align: center;">1.94 ± 1.01<br>
-n = 105</td>
+<td style="text-align: center;">1.91 ± 0.97<br>
+n = 104</td>
 <td style="text-align: center;">1.86 ± 0.56<br>
 n = 22</td>
-<td style="text-align: center;">2.27 ± 1.39<br>
-n = 190</td>
+<td style="text-align: center;">2.28 ± 1.39<br>
+n = 189</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">improvement therapist</span></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">2.74 ± 0.79<br>
-n = 219</td>
+<td style="text-align: center;">2.74 ± 0.80<br>
+n = 218</td>
 <td style="text-align: center;">2.39 ± 0.94<br>
 n = 146</td>
-<td style="text-align: center;">2.07 ± 0.63<br>
-n = 60</td>
+<td style="text-align: center;">2.07 ± 0.64<br>
+n = 59</td>
 <td style="text-align: center;">1.93 ± 0.47<br>
 n = 14</td>
 <td style="text-align: center;">1.73 ± 1.30<br>
@@ -2226,74 +2191,74 @@ n = 52</td>
 <tr class="odd">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Anxiety</span></td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">12.03 ± 8.30<br>
-n = 341</td>
-<td style="text-align: center;">8.86 ± 6.97<br>
-n = 117</td>
-<td style="text-align: center;">8.30 ± 7.85<br>
-n = 224</td>
-<td style="text-align: center;">7.37 ± 7.32<br>
-n = 186</td>
-<td style="text-align: center;">8.93 ± 7.96<br>
-n = 70</td>
+<td style="text-align: center;">12.05 ± 8.31<br>
+n = 339</td>
+<td style="text-align: center;">8.82 ± 6.98<br>
+n = 116</td>
+<td style="text-align: center;">8.33 ± 7.85<br>
+n = 223</td>
+<td style="text-align: center;">7.40 ± 7.32<br>
+n = 185</td>
+<td style="text-align: center;">9.01 ± 7.99<br>
+n = 69</td>
 <td style="text-align: center;">6.38 ± 5.45<br>
 n = 13</td>
-<td style="text-align: center;">6.88 ± 7.42<br>
-n = 193</td>
+<td style="text-align: center;">6.90 ± 7.46<br>
+n = 191</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Depression</span></td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">19.86 ± 11.17<br>
-n = 341</td>
-<td style="text-align: center;">16.44 ± 10.35<br>
-n = 117</td>
-<td style="text-align: center;">13.31 ± 10.85<br>
-n = 224</td>
-<td style="text-align: center;">12.68 ± 11.35<br>
-n = 186</td>
-<td style="text-align: center;">11.99 ± 10.53<br>
-n = 70</td>
+<td style="text-align: center;">19.91 ± 11.16<br>
+n = 339</td>
+<td style="text-align: center;">16.28 ± 10.24<br>
+n = 116</td>
+<td style="text-align: center;">13.35 ± 10.86<br>
+n = 223</td>
+<td style="text-align: center;">12.74 ± 11.35<br>
+n = 185</td>
+<td style="text-align: center;">12.13 ± 10.54<br>
+n = 69</td>
 <td style="text-align: center;">12.08 ± 9.81<br>
 n = 13</td>
-<td style="text-align: center;">11.48 ± 10.79<br>
-n = 193</td>
+<td style="text-align: center;">11.55 ± 10.83<br>
+n = 191</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Stress</span></td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">19.37 ± 9.21<br>
-n = 341</td>
-<td style="text-align: center;">16.26 ± 8.89<br>
-n = 117</td>
-<td style="text-align: center;">14.86 ± 9.34<br>
-n = 224</td>
-<td style="text-align: center;">12.91 ± 9.39<br>
-n = 186</td>
-<td style="text-align: center;">14.67 ± 10.12<br>
-n = 70</td>
+<td style="text-align: center;">19.42 ± 9.19<br>
+n = 339</td>
+<td style="text-align: center;">16.12 ± 8.81<br>
+n = 116</td>
+<td style="text-align: center;">14.88 ± 9.36<br>
+n = 223</td>
+<td style="text-align: center;">12.95 ± 9.39<br>
+n = 185</td>
+<td style="text-align: center;">14.75 ± 10.18<br>
+n = 69</td>
 <td style="text-align: center;">14.15 ± 6.69<br>
 n = 13</td>
-<td style="text-align: center;">13.05 ± 10.04<br>
-n = 193</td>
+<td style="text-align: center;">13.07 ± 10.08<br>
+n = 191</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Total</span></td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">51.25 ± 24.05<br>
-n = 341</td>
-<td style="text-align: center;">41.56 ± 22.33<br>
-n = 117</td>
-<td style="text-align: center;">36.48 ± 24.75<br>
-n = 224</td>
-<td style="text-align: center;">32.95 ± 24.95<br>
-n = 186</td>
-<td style="text-align: center;">35.59 ± 25.92<br>
-n = 70</td>
+<td style="text-align: center;">51.37 ± 24.01<br>
+n = 339</td>
+<td style="text-align: center;">41.22 ± 22.12<br>
+n = 116</td>
+<td style="text-align: center;">36.57 ± 24.77<br>
+n = 223</td>
+<td style="text-align: center;">33.09 ± 24.95<br>
+n = 185</td>
+<td style="text-align: center;">35.90 ± 25.98<br>
+n = 69</td>
 <td style="text-align: center;">32.62 ± 19.56<br>
 n = 13</td>
-<td style="text-align: center;">31.40 ± 25.36<br>
-n = 193</td>
+<td style="text-align: center;">31.52 ± 25.46<br>
+n = 191</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>GAS</strong></td>
@@ -2312,15 +2277,15 @@ n = 193</td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;">1.40 ± 1.01<br>
-n = 239</td>
-<td style="text-align: center;">1.98 ± 1.12<br>
-n = 194</td>
-<td style="text-align: center;">2.04 ± 1.07<br>
-n = 89</td>
+n = 238</td>
+<td style="text-align: center;">1.97 ± 1.12<br>
+n = 193</td>
+<td style="text-align: center;">2.02 ± 1.07<br>
+n = 88</td>
 <td style="text-align: center;">2.42 ± 0.89<br>
 n = 19</td>
-<td style="text-align: center;">2.28 ± 1.14<br>
-n = 82</td>
+<td style="text-align: center;">2.27 ± 1.14<br>
+n = 81</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">th mean</span></td>
@@ -2328,11 +2293,11 @@ n = 82</td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;">1.39 ± 0.98<br>
-n = 179</td>
+n = 178</td>
 <td style="text-align: center;">1.95 ± 1.06<br>
 n = 131</td>
-<td style="text-align: center;">2.36 ± 0.88<br>
-n = 49</td>
+<td style="text-align: center;">2.37 ± 0.89<br>
+n = 48</td>
 <td style="text-align: center;">2.85 ± 0.60<br>
 n = 11</td>
 <td style="text-align: center;"></td>
@@ -2353,16 +2318,16 @@ n = 11</td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">4.54 ± 1.02<br>
-n = 344</td>
-<td style="text-align: center;">4.92 ± 0.95<br>
-n = 259</td>
-<td style="text-align: center;">5.01 ± 0.92<br>
-n = 108</td>
+<td style="text-align: center;">4.54 ± 1.03<br>
+n = 342</td>
+<td style="text-align: center;">4.92 ± 0.94<br>
+n = 258</td>
+<td style="text-align: center;">5.01 ± 0.93<br>
+n = 107</td>
 <td style="text-align: center;">5.41 ± 0.67<br>
 n = 22</td>
-<td style="text-align: center;">4.65 ± 1.19<br>
-n = 199</td>
+<td style="text-align: center;">4.65 ± 1.20<br>
+n = 197</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">pt satisfaction</span></td>
@@ -2370,27 +2335,27 @@ n = 199</td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;">4.07 ± 1.04<br>
-n = 344</td>
+n = 342</td>
 <td style="text-align: center;">4.43 ± 1.05<br>
-n = 259</td>
+n = 258</td>
 <td style="text-align: center;">4.42 ± 0.95<br>
-n = 108</td>
+n = 107</td>
 <td style="text-align: center;">4.64 ± 0.73<br>
 n = 22</td>
-<td style="text-align: center;">4.30 ± 1.18<br>
-n = 199</td>
+<td style="text-align: center;">4.29 ± 1.18<br>
+n = 197</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">th benefit</span></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">3.85 ± 0.93<br>
-n = 261</td>
+<td style="text-align: center;">3.85 ± 0.94<br>
+n = 259</td>
 <td style="text-align: center;">4.28 ± 1.02<br>
 n = 174</td>
-<td style="text-align: center;">4.66 ± 0.72<br>
-n = 62</td>
+<td style="text-align: center;">4.66 ± 0.73<br>
+n = 61</td>
 <td style="text-align: center;">5.21 ± 0.43<br>
 n = 14</td>
 <td style="text-align: center;"></td>
@@ -2400,12 +2365,12 @@ n = 14</td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">3.62 ± 0.95<br>
-n = 261</td>
+<td style="text-align: center;">3.61 ± 0.95<br>
+n = 259</td>
 <td style="text-align: center;">4.02 ± 1.10<br>
 n = 174</td>
 <td style="text-align: center;">4.31 ± 0.92<br>
-n = 62</td>
+n = 61</td>
 <td style="text-align: center;">4.50 ± 0.76<br>
 n = 14</td>
 <td style="text-align: center;"></td>
@@ -2424,20 +2389,20 @@ n = 14</td>
 <tr class="even">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Sum</span></td>
 <td style="text-align: center;"></td>
-<td style="text-align: center;">10.55 ± 5.98<br>
-n = 504</td>
-<td style="text-align: center;">11.45 ± 6.14<br>
-n = 244</td>
-<td style="text-align: center;">12.72 ± 6.34<br>
-n = 341</td>
-<td style="text-align: center;">13.82 ± 6.72<br>
-n = 263</td>
-<td style="text-align: center;">12.82 ± 6.06<br>
-n = 107</td>
+<td style="text-align: center;">10.50 ± 5.89<br>
+n = 502</td>
+<td style="text-align: center;">11.41 ± 6.12<br>
+n = 243</td>
+<td style="text-align: center;">12.71 ± 6.35<br>
+n = 339</td>
+<td style="text-align: center;">13.79 ± 6.71<br>
+n = 262</td>
+<td style="text-align: center;">12.79 ± 6.08<br>
+n = 106</td>
 <td style="text-align: center;">11.64 ± 6.00<br>
 n = 22</td>
-<td style="text-align: center;">15.23 ± 6.87<br>
-n = 199</td>
+<td style="text-align: center;">15.19 ± 6.89<br>
+n = 197</td>
 </tr>
 </tbody>
 </table>
@@ -2477,7 +2442,7 @@ n = 199</td>
 <span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">distinct</span>(instrument, scale, <span class="at">.keep_all =</span> <span class="cn">TRUE</span>) <span class="co"># safety: one row per scale</span></span>
 <span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Vectorized formatter for mean ± sd</span></span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>fmt_mean_sd <span class="ot">&lt;-</span> <span class="cf">function</span>(m, s) {</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>fmt_mean_sd_vec <span class="ot">&lt;-</span> <span class="cf">function</span>(m, s) {</span>
 <span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>  out <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"%.2f \u00B1 %.2f"</span>, m, s)</span>
 <span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>  out[<span class="fu">is.na</span>(m) <span class="sc">|</span> <span class="fu">is.na</span>(s)] <span class="ot">&lt;-</span> <span class="st">""</span></span>
 <span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>  out</span>
@@ -2514,41 +2479,38 @@ n = 199</td>
 <span id="cb14-67"><a href="#cb14-67" aria-hidden="true" tabindex="-1"></a><span class="co"># Build Table 2</span></span>
 <span id="cb14-68"><a href="#cb14-68" aria-hidden="true" tabindex="-1"></a>table2 <span class="ot">&lt;-</span> pairs <span class="sc">%&gt;%</span></span>
 <span id="cb14-69"><a href="#cb14-69" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">stats =</span> <span class="fu">pmap</span>(<span class="fu">list</span>(baseline_var, endpoint_var),</span>
-<span id="cb14-70"><a href="#cb14-70" aria-hidden="true" tabindex="-1"></a>                      \(b, e) <span class="fu">complete_case_stats</span>(working_data_psy, b, e))) <span class="sc">%&gt;%</span></span>
+<span id="cb14-70"><a href="#cb14-70" aria-hidden="true" tabindex="-1"></a>                      \(b, e) <span class="fu">complete_case_stats</span>(working_data, b, e))) <span class="sc">%&gt;%</span></span>
 <span id="cb14-71"><a href="#cb14-71" aria-hidden="true" tabindex="-1"></a>  <span class="fu">unnest</span>(stats) <span class="sc">%&gt;%</span></span>
 <span id="cb14-72"><a href="#cb14-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb14-73"><a href="#cb14-73" aria-hidden="true" tabindex="-1"></a>    <span class="at">Scale =</span> <span class="fu">scale_pretty</span>(scale),</span>
 <span id="cb14-74"><a href="#cb14-74" aria-hidden="true" tabindex="-1"></a>    <span class="at">Baseline =</span> baseline_tp,</span>
 <span id="cb14-75"><a href="#cb14-75" aria-hidden="true" tabindex="-1"></a>    <span class="at">Endpoint =</span> endpoint_tp,</span>
-<span id="cb14-76"><a href="#cb14-76" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Baseline M ± SD</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fmt_mean_sd</span>(pre_mean, pre_sd),</span>
-<span id="cb14-77"><a href="#cb14-77" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Endpoint M ± SD</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fmt_mean_sd</span>(post_mean, post_sd),</span>
+<span id="cb14-76"><a href="#cb14-76" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Baseline M ± SD</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fmt_mean_sd_vec</span>(pre_mean, pre_sd),</span>
+<span id="cb14-77"><a href="#cb14-77" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Endpoint M ± SD</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">fmt_mean_sd_vec</span>(post_mean, post_sd),</span>
 <span id="cb14-78"><a href="#cb14-78" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">ΔM (End − Base)</span><span class="st">`</span> <span class="ot">=</span> <span class="fu">ifelse</span>(<span class="fu">is.na</span>(delta_mean), <span class="st">""</span>, <span class="fu">sprintf</span>(<span class="st">"%.2f"</span>, delta_mean)),</span>
 <span id="cb14-79"><a href="#cb14-79" aria-hidden="true" tabindex="-1"></a>    <span class="at">n =</span> <span class="fu">as.integer</span>(n)</span>
 <span id="cb14-80"><a href="#cb14-80" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">%&gt;%</span></span>
 <span id="cb14-81"><a href="#cb14-81" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(instrument, Scale, Baseline, Endpoint, <span class="st">`</span><span class="at">Baseline M ± SD</span><span class="st">`</span>, <span class="st">`</span><span class="at">Endpoint M ± SD</span><span class="st">`</span>, <span class="st">`</span><span class="at">ΔM (End − Base)</span><span class="st">`</span>, n) <span class="sc">%&gt;%</span></span>
 <span id="cb14-82"><a href="#cb14-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(instrument, Scale)</span>
 <span id="cb14-83"><a href="#cb14-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-84"><a href="#cb14-84" aria-hidden="true" tabindex="-1"></a><span class="co"># Render with instrument headers</span></span>
-<span id="cb14-85"><a href="#cb14-85" aria-hidden="true" tabindex="-1"></a>render_df <span class="ot">&lt;-</span> table2 <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">instrument =</span> <span class="fu">as.character</span>(instrument))</span>
-<span id="cb14-86"><a href="#cb14-86" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-87"><a href="#cb14-87" aria-hidden="true" tabindex="-1"></a>psy_tab2_df <span class="ot">&lt;-</span> render_df <span class="sc">%&gt;%</span></span>
-<span id="cb14-88"><a href="#cb14-88" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">instrument =</span> <span class="fu">as.character</span>(instrument)) <span class="sc">%&gt;%</span></span>
-<span id="cb14-89"><a href="#cb14-89" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_section_rows</span>(<span class="at">section_col =</span> <span class="st">"instrument"</span>, <span class="at">label_col =</span> <span class="st">"Scale"</span>) <span class="sc">%&gt;%</span></span>
-<span id="cb14-90"><a href="#cb14-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>instrument)</span>
-<span id="cb14-91"><a href="#cb14-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-92"><a href="#cb14-92" aria-hidden="true" tabindex="-1"></a>psy_tab_2 <span class="ot">&lt;-</span> knitr<span class="sc">::</span><span class="fu">kable</span>(</span>
-<span id="cb14-93"><a href="#cb14-93" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table_for_print</span>(psy_tab2_df),</span>
-<span id="cb14-94"><a href="#cb14-94" aria-hidden="true" tabindex="-1"></a>  <span class="at">format   =</span> <span class="fu">kable_fmt</span>(),</span>
-<span id="cb14-95"><a href="#cb14-95" aria-hidden="true" tabindex="-1"></a>  <span class="at">escape   =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb14-96"><a href="#cb14-96" aria-hidden="true" tabindex="-1"></a>  <span class="at">booktabs =</span> knitr<span class="sc">::</span><span class="fu">is_latex_output</span>(),</span>
-<span id="cb14-97"><a href="#cb14-97" aria-hidden="true" tabindex="-1"></a>  <span class="at">longtable =</span> knitr<span class="sc">::</span><span class="fu">is_latex_output</span>(),</span>
-<span id="cb14-98"><a href="#cb14-98" aria-hidden="true" tabindex="-1"></a>  <span class="at">align    =</span> <span class="fu">c</span>(<span class="st">"l"</span>, <span class="fu">rep</span>(<span class="st">"c"</span>, <span class="fu">ncol</span>(psy_tab2_df) <span class="sc">-</span> <span class="dv">1</span>)),</span>
-<span id="cb14-99"><a href="#cb14-99" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(</span>
-<span id="cb14-100"><a href="#cb14-100" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Scale"</span>, <span class="st">"Baseline"</span>, <span class="st">"Endpoint"</span>,</span>
-<span id="cb14-101"><a href="#cb14-101" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Baseline M ± SD"</span>, <span class="st">"Endpoint M ± SD"</span>,</span>
-<span id="cb14-102"><a href="#cb14-102" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ΔM (End − Base)"</span>, <span class="st">"n (complete)"</span></span>
-<span id="cb14-103"><a href="#cb14-103" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb14-104"><a href="#cb14-104" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb14-84"><a href="#cb14-84" aria-hidden="true" tabindex="-1"></a>psy_tab2_df <span class="ot">&lt;-</span> table2 <span class="sc">%&gt;%</span></span>
+<span id="cb14-85"><a href="#cb14-85" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">instrument =</span> <span class="fu">as.character</span>(instrument)) <span class="sc">%&gt;%</span></span>
+<span id="cb14-86"><a href="#cb14-86" aria-hidden="true" tabindex="-1"></a>  <span class="fu">add_section_rows</span>(<span class="at">section_col =</span> <span class="st">"instrument"</span>, <span class="at">label_col =</span> <span class="st">"Scale"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb14-87"><a href="#cb14-87" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>instrument)</span>
+<span id="cb14-88"><a href="#cb14-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-89"><a href="#cb14-89" aria-hidden="true" tabindex="-1"></a>psy_tab_2 <span class="ot">&lt;-</span> <span class="fu">kable</span>(</span>
+<span id="cb14-90"><a href="#cb14-90" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table_for_print</span>(psy_tab2_df),</span>
+<span id="cb14-91"><a href="#cb14-91" aria-hidden="true" tabindex="-1"></a>  <span class="at">format   =</span> <span class="fu">kable_fmt</span>(),</span>
+<span id="cb14-92"><a href="#cb14-92" aria-hidden="true" tabindex="-1"></a>  <span class="at">escape   =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb14-93"><a href="#cb14-93" aria-hidden="true" tabindex="-1"></a>  <span class="at">booktabs =</span> <span class="fu">is_latex_output</span>(),</span>
+<span id="cb14-94"><a href="#cb14-94" aria-hidden="true" tabindex="-1"></a>  <span class="at">longtable =</span> <span class="fu">is_latex_output</span>(),</span>
+<span id="cb14-95"><a href="#cb14-95" aria-hidden="true" tabindex="-1"></a>  <span class="at">align    =</span> <span class="fu">c</span>(<span class="st">"l"</span>, <span class="fu">rep</span>(<span class="st">"c"</span>, <span class="fu">ncol</span>(psy_tab2_df) <span class="sc">-</span> <span class="dv">1</span>)),</span>
+<span id="cb14-96"><a href="#cb14-96" aria-hidden="true" tabindex="-1"></a>  <span class="at">col.names =</span> <span class="fu">c</span>(</span>
+<span id="cb14-97"><a href="#cb14-97" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Scale"</span>, <span class="st">"Baseline"</span>, <span class="st">"Endpoint"</span>,</span>
+<span id="cb14-98"><a href="#cb14-98" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Baseline M ± SD"</span>, <span class="st">"Endpoint M ± SD"</span>,</span>
+<span id="cb14-99"><a href="#cb14-99" aria-hidden="true" tabindex="-1"></a>    <span class="st">"ΔM (End − Base)"</span>, <span class="st">"n (complete)"</span></span>
+<span id="cb14-100"><a href="#cb14-100" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb14-101"><a href="#cb14-101" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
 <div class="cell-container"><div class="cell-decorator"><pre>In [13]:</pre></div><div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>psy_tab_2</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -2579,10 +2541,10 @@ n = 199</td>
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Sum</span></td>
 <td style="text-align: center;">DU-Prä</td>
 <td style="text-align: center;">KZT2-DUPost</td>
-<td style="text-align: center;">22.37 ± 12.05</td>
-<td style="text-align: center;">15.11 ± 12.58</td>
-<td style="text-align: center;">-7.26</td>
-<td style="text-align: center;">248</td>
+<td style="text-align: center;">22.40 ± 12.06</td>
+<td style="text-align: center;">15.17 ± 12.57</td>
+<td style="text-align: center;">-7.23</td>
+<td style="text-align: center;">247</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>BSI</strong></td>
@@ -2599,8 +2561,8 @@ n = 199</td>
 <td style="text-align: center;">KZT2-DUPost</td>
 <td style="text-align: center;">1.19 ± 0.66</td>
 <td style="text-align: center;">0.85 ± 0.68</td>
-<td style="text-align: center;">-0.35</td>
-<td style="text-align: center;">214</td>
+<td style="text-align: center;">-0.34</td>
+<td style="text-align: center;">213</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><strong>DASS</strong></td>
@@ -2615,37 +2577,37 @@ n = 199</td>
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Anxiety</span></td>
 <td style="text-align: center;">DU-Prä</td>
 <td style="text-align: center;">KZT2-DUPost</td>
-<td style="text-align: center;">11.90 ± 8.16</td>
-<td style="text-align: center;">7.07 ± 7.03</td>
-<td style="text-align: center;">-4.83</td>
-<td style="text-align: center;">143</td>
+<td style="text-align: center;">11.88 ± 8.19</td>
+<td style="text-align: center;">7.11 ± 7.04</td>
+<td style="text-align: center;">-4.77</td>
+<td style="text-align: center;">142</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Depression</span></td>
 <td style="text-align: center;">DU-Prä</td>
 <td style="text-align: center;">KZT2-DUPost</td>
-<td style="text-align: center;">20.30 ± 11.69</td>
-<td style="text-align: center;">13.07 ± 11.92</td>
-<td style="text-align: center;">-7.23</td>
-<td style="text-align: center;">143</td>
+<td style="text-align: center;">20.30 ± 11.73</td>
+<td style="text-align: center;">13.15 ± 11.93</td>
+<td style="text-align: center;">-7.15</td>
+<td style="text-align: center;">142</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Stress</span></td>
 <td style="text-align: center;">DU-Prä</td>
 <td style="text-align: center;">KZT2-DUPost</td>
-<td style="text-align: center;">19.59 ± 9.50</td>
-<td style="text-align: center;">12.65 ± 9.25</td>
-<td style="text-align: center;">-6.94</td>
-<td style="text-align: center;">143</td>
+<td style="text-align: center;">19.60 ± 9.53</td>
+<td style="text-align: center;">12.70 ± 9.26</td>
+<td style="text-align: center;">-6.89</td>
+<td style="text-align: center;">142</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Total</span></td>
 <td style="text-align: center;">DU-Prä</td>
 <td style="text-align: center;">KZT2-DUPost</td>
-<td style="text-align: center;">51.79 ± 24.55</td>
-<td style="text-align: center;">32.79 ± 25.10</td>
-<td style="text-align: center;">-19.00</td>
-<td style="text-align: center;">143</td>
+<td style="text-align: center;">51.78 ± 24.64</td>
+<td style="text-align: center;">32.96 ± 25.10</td>
+<td style="text-align: center;">-18.82</td>
+<td style="text-align: center;">142</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><strong>PMH</strong></td>
@@ -2660,10 +2622,10 @@ n = 199</td>
 <td style="text-align: left;"><span style="padding-left:1.2em; display:inline-block;">Sum</span></td>
 <td style="text-align: center;">DU-Prä</td>
 <td style="text-align: center;">KZT2-DUPost</td>
-<td style="text-align: center;">10.47 ± 5.87</td>
-<td style="text-align: center;">13.68 ± 6.75</td>
-<td style="text-align: center;">3.22</td>
-<td style="text-align: center;">245</td>
+<td style="text-align: center;">10.45 ± 5.88</td>
+<td style="text-align: center;">13.64 ± 6.73</td>
+<td style="text-align: center;">3.19</td>
+<td style="text-align: center;">244</td>
 </tr>
 </tbody>
 </table>

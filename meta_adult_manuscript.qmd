@@ -181,20 +181,14 @@ library(tidyverse)   # dplyr / tidyr / ggplot / general wrangling
 library(stringi)     # robust word counts (stri_count_words)
 library(knitr)       # kable() table rendering
 library(tidytext)    # unnest_tokens() for tokenization
-library(purrr)       # map() helpers
 
 # ============================================================
 # Output helpers (to support pdf + html + docx via Quarto/Pandoc)
 # ============================================================
 
-# Print a note below a table in a way that survives multiple output formats.
-print_note <- function(text) {
-  cat("\n\n", "Note:", text, "\n\n")
-}
-
-# Indent labels in tables. We use LaTeX spacing for PDF and inline HTML for HTML/docx.
+# Indent labels in tables. Use LaTeX spacing for PDF and inline HTML for HTML/docx.
 indent_label <- function(x, level = 1) {
-  if (knitr::is_latex_output()) {
+  if (is_latex_output()) {
     paste0(strrep("\\hspace{1em}", level), x)
   } else {
     paste0(
@@ -210,20 +204,20 @@ indent_label <- function(x, level = 1) {
 # - html for HTML
 # - pipe for Word/docx via pandoc
 kable_fmt <- function() {
-  if (knitr::is_latex_output()) "latex"
-  else if (knitr::is_html_output()) "html"
+  if (is_latex_output()) "latex"
+  else if (is_html_output()) "html"
   else "pipe"
 }
 
 # Line break that works inside a table cell for each output type.
 cell_br <- function() {
-  if (knitr::is_latex_output()) "\\\\"
+  if (is_latex_output()) "\\\\"
   else "<br>"
 }
 
-# Bold text in a way that works across formats.
+# Bold text in a way that works across formats inside kable.
 fmt_bold <- function(x) {
-  if (knitr::is_latex_output()) paste0("\\textbf{", x, "}")
+  if (is_latex_output()) paste0("\\textbf{", x, "}")
   else paste0("<strong>", x, "</strong>")
 }
 
@@ -238,11 +232,11 @@ add_section_rows <- function(df, section_col = "instrument", label_col = "Scale"
 
   # Create an "empty row" with correct column types so bind_rows() is safe.
   typed_na_row <- function(template_df) {
-    dplyr::slice(template_df, 1) %>%
-      dplyr::mutate(dplyr::across(dplyr::everything(), ~ .x[NA_integer_]))
+    slice(template_df, 1) %>%
+      mutate(across(everything(), ~ .x[NA_integer_]))
   }
 
-  dplyr::bind_rows(lapply(sections, function(s) {
+  bind_rows(lapply(sections, function(s) {
 
     # rows belonging to this section
     block <- df[df[[section_col]] == s, , drop = FALSE]
@@ -254,7 +248,7 @@ add_section_rows <- function(df, section_col = "instrument", label_col = "Scale"
     # indent all scale labels under this header for readability
     block[[label_col]] <- indent_label(block[[label_col]], level = 1)
 
-    dplyr::bind_rows(header, block)
+    bind_rows(header, block)
   }))
 }
 ```
@@ -311,17 +305,17 @@ pretty_names <- c(
 # - categorical vars: one header row + one row per category level
 # ============================================================
 make_section <- function(data, vars, section_title, pretty_names) {
-  df <- data %>% dplyr::select(dplyr::all_of(vars))
+  df <- data %>% select(all_of(vars))
   num_vars <- names(df)[vapply(df, is.numeric, logical(1))]
   cat_vars <- setdiff(names(df), num_vars)
 
   # ----------------------------
   # Numeric rows (one per variable)
   # ----------------------------
-  num_tab <- tibble::tibble(Variable_raw = num_vars) %>%
-    dplyr::mutate(
+  num_tab <- tibble(Variable_raw = num_vars) %>%
+    mutate(
       Section = section_title,
-      Variable = dplyr::recode(Variable_raw, !!!pretty_names),
+      Variable = recode(Variable_raw, !!!pretty_names),
       is_header = TRUE,
       Level = "",
       Valid_n   = sapply(df[num_vars], \(x) sum(!is.na(x))),
@@ -334,21 +328,21 @@ make_section <- function(data, vars, section_title, pretty_names) {
   # Categorical rows (header + levels)
   # ----------------------------
   cat_long <- df %>%
-    tidyr::pivot_longer(dplyr::all_of(cat_vars), names_to = "Variable_raw", values_to = "Value") %>%
-    dplyr::mutate(
+    pivot_longer(all_of(cat_vars), names_to = "Variable_raw", values_to = "Value") %>%
+    mutate(
       Section = section_title,
-      Variable = dplyr::recode(Variable_raw, !!!pretty_names)
+      Variable = recode(Variable_raw, !!!pretty_names)
     )
 
   # Header row per categorical variable: reports valid/missing counts
   cat_header <- cat_long %>%
-    dplyr::group_by(Section, Variable_raw, Variable) %>%
-    dplyr::summarise(
+    group_by(Section, Variable_raw, Variable) %>%
+    summarise(
       Valid_n   = sum(!is.na(Value)),
       Missing_n = sum(is.na(Value)),
       .groups = "drop"
     ) %>%
-    dplyr::mutate(
+    mutate(
       is_header = TRUE,
       Level = "",
       `Mean ± SD` = "",
@@ -357,16 +351,16 @@ make_section <- function(data, vars, section_title, pretty_names) {
   
   # Level rows: counts within each categorical variable
   cat_levels <- cat_long %>%
-    dplyr::filter(!is.na(Value)) %>%
-    dplyr::group_by(Section, Variable_raw, Variable) %>%
-    dplyr::mutate(
-      Valid_n = dplyr::n(),
+    filter(!is.na(Value)) %>%
+    group_by(Section, Variable_raw, Variable) %>%
+    mutate(
+      Valid_n = n(),
       # Preserve original level order as much as possible
       Value_f = if (is.factor(Value)) Value else factor(as.character(Value), levels = unique(as.character(Value)))
     ) %>%
-    dplyr::ungroup() %>%
-    dplyr::count(Section, Variable_raw, Variable, Value_f, Valid_n, name = "n", sort = FALSE) %>%
-    dplyr::mutate(
+    ungroup() %>%
+    count(Section, Variable_raw, Variable, Value_f, Valid_n, name = "n", sort = FALSE) %>%
+    mutate(
       is_header = FALSE,
       Missing_n = NA_integer_,
       level_order = as.integer(Value_f),
@@ -374,29 +368,29 @@ make_section <- function(data, vars, section_title, pretty_names) {
       `Mean ± SD` = "",
       `n (%)` = sprintf("%d (%s)", n, fmt_pct(n / Valid_n))
     ) %>%
-    dplyr::select(Section, Variable_raw, Variable, is_header, Level, level_order,
+    select(Section, Variable_raw, Variable, is_header, Level, level_order,
                   Valid_n, Missing_n, `Mean ± SD`, `n (%)`)
 
   # ----------------------------
   # Combine numeric + categorical blocks and order nicely
   # ----------------------------  
-  dplyr::bind_rows(
-    num_tab %>% dplyr::mutate(level_order = NA_integer_),
-    cat_header %>% dplyr::mutate(level_order = NA_integer_),
+  bind_rows(
+    num_tab %>% mutate(level_order = NA_integer_),
+    cat_header %>% mutate(level_order = NA_integer_),
     cat_levels
   ) %>%
-    dplyr::mutate(
+    mutate(
       var_order  = match(Variable_raw, vars),
       row_order  = ifelse(is_header, 0L, 1L),
       level_order = ifelse(is.na(level_order), 0L, level_order)
     ) %>%
-    dplyr::arrange(var_order, row_order, level_order) %>%
-    dplyr::mutate(
+    arrange(var_order, row_order, level_order) %>%
+    mutate(
       Variable  = ifelse(is_header, paste0("**", Variable, "**"), ""),
       Valid_n   = ifelse(is_header, as.character(Valid_n), ""),
       Missing_n = ifelse(is_header, as.character(Missing_n), "")
     ) %>%
-    dplyr::select(Section, Variable, Valid_n, Missing_n, Level, `Mean ± SD`, `n (%)`)
+    select(Section, Variable, Valid_n, Missing_n, Level, `Mean ± SD`, `n (%)`)
 }
 
 # Build patient and therapist sections, then split into two printed tables
@@ -405,11 +399,11 @@ therapist_section <- make_section(working_data, vars_therapist, "Therapist", pre
 
 final_tab_print <- bind_rows(patient_section, therapist_section)
 
-pt <- final_tab_print %>% dplyr::filter(Section == "Patient") %>% dplyr::select(-Section)
-th <- final_tab_print %>% dplyr::filter(Section == "Therapist") %>% dplyr::select(-Section)
+pt <- final_tab_print %>% filter(Section == "Patient") %>% select(-Section)
+th <- final_tab_print %>% filter(Section == "Therapist") %>% select(-Section)
 
-pt <- pt %>% dplyr::rename(`Valid n` = Valid_n, `Missing n` = Missing_n)
-th <- th %>% dplyr::rename(`Valid n` = Valid_n, `Missing n` = Missing_n)
+pt <- pt %>% rename(`Valid n` = Valid_n, `Missing n` = Missing_n)
+th <- th %>% rename(`Valid n` = Valid_n, `Missing n` = Missing_n)
 ```
 
 ```{r}
@@ -462,7 +456,7 @@ working_data_long <- working_data %>%
     # Extract numeric question ID (1–12) from column name
     question_id = str_extract(question_raw, "\\d+") %>% as.integer(),
     
-    # Extract human-readable question label from column name
+    # Extract question label from column name
     question_label = str_remove(question_raw, "^txt\\d+_"),
     
     # Normalize whitespace in text
@@ -520,8 +514,7 @@ question_labels <- c(
 # ============================================================
 # Tokenization for lexical diversity (across respondents per question)
 # ============================================================
-# IMPORTANT: diversity here is computed on the pooled word distribution per question,
-# not within each individual response.
+# IMPORTANT: diversity here is computed on the pooled word distribution per question, not within each individual response.
 tokens_by_question <- working_data_long %>% 
   filter(!is_missing) %>%                     # exclude missing responses
   unnest_tokens(word, text, token = "words") %>%  # split into word tokens
@@ -692,11 +685,10 @@ diag_print <- diag_table_final %>%
     `Primary diagnoses (n)` = n_primary
   )
 
-knitr::kable(
+kable(
   diag_print,
-  format   = kable_fmt(),                 # uses your helper: html/latex/pipe
   align    = c("l", "c", "c"),
-  booktabs = knitr::is_latex_output(),
+  booktabs = is_latex_output(),
   caption  = "DSM-5 diagnoses in the sample (absolute frequencies)"
 )
 ```
@@ -716,7 +708,7 @@ Table 1 presents descriptive statistics for symptom measures at each assessment 
 # ============================================================
 # These are wide-format columns where suffixes encode timepoints, e.g.:
 #   dass_dep_score_KZT2-DUPost
-# We later parse these into instrument / scale / timepoint.
+# I later parse these into instrument / scale / timepoint.
 psy_vars <- c(
   # BSI
   "bsi_gsi_DI",
@@ -765,35 +757,6 @@ psy_vars <- c(
 )
 
 # ============================================================
-# Helper: robust numeric coercion for messy imported columns
-# ============================================================
-# Problem this solves:
-# - some columns may be list-columns
-# - factors/characters should become numeric safely
-# - sd()/mean() should not crash due to non-numeric types
-to_num <- function(x) {
-  # Sometimes a "column" is accidentally a nested data.frame/tibble:
-  if (is.data.frame(x)) x <- x[[1]]
-
-  # If it's a list-column: replace NULL with NA and coerce to numeric
-  if (is.list(x) && !is.atomic(x)) {
-    return(map_dbl(x, function(.x) {
-      if (is.null(.x) || length(.x) == 0) return(NA_real_)
-      if (length(.x) == 1) return(suppressWarnings(as.numeric(.x)))
-      suppressWarnings(as.numeric(.x[[1]])) # take first element if longer than 1
-    }))
-  }
-
-  # Atomic but non-numeric types
-  if (is.factor(x)) x <- as.character(x)
-  suppressWarnings(as.numeric(x))
-}
-
-# Clean copy of the data for psychometric columns (prevents sd()/var() errors)
-working_data_psy <- working_data %>%
-  mutate(across(all_of(psy_vars), to_num))
-
-# ============================================================
 # Parse variable names into components:
 #   instrument_scale_timepoint
 # ============================================================
@@ -809,7 +772,7 @@ parse_psy_name <- function(x) {
     timepoint <- sub("^.*_", "", rest)      # last underscore-separated token
     scale <- sub("_[^_]+$", "", rest)       # everything before that last token
   } else {
-    # If there is no underscore left, we treat the whole thing as timepoint/scale
+    # If there is no underscore left, I treat the whole thing as timepoint/scale
     timepoint <- rest
     scale <- rest
   }
@@ -883,7 +846,7 @@ fmt_cell <- function(mean, sd, n) {
 
 # Long format: one row per (variable column), then widen to timepoints as columns
 psy_desc_long <- meta %>%
-  mutate(stats = map(var, \(v) desc_num(working_data_psy[[v]]))) %>%  # IMPORTANT: use cleaned data!
+  mutate(stats = map(var, \(v) desc_num(working_data[[v]]))) %>%
   unnest(stats) %>%
   mutate(cell = pmap_chr(list(mean, sd, n), fmt_cell)) %>%
   select(instrument, scale, timepoint, cell)
@@ -896,28 +859,25 @@ psy_table <- psy_desc_long %>%
   mutate(Scale = scale_pretty(scale)) %>%
   select(instrument, Scale, all_of(intersect(tp_levels, names(.))))
 
-# Render with instrument headers
-render_df <- psy_table %>% mutate(instrument = as.character(instrument))
-
 table_for_print <- function(df) {
   df %>%
-    dplyr::mutate(dplyr::across(dplyr::everything(), as.character)) %>%
-    dplyr::mutate(dplyr::across(dplyr::everything(), ~ dplyr::if_else(is.na(.x), "", .x)))
+    mutate(across(everything(), as.character)) %>%
+    mutate(across(everything(), ~ if_else(is.na(.x), "", .x)))
 }
 
-psy_tab1_df <- render_df %>%
+psy_tab1_df <- psy_table %>%
   mutate(instrument = as.character(instrument)) %>%
   add_section_rows(section_col = "instrument", label_col = "Scale") %>%
   select(-instrument)
 
-psy_tab_1 <- knitr::kable(
+psy_tab_1 <- kable(
   table_for_print(psy_tab1_df),
   format   = kable_fmt(),
   escape   = FALSE,
-  booktabs = knitr::is_latex_output(),
-  longtable = knitr::is_latex_output(),
+  booktabs = is_latex_output(),
+  longtable = is_latex_output(),
   align    = c("l", rep("c", ncol(psy_tab1_df) - 1)),
-  col.names = c("Scale", intersect(tp_levels, names(render_df)))
+  col.names = c("Scale", intersect(tp_levels, names(psy_table)))
 )
 ```
 
@@ -966,7 +926,7 @@ pairs <- meta %>%
   distinct(instrument, scale, .keep_all = TRUE) # safety: one row per scale
 
 # Vectorized formatter for mean ± sd
-fmt_mean_sd <- function(m, s) {
+fmt_mean_sd_vec <- function(m, s) {
   out <- sprintf("%.2f \u00B1 %.2f", m, s)
   out[is.na(m) | is.na(s)] <- ""
   out
@@ -1003,34 +963,31 @@ complete_case_stats <- function(data, pre_col, post_col) {
 # Build Table 2
 table2 <- pairs %>%
   mutate(stats = pmap(list(baseline_var, endpoint_var),
-                      \(b, e) complete_case_stats(working_data_psy, b, e))) %>%
+                      \(b, e) complete_case_stats(working_data, b, e))) %>%
   unnest(stats) %>%
   mutate(
     Scale = scale_pretty(scale),
     Baseline = baseline_tp,
     Endpoint = endpoint_tp,
-    `Baseline M ± SD` = fmt_mean_sd(pre_mean, pre_sd),
-    `Endpoint M ± SD` = fmt_mean_sd(post_mean, post_sd),
+    `Baseline M ± SD` = fmt_mean_sd_vec(pre_mean, pre_sd),
+    `Endpoint M ± SD` = fmt_mean_sd_vec(post_mean, post_sd),
     `ΔM (End − Base)` = ifelse(is.na(delta_mean), "", sprintf("%.2f", delta_mean)),
     n = as.integer(n)
   ) %>%
   select(instrument, Scale, Baseline, Endpoint, `Baseline M ± SD`, `Endpoint M ± SD`, `ΔM (End − Base)`, n) %>%
   arrange(instrument, Scale)
 
-# Render with instrument headers
-render_df <- table2 %>% mutate(instrument = as.character(instrument))
-
-psy_tab2_df <- render_df %>%
+psy_tab2_df <- table2 %>%
   mutate(instrument = as.character(instrument)) %>%
   add_section_rows(section_col = "instrument", label_col = "Scale") %>%
   select(-instrument)
 
-psy_tab_2 <- knitr::kable(
+psy_tab_2 <- kable(
   table_for_print(psy_tab2_df),
   format   = kable_fmt(),
   escape   = FALSE,
-  booktabs = knitr::is_latex_output(),
-  longtable = knitr::is_latex_output(),
+  booktabs = is_latex_output(),
+  longtable = is_latex_output(),
   align    = c("l", rep("c", ncol(psy_tab2_df) - 1)),
   col.names = c(
     "Scale", "Baseline", "Endpoint",
