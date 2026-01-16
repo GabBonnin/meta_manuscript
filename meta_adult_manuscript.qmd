@@ -20,9 +20,9 @@ This project is supported by the [Ruhr University Bochum Research School](https:
 
 Psychotherapy is one of the most effective treatments for mental health problems, but its success depends on accurate diagnostic assessments. Current assessment practices largely rely on standardized closed-ended scales that, while reliable, may fail to capture the complexity, context and individuality of patients' mental states. Advances in artificial intelligence (AI) and natural language processing (NLP) enable the measurement of psychological constructs through natural language, offering a promising complement to traditional assessment methods by leveraging patients’ own descriptions of their experiences.
 
-While previous NLP-based mental health research has primarily focused on social media language, this project applies state-of-the-art large language models (LLMs) to open-ended intake data from a German outpatient psychotherapy clinic. Before therapy, patients describe the development, context, and perceived causes of their problems, as well as their current difficulties and therapy goals, in their own words. These texts are linked to key clinical measures, including diagnoses, symptom severity, functional impairment, and treatment outcomes, providing an ecologically valid resource for studying language-based assessment in real-world clinical settings.
+While previous research has primarily focused on social media or non-clinical language, this project applies state-of-the-art large language models (LLMs) to open-ended intake data from a German outpatient psychotherapy clinic, providing an ecologically valid resource for studying language-based assessment in real-world clinical settings.
 
-The project comprises several complementary substudies. First, we examine whether patient language at intake reflects cross-sectional symptom severity and impairment and whether it provides incremental information beyond established self-report questionnaires. Second, we conduct a thematic analysis of patient responses to different open-ended prompts to characterize recurring themes. Third, we evaluate whether pre-therapy language predicts longitudinal treatment outcomes beyond baseline symptom measures.
+The project comprises several complementary research areas. First, we examine whether patient language at intake reflects cross-sectional symptom severity and impairment and whether it provides incremental information beyond established self-report questionnaires. Second, we conduct a thematic analysis of patient responses to different open-ended prompts to characterize recurring themes. Third, we evaluate whether pre-therapy language predicts longitudinal treatment outcomes beyond baseline symptom measures.
 
 Together, these studies aim to clarify how patient-generated language can be used for assessment, interpretation, and prognosis in psychotherapy. The findings are intended to inform the development of clinically meaningful, language-based assessment tools that support personalized care and contribute to the modernization of mental health evaluation.
 
@@ -31,15 +31,15 @@ Together, these studies aim to clarify how patient-generated language can be use
 
 # Introduction
 
-Mental health problems pose a significant global challenge, accounting for a considerable proportion of deaths and disability-adjusted life years [@WorldHealthOrganization2017]. Psychotherapy is an effective and sustainable intervention for reducing symptoms and improving quality of life [@wampold2015great; @chorpita2011evidence], but it’s success critically depends on accurate assessments [@Lutz2022; @Jensen-Doss2008].
+Mental health problems pose a significant global challenge, accounting for a considerable proportion of deaths and disability-adjusted life years [@WorldHealthOrganization2017]. Psychotherapy is an effective and sustainable intervention for reducing symptoms and improving quality of life [@wampold2015great; @chorpita2011evidence], but its success critically depends on accurate assessments [@Lutz2022; @Jensen-Doss2008].
 
 Standardized closed-ended tools such as the Beck Depression Inventory-II [@Beck1996] rely on numerical scales [@Likert1932] to structure and standardize assessments and are widely used in clinical research and practice. While these methods have advanced replicability and reliability in psychological assessment, they can miss important individual differences by restricting responses to pre-defined categories, limiting the ability to capture the complexity of mental states [@Kjell2024].
 
-Recent advances in AI, particularly transformer-based LLMs [@Vaswani2017], present promising solutions to these limitations [@Kjell2024]. LLMs excel in analyzing context-rich natural language with remarkable accuracy across diverse tasks [@devlin-etal-2019-bert]. Open-ended response formats, where patients describe their experiences in their own words, provide high-dimensional, context-rich information that remains underutilized in current assessment practices. Empirical studies highlight the potential of NLP-based analysis of open-ended responses, achieving moderate convergence with closed-ended rating scales using traditional NLP methods [@kjell2019semantic] and nearing theoretical upper limits of accuracy with LLMs [@Kjell2022]. Preliminary research also highlights their potential for predicting clinically significant outcomes, including suicide risk [@zirikly-etal-2019-clpsych; @mohammadi-etal-2019-clac-clpsych; @matero-etal-2019-suicide].
+To address this limitation, researchers have turned to patients' natural language, which provides high-dimensional, context-rich information that remains underutilized in current assessment practices. Advances in AI, particularly transformer-based LLMs [@Vaswani2017], enable the context-rich analysis of natural language with remarkable accuracy [@devlin-etal-2019-bert]. When applying LLMs to mental health assessment, two primary measurement contexts emerge. On the one hand, ecologically collected speech data can be analysed that was not primarily generated for measurement purposes. Examples include the prediction of depression levels on the basis of social-media-posts [@eichstaedt2018], or psychotherapy session transcripts for analyzing emotional reaction [@tanana2021; @eberhardt2024]. On the other hand, language-based self-reporting can be used specifically for measurement purposes, for example in the form of standardized questions (“*Please describe how you have been feeling over the past two weeks.*”). Empirical studies highlight the potential of NLP-based analysis of prompted open-ended responses, achieving moderate convergence with closed-ended rating scales using traditional NLP methods [@kjell2019semantic] and nearing theoretical upper limits of accuracy with LLMs [@Kjell2022].
 
-However, much of the existing literature relies on social media or non-clinical text data, raising concerns about ecological validity and clinical relevance. In contrast, open-ended patient responses are routinely collected in clinical settings as part of pre-therapy intake procedures but remain largely underused in empirical research. At the Mental Health Research and Treatment Center at Ruhr University Bochum, patients respond to multiple prompts addressing the development and context of their problems, perceived causes, social reactions, current difficulties, and therapy goals. These narratives are linked to structured diagnostic interviews, repeated symptom assessments, clinician ratings, and longitudinal outcome measures. This unique, large-scale, and longitudinal clinical dataset enables a comprehensive examination of patient language across multiple analytic perspectives.
+However, much of the existing literature relies on online survey data or non-clinical text data, leaving a gap in our understanding of how these methods perform in real-world clinical contexts. In contrast, open-ended patient responses are routinely collected in clinical settings as part of pre-therapy intake procedures but remain largely underused in empirical research. The present project leverages data from an outpatient psychotherapy clinic at Ruhr University Bochum, where patients respond to multiple prompts addressing the development and context of their mental health problems, perceived causes, social reactions, current difficulties, and therapy goals. These narratives are linked to structured diagnostic interviews, repeated symptom assessments, clinician ratings, and longitudinal outcome measures. This longitudinal clinical dataset enables a comprehensive examination of patient language across multiple analytic perspectives.
 
-Accordingly, the present project is organized into three complementary substudies. The first investigates whether pre-therapy language reflects cross-sectional symptom severity and clinician-rated impairment and whether language-based representations provide incremental information beyond standardized self-report questionnaires. The second focuses on the semantic content and structure of patient narratives, using question-specific analyses to identify recurring themes and selective response patterns in how patients conceptualize their mental health problems. The third evaluates the prognostic value of pre-therapy language by testing whether patient narratives predict treatment response and individualized goal attainment over time, beyond baseline symptom severity.
+Accordingly, the present project is organized into three complementary research areas. The first investigates whether pre-therapy language reflects cross-sectional symptom severity and clinician-rated impairment and whether language-based representations provide incremental information beyond standardized self-report questionnaires. The second focuses on the semantic content and structure of pre-therapy patient narratives, using question-specific analyses to identify recurring themes and selective response patterns in how patients conceptualize their mental health problems before therapy. The third evaluates the prognostic value of pre-therapy language by testing whether patient narratives predict treatment response and individualized goal attainment over time, beyond baseline symptom severity.
 
 By integrating assessment, interpretive, and prognostic perspectives, this project aims to advance the clinical use of natural language in psychotherapy. Ultimately, the findings seek to support more nuanced, patient-centered assessment practices and contribute to the development of language-based tools that complement existing diagnostic frameworks and inform personalized treatment planning.
 
@@ -692,7 +692,8 @@ kable(
   caption  = "DSM-5 diagnoses in the sample (absolute frequencies)"
 )
 ```
-Diagnoses were collapsed for display. Only diagnoses with ≥10 occurrences are shown individually; remaining diagnoses are summarized as “Other diagnoses (<10)”.
+
+Diagnoses were collapsed for display. Only diagnoses with ≥10 occurrences are shown individually; remaining diagnoses are summarized as “Other diagnoses (\<10)”.
 
 ### psychometric measures
 
@@ -881,13 +882,11 @@ psy_tab_1 <- kable(
 )
 ```
 
-
 ```{r}
 #| echo: false
 
 psy_tab_1
 ```
-
 
 Table 2 reports descriptive statistics restricted to patients with complete data at both pre-treatment and post-treatment assessments. For complete-case descriptive analyses, the post-treatment endpoint was defined as the assessment at the end of the second short-term therapy phase (KZT2-DUPost), as this represents the last common assessment across the majority of patients. This table provides a descriptive approximation of within-person change, independent of selective dropout.
 
@@ -1006,15 +1005,13 @@ psy_tab_2
 ::: {pagebreak}
 :::
 
-# Substudies
+# Research areas
 
-This project comprises multiple complementary substudies that share a common dataset and preprocessing pipeline but address distinct research questions. To avoid analytic flexibility and to maximize interpretability, each substudy pre-specifies its text inputs, outcomes, and evaluation strategy.
+This project comprises multiple complementary research areas that share a common dataset and preprocessing pipeline but address distinct research questions. To avoid analytic flexibility and to maximize interpretability, each substudy pre-specifies its text inputs, outcomes, and evaluation strategy.
 
-## Substudy 1: Language as clinical assessment (cross-sectional)
+## Research area 1: Language as clinical assessment (cross-sectional)
 
-**Core research question.** Does patients’ pre-therapy language provide clinically meaningful information about symptom severity and functioning, and does it add predictive value beyond established self-report questionnaires? Additionally, to what extent is this information captured by large language model (LLM)–based representations compared with simpler linguistic features?
-
-**Conceptual contribution.** This substudy conceptualizes patient-generated language as an independent assessment modality rather than a proxy for existing symptom scales. While prior work has demonstrated correlations between language and self-reported symptoms, few studies have tested whether language captures incremental clinical information beyond standardized questionnaires, particularly for clinician-rated outcomes.
+**Core research question.** Does patients’ pre-therapy language provide clinically meaningful information about symptom severity and functioning, and does it add predictive value beyond established self-report questionnaires?
 
 **Text inputs.** Q1 Problem developtment, Q10 *Problem description,* Q12 *Therapy goals*
 
@@ -1028,27 +1025,23 @@ This project comprises multiple complementary substudies that share a common dat
 
 The Sequential Evaluation with Model Pre-registration [@kjell_ganesan_boyd_oltmanns_rivero_feltman_carr_luft_kotov_schwartz_2024] framework will be implemented to ensure robust model development, mitigating overfitting and enabling unbiased performance evaluation. Additionally, evaluating models on prospective data will simulate real-world clinical deployment by assessing performance on new, unseen patient data.
 
-During the model development phase, preprocessing pipelines will be finalized, and exploratory models developed using advanced cross-validation techniques. Contextual embeddings derived from pretrained LLMs will be linked to clinical outcomes using state-of-the-art prediction models, including ridge regression [@Hoerl1970], lasso regression [@10.1111/j.2517-6161.1996.tb02080.x], and random forests [@598994]. The final pipelines will be pre-registered for evaluation (e.g., <https://aspredicted.org/>). In the evaluation phase, pre-registered models will be tested on held-out datasets, enabling unbiased performance assessments.
+Contextual embeddings derived from pretrained LLMs will be linked to clinical outcomes using state-of-the-art prediction models, including ridge regression [@Hoerl1970], lasso regression [@10.1111/j.2517-6161.1996.tb02080.x], and random forests [@598994].
 
-![The step-by-step process of patient narrative analysis, from preprocessing to data evaluation.](reports/Abbildung_Gabriel_eng.png){#figure_1 width="100%"}
+## Research area 2: Patient narratives and themes
 
-## Substudy 2: Patient narratives and themes
-
-**Core research question.** How do patients conceptualize the their mental health problems, as well as anticipated improvements, and how do these narrative patterns vary across individuals and clinical groups?
-
-**Conceptual contribution.** This substudy emphasizes interpretation and theory generation, using patient language to uncover recurring narrative themes. By analyzing these themes, this substudy provides insight into how narrative content and response patterns relate to diagnostic categories, baseline severity or sociodemographic (e.g. age, gender) and anamnestic (e.g. childhood trauma) characteristics.
+**Core research question.** How do patients conceptualize the their mental health problems, as well as anticipated improvements, and how do these narrative patterns vary across diagnostic categories, baseline severity or sociodemographic (e.g. age, gender) and anamnestic (e.g. childhood trauma) characteristics.
 
 **Text inputs.** Q1 *Problem development*, Q2 *Extra stressors*, Q3 *Pre-onset changes*, Q6 *Problem causes*, Q7 *Expected improvements*, Q8 *Environment response*. Question-wise modeling.
 
 **Outcomes.** No single predictive outcome is specified, as the primary aim is interpretive and theory-generating rather than predictive.
 
-**Models & evaluation.** Topic modeling / embedding-based clustering; interpretive labeling; comparison of topic prevalence across patient groups.
+**Models & evaluation.** Topic modeling; interpretive labeling; comparison of topic prevalence across patient groups.
 
-## Substudy 3: Predicting treatment response and goal attainment (longitudinal prediction)
+## Research area 3: Predicting treatment response and goal attainment (longitudinal prediction)
 
-**Core research question.** Can patients’ pre-therapy language predict clinically meaningful treatment outcomes beyond baseline symptom severity and demographic characteristics?
+**Core research question.** Can patients’ pre-therapy language predict clinically meaningful treatment outcomes beyond baseline symptom severity and demographic or anamnestic characteristics?
 
-**Conceptual contribution.** This substudy extends language-based mental health assessment from cross-sectional validity to prognostic utility. While prior work has primarily examined whether language reflects current symptom severity, far less is known about whether pre-therapy narratives encode information relevant for future treatment response, such as motivation, goal clarity, perceived agency, or narrative coherence. By evaluating the ability of pre-therapy language to predict longitudinal outcomes above and beyond baseline symptom and well-being measures, this substudy tests whether patient-generated text captures clinically actionable signals that are not accessible through standard intake questionnaires alone.
+**Conceptual contribution.** This substudy extends language-based mental health assessment from cross-sectional validity to prognostic utility. While prior work has primarily examined whether language reflects current symptom severity, less is known about whether pre-therapy narratives contain information relevant for predicting future treatment response.
 
 **Text inputs.** Primary: Q10, Q12, Q7, Q1; Secondary: concatenation models.
 
@@ -1066,8 +1059,8 @@ During the model development phase, preprocessing pipelines will be finalized, a
 
 -   Baseline prognostic models: Demographic variables and baseline symptom severity and well-being (e.g., BDI-II, BSI/GSI, PMH, CGI-Severity).
 
--   Language-augmented models: Baseline predictors plus language representations derived from pre-therapy text.
+-   Language-augmented models: Baseline predictors plus pre-therapy language representations.
 
-## Substudy 4: Prompt-based LLM rubrics for interpretable language assessment
+## Research area 4: Prompt-based LLMs for interpretable language assessment
 
-**Core research question.** Can prompt-based large language models (LLMs) reliably extract interpretable, clinically meaningful rubric scores from pre-therapy narratives, and do these rubric-based language measures add incremental value beyond (a) standardized questionnaires and (b) embedding-based language representations?
+**Core research question.** Can prompt-based LLMs reliably extract interpretable, clinically meaningful scores from pre-therapy narratives, and do these language measures add incremental value beyond (a) standardized questionnaires and (b) embedding-based language representations?
