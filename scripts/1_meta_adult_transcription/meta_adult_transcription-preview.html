@@ -211,13 +211,143 @@
 </div>
 <main class="content quarto-banner-title-block" id="quarto-document-content">      
 
-     <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div id="cell-1" class="cell">
+     <div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div id="cell-1" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> pip install <span class="op">-</span>r requirements.txt</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Für eventuellen Grafikkarten-Support:</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> pip install torch torchvision torchaudio <span class="op">--</span>index<span class="op">-</span>url https:<span class="op">//</span>download.pytorch.org<span class="op">/</span>whl<span class="op">/</span>cu128</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre>Requirement already satisfied: pandas==2.3.1 in ./meta_transcription_venv/lib/python3.12/site-packages (from -r requirements.txt (line 1)) (2.3.1)
+
+Requirement already satisfied: openai-whisper==20250625 in ./meta_transcription_venv/lib/python3.12/site-packages (from -r requirements.txt (line 2)) (20250625)
+
+Requirement already satisfied: librosa==0.10.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from -r requirements.txt (line 3)) (0.10.0)
+
+Requirement already satisfied: python-dotenv==1.2.1 in ./meta_transcription_venv/lib/python3.12/site-packages (from -r requirements.txt (line 4)) (1.2.1)
+
+Collecting rapidfuzz==3.9.6 (from -r requirements.txt (line 5))
+
+  Downloading rapidfuzz-3.9.6-cp312-cp312-macosx_11_0_arm64.whl.metadata (12 kB)
+
+Requirement already satisfied: numpy&gt;=1.26.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from pandas==2.3.1-&gt;-r requirements.txt (line 1)) (2.3.5)
+
+Requirement already satisfied: python-dateutil&gt;=2.8.2 in ./meta_transcription_venv/lib/python3.12/site-packages (from pandas==2.3.1-&gt;-r requirements.txt (line 1)) (2.9.0.post0)
+
+Requirement already satisfied: pytz&gt;=2020.1 in ./meta_transcription_venv/lib/python3.12/site-packages (from pandas==2.3.1-&gt;-r requirements.txt (line 1)) (2025.2)
+
+Requirement already satisfied: tzdata&gt;=2022.7 in ./meta_transcription_venv/lib/python3.12/site-packages (from pandas==2.3.1-&gt;-r requirements.txt (line 1)) (2025.2)
+
+Requirement already satisfied: more-itertools in ./meta_transcription_venv/lib/python3.12/site-packages (from openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (10.8.0)
+
+Requirement already satisfied: numba in ./meta_transcription_venv/lib/python3.12/site-packages (from openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (0.63.1)
+
+Requirement already satisfied: tiktoken in ./meta_transcription_venv/lib/python3.12/site-packages (from openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (0.12.0)
+
+Requirement already satisfied: torch in ./meta_transcription_venv/lib/python3.12/site-packages (from openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (2.9.1)
+
+Requirement already satisfied: tqdm in ./meta_transcription_venv/lib/python3.12/site-packages (from openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (4.67.1)
+
+Requirement already satisfied: audioread&gt;=2.1.9 in ./meta_transcription_venv/lib/python3.12/site-packages (from librosa==0.10.0-&gt;-r requirements.txt (line 3)) (3.1.0)
+
+Requirement already satisfied: scipy&gt;=1.2.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from librosa==0.10.0-&gt;-r requirements.txt (line 3)) (1.16.3)
+
+Requirement already satisfied: scikit-learn&gt;=0.20.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from librosa==0.10.0-&gt;-r requirements.txt (line 3)) (1.8.0)
+
+Requirement already satisfied: joblib&gt;=0.14 in ./meta_transcription_venv/lib/python3.12/site-packages (from librosa==0.10.0-&gt;-r requirements.txt (line 3)) (1.5.2)
+
+Requirement already satisfied: decorator&gt;=4.3.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from librosa==0.10.0-&gt;-r requirements.txt (line 3)) (5.2.1)
+
+Requirement already satisfied: soundfile&gt;=0.12.1 in ./meta_transcription_venv/lib/python3.12/site-packages (from librosa==0.10.0-&gt;-r requirements.txt (line 3)) (0.13.1)
+
+Requirement already satisfied: pooch&gt;=1.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from librosa==0.10.0-&gt;-r requirements.txt (line 3)) (1.8.2)
+
+Requirement already satisfied: soxr&gt;=0.3.2 in ./meta_transcription_venv/lib/python3.12/site-packages (from librosa==0.10.0-&gt;-r requirements.txt (line 3)) (1.0.0)
+
+Requirement already satisfied: typing-extensions&gt;=4.1.1 in ./meta_transcription_venv/lib/python3.12/site-packages (from librosa==0.10.0-&gt;-r requirements.txt (line 3)) (4.15.0)
+
+Requirement already satisfied: lazy-loader&gt;=0.1 in ./meta_transcription_venv/lib/python3.12/site-packages (from librosa==0.10.0-&gt;-r requirements.txt (line 3)) (0.4)
+
+Requirement already satisfied: msgpack&gt;=1.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from librosa==0.10.0-&gt;-r requirements.txt (line 3)) (1.1.2)
+
+Requirement already satisfied: packaging in ./meta_transcription_venv/lib/python3.12/site-packages (from lazy-loader&gt;=0.1-&gt;librosa==0.10.0-&gt;-r requirements.txt (line 3)) (25.0)
+
+Requirement already satisfied: llvmlite&lt;0.47,&gt;=0.46.0dev0 in ./meta_transcription_venv/lib/python3.12/site-packages (from numba-&gt;openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (0.46.0)
+
+Requirement already satisfied: platformdirs&gt;=2.5.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from pooch&gt;=1.0-&gt;librosa==0.10.0-&gt;-r requirements.txt (line 3)) (4.5.1)
+
+Requirement already satisfied: requests&gt;=2.19.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from pooch&gt;=1.0-&gt;librosa==0.10.0-&gt;-r requirements.txt (line 3)) (2.32.5)
+
+Requirement already satisfied: six&gt;=1.5 in ./meta_transcription_venv/lib/python3.12/site-packages (from python-dateutil&gt;=2.8.2-&gt;pandas==2.3.1-&gt;-r requirements.txt (line 1)) (1.17.0)
+
+Requirement already satisfied: threadpoolctl&gt;=3.2.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from scikit-learn&gt;=0.20.0-&gt;librosa==0.10.0-&gt;-r requirements.txt (line 3)) (3.6.0)
+
+Requirement already satisfied: cffi&gt;=1.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from soundfile&gt;=0.12.1-&gt;librosa==0.10.0-&gt;-r requirements.txt (line 3)) (2.0.0)
+
+Requirement already satisfied: regex&gt;=2022.1.18 in ./meta_transcription_venv/lib/python3.12/site-packages (from tiktoken-&gt;openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (2025.11.3)
+
+Requirement already satisfied: filelock in ./meta_transcription_venv/lib/python3.12/site-packages (from torch-&gt;openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (3.20.0)
+
+Requirement already satisfied: setuptools in ./meta_transcription_venv/lib/python3.12/site-packages (from torch-&gt;openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (80.9.0)
+
+Requirement already satisfied: sympy&gt;=1.13.3 in ./meta_transcription_venv/lib/python3.12/site-packages (from torch-&gt;openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (1.14.0)
+
+Requirement already satisfied: networkx&gt;=2.5.1 in ./meta_transcription_venv/lib/python3.12/site-packages (from torch-&gt;openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (3.6.1)
+
+Requirement already satisfied: jinja2 in ./meta_transcription_venv/lib/python3.12/site-packages (from torch-&gt;openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (3.1.6)
+
+Requirement already satisfied: fsspec&gt;=0.8.5 in ./meta_transcription_venv/lib/python3.12/site-packages (from torch-&gt;openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (2025.12.0)
+
+Requirement already satisfied: pycparser in ./meta_transcription_venv/lib/python3.12/site-packages (from cffi&gt;=1.0-&gt;soundfile&gt;=0.12.1-&gt;librosa==0.10.0-&gt;-r requirements.txt (line 3)) (2.23)
+
+Requirement already satisfied: charset_normalizer&lt;4,&gt;=2 in ./meta_transcription_venv/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pooch&gt;=1.0-&gt;librosa==0.10.0-&gt;-r requirements.txt (line 3)) (3.4.4)
+
+Requirement already satisfied: idna&lt;4,&gt;=2.5 in ./meta_transcription_venv/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pooch&gt;=1.0-&gt;librosa==0.10.0-&gt;-r requirements.txt (line 3)) (3.11)
+
+Requirement already satisfied: urllib3&lt;3,&gt;=1.21.1 in ./meta_transcription_venv/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pooch&gt;=1.0-&gt;librosa==0.10.0-&gt;-r requirements.txt (line 3)) (2.6.1)
+
+Requirement already satisfied: certifi&gt;=2017.4.17 in ./meta_transcription_venv/lib/python3.12/site-packages (from requests&gt;=2.19.0-&gt;pooch&gt;=1.0-&gt;librosa==0.10.0-&gt;-r requirements.txt (line 3)) (2025.11.12)
+
+Requirement already satisfied: mpmath&lt;1.4,&gt;=1.1.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from sympy&gt;=1.13.3-&gt;torch-&gt;openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (1.3.0)
+
+Requirement already satisfied: MarkupSafe&gt;=2.0 in ./meta_transcription_venv/lib/python3.12/site-packages (from jinja2-&gt;torch-&gt;openai-whisper==20250625-&gt;-r requirements.txt (line 2)) (3.0.3)
+
+Downloading rapidfuzz-3.9.6-cp312-cp312-macosx_11_0_arm64.whl (1.5 MB)
+
+   <span class="ansi-bright-black-fg">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-green-fg">1.5/1.5 MB</span> <span class="ansi-red-fg">3.1 MB/s</span> eta <span class="ansi-cyan-fg">0:00:00</span>00:0100:01
+
+Installing collected packages: rapidfuzz
+
+Successfully installed rapidfuzz-3.9.6
+
+
+
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> A new release of pip is available: <span class="ansi-red-fg">24.0</span> -&gt; <span class="ansi-green-fg">26.0.1</span>
+
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> To update, run: <span class="ansi-green-fg">pip install --upgrade pip</span>
+
+Looking in indexes: https://download.pytorch.org/whl/cu128
+
+Requirement already satisfied: torch in ./meta_transcription_venv/lib/python3.12/site-packages (2.9.1)
+
+Collecting torchvision
+
+  Using cached https://download.pytorch.org/whl/torchvision-0.2.0-py2.py3-none-any.whl (48 kB)
+
+<span class="ansi-red-fg">ERROR: Could not find a version that satisfies the requirement torchaudio (from versions: none)</span><span class="ansi-red-fg">
+
+</span><span class="ansi-red-fg">ERROR: No matching distribution found for torchaudio</span><span class="ansi-red-fg">
+
+</span>
+
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> A new release of pip is available: <span class="ansi-red-fg">24.0</span> -&gt; <span class="ansi-green-fg">26.0.1</span>
+
+<span class="ansi-bold">[</span><span class="ansi-blue-fg">notice</span><span class="ansi-bold">]</span> To update, run: <span class="ansi-green-fg">pip install --upgrade pip</span>
+</pre>
+</div>
+</div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div id="cell-2" class="cell">
+<div class="cell-container"><div class="cell-decorator"><pre>In [2]:</pre></div><div id="cell-2" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dotenv <span class="im">import</span> load_dotenv</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
@@ -248,133 +378,261 @@
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co"># === Whisper Modell Set-Up ===</span></span>
 <span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>model_name <span class="op">=</span> <span class="st">"large-v2"</span>  <span class="co"># Je nach GPU Speichergröße bzw. Gerät auf dem der Code läuft. Auswahlmöglichkeiten: "tiny", "base", "small", "medium", "large", "large-v2", "large-v3"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Apple GPU (Metal) erkannt – Whisper läuft auf der GPU.</code></pre>
+</div>
 </div></div>
-<div class="cell-container"><div class="cell-decorator"><pre>In [3]:</pre></div><div id="cell-3" class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> whisper</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> librosa</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># === Helper: bereits verarbeitete Dateien laden ===</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>processed_files <span class="op">=</span> <span class="bu">set</span>()</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.path.exists(processed_log_path):</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(processed_log_path, <span class="st">"r"</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> f:</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> line <span class="kw">in</span> f:</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>            path <span class="op">=</span> line.strip()</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> path:</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                path <span class="op">=</span> os.path.abspath(path).replace(<span class="st">"</span><span class="ch">\\</span><span class="st">"</span>, <span class="st">"/"</span>)  <span class="co"># Normalisieren</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                processed_files.add(path)</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co"># === GPU Cache leeren (falls nötig) ===</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> device <span class="op">==</span> <span class="st">"cuda"</span>:</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    torch.cuda.empty_cache()</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="co"># === Whisper-Modell laden auf passendem Device ===</span></span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> whisper.load_model(model_name)</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="co"># === NATO-Alphabet ===</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>nato_alphabet <span class="op">=</span> {</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">"alpha"</span>: <span class="st">"A"</span>, <span class="st">"bravo"</span>: <span class="st">"B"</span>, <span class="st">"charlie"</span>: <span class="st">"C"</span>, <span class="st">"delta"</span>: <span class="st">"D"</span>, <span class="st">"echo"</span>: <span class="st">"E"</span>,</span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"foxtrot"</span>: <span class="st">"F"</span>, <span class="st">"golf"</span>: <span class="st">"G"</span>, <span class="st">"hotel"</span>: <span class="st">"H"</span>, <span class="st">"india"</span>: <span class="st">"I"</span>, <span class="st">"juliett"</span>: <span class="st">"J"</span>,</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"kilo"</span>: <span class="st">"K"</span>, <span class="st">"lima"</span>: <span class="st">"L"</span>, <span class="st">"mike"</span>: <span class="st">"M"</span>, <span class="st">"november"</span>: <span class="st">"N"</span>, <span class="st">"oscar"</span>: <span class="st">"O"</span>,</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"papa"</span>: <span class="st">"P"</span>, <span class="st">"quebec"</span>: <span class="st">"Q"</span>, <span class="st">"romeo"</span>: <span class="st">"R"</span>, <span class="st">"sierra"</span>: <span class="st">"S"</span>, <span class="st">"tango"</span>: <span class="st">"T"</span>,</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">"uniform"</span>: <span class="st">"U"</span>, <span class="st">"victor"</span>: <span class="st">"V"</span>, <span class="st">"whiskey"</span>: <span class="st">"W"</span>, <span class="st">"xray"</span>: <span class="st">"X"</span>, <span class="st">"yankee"</span>: <span class="st">"Y"</span>, <span class="st">"zulu"</span>: <span class="st">"Z"</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co"># === Erwartete Fragen ===</span></span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>expected_markers <span class="op">=</span> [</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Frage 5"</span>, <span class="st">"Frage 6"</span>, <span class="st">"Frage 7"</span>, <span class="st">"Frage 8"</span>, <span class="st">"Frage 9"</span>, </span>
-<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Frage 10"</span>, <span class="st">"Frage 11"</span>, <span class="st">"Frage 12"</span>, <span class="st">"Frage 13"</span>, </span>
-<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Frage 40"</span>, <span class="st">"Frage 60"</span>, <span class="st">"Frage 61"</span>, <span class="st">"Frage 62"</span></span>
-<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean_answer(answer: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
-<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    answer <span class="op">=</span> re.sub(<span class="vs">r'</span><span class="fu">(?i)</span><span class="dv">^\s</span><span class="op">*</span><span class="vs">hier folgt die antwort auf</span><span class="dv">\s</span><span class="op">*</span><span class="vs">'</span>, <span class="st">''</span>, answer)</span>
-<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    answer <span class="op">=</span> re.sub(<span class="vs">r'</span><span class="fu">(?i)</span><span class="dv">\s</span><span class="op">*</span><span class="vs">hier folgt die antwort auf</span><span class="dv">\s</span><span class="op">*</span><span class="dv">$</span><span class="vs">'</span>, <span class="st">''</span>, answer)</span>
-<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> answer.strip(<span class="st">" .,-"</span>)</span>
-<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> robust_extract_questions(text: <span class="bu">str</span>, expected_markers: <span class="bu">list</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
-<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    marker_pattern <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r'</span><span class="kw">(</span><span class="vs">Frage</span><span class="dv">\s</span><span class="op">*</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">'</span>, re.IGNORECASE)</span>
-<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    matches <span class="op">=</span> <span class="bu">list</span>(marker_pattern.finditer(text))</span>
-<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    answers <span class="op">=</span> {marker: <span class="va">None</span> <span class="cf">for</span> marker <span class="kw">in</span> expected_markers}</span>
-<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> normalize_marker(m):</span>
-<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> re.sub(<span class="vs">r'</span><span class="dv">\s</span><span class="op">+</span><span class="vs">'</span>, <span class="st">' '</span>, m.group()).strip().capitalize()</span>
-<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    extracted <span class="op">=</span> []</span>
-<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, m <span class="kw">in</span> <span class="bu">enumerate</span>(matches):</span>
-<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>        marker_text <span class="op">=</span> normalize_marker(m)</span>
-<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>        start_index <span class="op">=</span> m.end()</span>
-<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>        end_index <span class="op">=</span> matches[i <span class="op">+</span> <span class="dv">1</span>].start() <span class="cf">if</span> i <span class="op">+</span> <span class="dv">1</span> <span class="op">&lt;</span> <span class="bu">len</span>(matches) <span class="cf">else</span> <span class="bu">len</span>(text)</span>
-<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>        extracted.append((marker_text, start_index, end_index))</span>
-<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="co"># NEU: kein break -&gt; letzte Version überschreibt frühere</span></span>
-<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> exp_marker <span class="kw">in</span> expected_markers:</span>
-<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> marker_text, start, end <span class="kw">in</span> extracted:</span>
-<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> marker_text.lower() <span class="op">==</span> exp_marker.lower():</span>
-<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>                answer <span class="op">=</span> clean_answer(text[start:end].strip())</span>
-<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>                answers[exp_marker] <span class="op">=</span> answer</span>
-<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>                <span class="co"># kein break -&gt; spätere Treffer überschreiben frühere</span></span>
-<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> answers</span>
-<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a><span class="co"># === Alle neuen Audio-Dateien sammeln ===</span></span>
-<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>audio_files <span class="op">=</span> []</span>
-<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> root, _, files <span class="kw">in</span> os.walk(raw_audio_path):</span>
-<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> files:</span>
-<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> f.lower().endswith((<span class="st">'.wav'</span>, <span class="st">'.mp3'</span>, <span class="st">'.m4a'</span>, <span class="st">'.flac'</span>)) <span class="kw">and</span> <span class="kw">not</span> f.startswith(<span class="st">'._'</span>):</span>
-<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>            full_path <span class="op">=</span> os.path.abspath(os.path.join(root, f)).replace(<span class="st">"</span><span class="ch">\\</span><span class="st">"</span>, <span class="st">"/"</span>)  <span class="co"># Normalisieren</span></span>
-<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> full_path <span class="kw">not</span> <span class="kw">in</span> processed_files:</span>
-<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>                audio_files.append(full_path)</span>
-<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="bu">len</span>(audio_files)<span class="sc">}</span><span class="ss"> neue Dateien gefunden."</span>)</span>
-<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a><span class="co"># === Falls schon CSV existiert, laden ===</span></span>
-<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.path.exists(output_csv):</span>
-<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(output_csv)</span>
-<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> df.to_dict(<span class="st">"records"</span>)</span>
-<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> []</span>
-<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a><span class="co"># === Neue Dateien verarbeiten ===</span></span>
-<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> audio_path <span class="kw">in</span> audio_files:</span>
-<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>    audio_path <span class="op">=</span> os.path.abspath(audio_path).replace(<span class="st">"</span><span class="ch">\\</span><span class="st">"</span>, <span class="st">"/"</span>)</span>
-<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print(f"Processing: {audio_path}")  # Un-kommentieren, um Pfad sichtbar zu machen</span></span>
-<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Transkription: WAV direkt mit librosa laden ---</span></span>
-<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>    audio, sr <span class="op">=</span> librosa.load(audio_path, sr<span class="op">=</span><span class="dv">16000</span>)  <span class="co"># resample auf 16 kHz</span></span>
-<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> model.transcribe(audio, language<span class="op">=</span><span class="st">"de"</span>)</span>
-<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>    text <span class="op">=</span> result[<span class="st">'text'</span>]</span>
-<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Chiffre-Extraktion ---</span></span>
-<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>    code_match <span class="op">=</span> re.search(<span class="vs">r'</span><span class="dv">\b</span><span class="kw">(</span><span class="pp">[A-Za-z]</span><span class="op">+</span><span class="kw">)</span><span class="pp">[</span><span class="dv">\s</span><span class="pp">:,-]</span><span class="op">*</span><span class="kw">(</span>(?:<span class="dv">\d</span><span class="pp">[</span><span class="dv">\s</span><span class="pp">,]</span><span class="op">*</span>)<span class="op">{6}</span><span class="kw">)</span><span class="dv">\b</span><span class="vs">'</span>, text)</span>
-<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>    code <span class="op">=</span> <span class="va">None</span></span>
-<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> code_match:</span>
-<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>        nato_word <span class="op">=</span> code_match.group(<span class="dv">1</span>).lower()</span>
-<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>        digits <span class="op">=</span> re.sub(<span class="vs">r'</span><span class="pp">[</span><span class="dv">\s</span><span class="pp">,]</span><span class="op">+</span><span class="vs">'</span>, <span class="st">''</span>, code_match.group(<span class="dv">2</span>))</span>
-<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(digits) <span class="op">==</span> <span class="dv">6</span> <span class="kw">and</span> nato_word <span class="kw">in</span> nato_alphabet:</span>
-<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>            code <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>nato_alphabet[nato_word]<span class="sc">}{</span>digits<span class="sc">}</span><span class="ss">"</span></span>
-<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Fragen-Extraktion ---</span></span>
-<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>    question_answers <span class="op">=</span> robust_extract_questions(text, expected_markers)</span>
-<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Ergebnis speichern</span></span>
-<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>    entry <span class="op">=</span> {<span class="st">"file_path"</span>: audio_path, <span class="st">"code"</span>: code, <span class="st">"full_transcript"</span>: text}</span>
-<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>    entry.update({<span class="ss">f"q</span><span class="sc">{</span>m<span class="sc">.</span>split()[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>: question_answers.get(m) <span class="cf">for</span> m <span class="kw">in</span> expected_markers})</span>
-<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>    data.append(entry)</span>
-<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- CSV aktualisieren ---</span></span>
-<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(data)</span>
-<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>    df.to_csv(output_csv, index<span class="op">=</span><span class="va">False</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>)</span>
-<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Log aktualisieren ---</span></span>
-<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(processed_log_path, <span class="st">"a"</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> log:</span>
-<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>        log.write(audio_path <span class="op">+</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
-<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a><span class="co"># === Abschlussmeldung ===</span></span>
-<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Fertig mit der Verarbeitung aller neuen Dateien."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-container"><div class="cell-decorator"><pre>In [1]:</pre></div><div id="cell-3" class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> whisper</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> librosa</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rapidfuzz <span class="im">import</span> process, fuzz</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co"># === Helper: bereits verarbeitete Dateien laden ===</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>processed_files <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.path.exists(processed_log_path):</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(processed_log_path, <span class="st">"r"</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> f:</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> line <span class="kw">in</span> f:</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>            path <span class="op">=</span> line.strip()</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> path:</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>                path <span class="op">=</span> os.path.abspath(path).replace(<span class="st">"</span><span class="ch">\\</span><span class="st">"</span>, <span class="st">"/"</span>)  <span class="co"># Normalisieren</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                processed_files.add(path)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co"># === GPU Cache leeren (falls nötig) ===</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> device <span class="op">==</span> <span class="st">"cuda"</span>:</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    torch.cuda.empty_cache()</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co"># === Whisper-Modell laden auf passendem Device ===</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> whisper.load_model(model_name)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co"># === NATO-Alphabet ===</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>NATO_CANON <span class="op">=</span> {</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="st">"alpha"</span>: <span class="st">"A"</span>, <span class="st">"bravo"</span>: <span class="st">"B"</span>, <span class="st">"charlie"</span>: <span class="st">"C"</span>, <span class="st">"delta"</span>: <span class="st">"D"</span>, <span class="st">"echo"</span>: <span class="st">"E"</span>,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="st">"foxtrot"</span>: <span class="st">"F"</span>, <span class="st">"golf"</span>: <span class="st">"G"</span>, <span class="st">"hotel"</span>: <span class="st">"H"</span>, <span class="st">"india"</span>: <span class="st">"I"</span>, <span class="st">"juliett"</span>: <span class="st">"J"</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="st">"kilo"</span>: <span class="st">"K"</span>, <span class="st">"lima"</span>: <span class="st">"L"</span>, <span class="st">"mike"</span>: <span class="st">"M"</span>, <span class="st">"november"</span>: <span class="st">"N"</span>, <span class="st">"oscar"</span>: <span class="st">"O"</span>,</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="st">"papa"</span>: <span class="st">"P"</span>, <span class="st">"quebec"</span>: <span class="st">"Q"</span>, <span class="st">"romeo"</span>: <span class="st">"R"</span>, <span class="st">"sierra"</span>: <span class="st">"S"</span>, <span class="st">"tango"</span>: <span class="st">"T"</span>,</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="st">"uniform"</span>: <span class="st">"U"</span>, <span class="st">"victor"</span>: <span class="st">"V"</span>, <span class="st">"whiskey"</span>: <span class="st">"W"</span>, <span class="st">"xray"</span>: <span class="st">"X"</span>, <span class="st">"yankee"</span>: <span class="st">"Y"</span>, <span class="st">"zulu"</span>: <span class="st">"Z"</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Häufige Varianten/ASR-Fehler -&gt; canonical key</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>NATO_ALIASES <span class="op">=</span> {</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="st">"whisky"</span>: <span class="st">"whiskey"</span>,</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    <span class="st">"juliet"</span>: <span class="st">"juliett"</span>,</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>    <span class="st">"x-ray"</span>: <span class="st">"xray"</span>,</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>    <span class="st">"x ray"</span>: <span class="st">"xray"</span>,</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    <span class="st">"xray"</span>: <span class="st">"xray"</span>,</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    <span class="st">"alfa"</span>: <span class="st">"alpha"</span>,       </span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sulu"</span>: <span class="st">"zulu"</span>,        </span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>    <span class="st">"zoulou"</span>: <span class="st">"zulu"</span>, </span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>    <span class="st">"oskar"</span>: <span class="st">"oscar"</span>,</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>    <span class="st">"maik"</span>: <span class="st">"mike"</span>,</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>    <span class="st">"meik"</span>: <span class="st">"mike"</span>,</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>    <span class="st">"mic"</span>: <span class="st">"mike"</span>,     </span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>NATO_KEYS <span class="op">=</span> <span class="bu">list</span>(NATO_CANON.keys())</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalize_nato_word(raw: <span class="bu">str</span>, min_score: <span class="bu">int</span> <span class="op">=</span> <span class="dv">85</span>):</span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a><span class="co">    Normalisiert ein transkribiertes NATO-Wort auf einen canonical key (z.B. 'whiskey' -&gt; 'whisky').</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a><span class="co">    Fällt zurück auf fuzzy matching, wenn kein Alias passt.</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">not</span> raw:</span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> raw.lower().strip()</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Nur Buchstaben/Leerzeichen/Bindestrich behalten (für x-ray, x ray, etc.)</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> re.sub(<span class="vs">r"</span><span class="pp">[^a-z</span><span class="ch">\-</span><span class="pp"> ]</span><span class="op">+</span><span class="vs">"</span>, <span class="st">""</span>, w)</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> re.sub(<span class="vs">r"</span><span class="dv">\s</span><span class="op">+</span><span class="vs">"</span>, <span class="st">" "</span>, w).strip()</span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 1) Harte Aliases</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> w <span class="kw">in</span> NATO_ALIASES:</span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> NATO_ALIASES[w]</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> w</span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2) Direkt korrekt</span></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> w <span class="kw">in</span> NATO_CANON:</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> w</span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3) Fuzzy Matching</span></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>    match <span class="op">=</span> process.extractOne(w, NATO_KEYS, scorer<span class="op">=</span>fuzz.WRatio)</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> match <span class="kw">and</span> match[<span class="dv">1</span>] <span class="op">&gt;=</span> min_score:</span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> match[<span class="dv">0</span>]</span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a><span class="co"># A) Zahlwörter für Fragenummern</span></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>NUM_WORDS_Q <span class="op">=</span> {</span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 0-19</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>    <span class="st">"null"</span>: <span class="st">"0"</span>,</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>    <span class="st">"eins"</span>: <span class="st">"1"</span>,</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>    <span class="st">"zwei"</span>: <span class="st">"2"</span>,</span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>    <span class="st">"drei"</span>: <span class="st">"3"</span>,</span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>    <span class="st">"vier"</span>: <span class="st">"4"</span>,</span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>    <span class="st">"fünf"</span>: <span class="st">"5"</span>,</span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sechs"</span>: <span class="st">"6"</span>,</span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sieben"</span>: <span class="st">"7"</span>,</span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>    <span class="st">"acht"</span>: <span class="st">"8"</span>,</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>    <span class="st">"neun"</span>: <span class="st">"9"</span>,</span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>    <span class="st">"zehn"</span>: <span class="st">"10"</span>,</span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>    <span class="st">"elf"</span>: <span class="st">"11"</span>,</span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>    <span class="st">"zwölf"</span>: <span class="st">"12"</span>,</span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>    <span class="st">"dreizehn"</span>: <span class="st">"13"</span>,</span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sechzig"</span>: <span class="st">"60"</span>,</span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>    <span class="st">"einundsechzig"</span>: <span class="st">"61"</span>,</span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>    <span class="st">"zweiundsechzig"</span>: <span class="st">"62"</span>,</span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-103"><a href="#cb4-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-104"><a href="#cb4-104" aria-hidden="true" tabindex="-1"></a><span class="co"># B) Zahlwörter für Code-Ziffernfolgen: nur 0-9 (damit du nicht ungewollt Fließtext veränderst)</span></span>
+<span id="cb4-105"><a href="#cb4-105" aria-hidden="true" tabindex="-1"></a>NUM_WORDS_DIGITS <span class="op">=</span> {</span>
+<span id="cb4-106"><a href="#cb4-106" aria-hidden="true" tabindex="-1"></a>    <span class="st">"null"</span>: <span class="st">"0"</span>,</span>
+<span id="cb4-107"><a href="#cb4-107" aria-hidden="true" tabindex="-1"></a>    <span class="st">"eins"</span>: <span class="st">"1"</span>,</span>
+<span id="cb4-108"><a href="#cb4-108" aria-hidden="true" tabindex="-1"></a>    <span class="st">"zwei"</span>: <span class="st">"2"</span>,</span>
+<span id="cb4-109"><a href="#cb4-109" aria-hidden="true" tabindex="-1"></a>    <span class="st">"drei"</span>: <span class="st">"3"</span>,</span>
+<span id="cb4-110"><a href="#cb4-110" aria-hidden="true" tabindex="-1"></a>    <span class="st">"vier"</span>: <span class="st">"4"</span>,</span>
+<span id="cb4-111"><a href="#cb4-111" aria-hidden="true" tabindex="-1"></a>    <span class="st">"fünf"</span>: <span class="st">"5"</span>,</span>
+<span id="cb4-112"><a href="#cb4-112" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sechs"</span>: <span class="st">"6"</span>,</span>
+<span id="cb4-113"><a href="#cb4-113" aria-hidden="true" tabindex="-1"></a>    <span class="st">"sieben"</span>: <span class="st">"7"</span>,</span>
+<span id="cb4-114"><a href="#cb4-114" aria-hidden="true" tabindex="-1"></a>    <span class="st">"acht"</span>: <span class="st">"8"</span>,</span>
+<span id="cb4-115"><a href="#cb4-115" aria-hidden="true" tabindex="-1"></a>    <span class="st">"neun"</span>: <span class="st">"9"</span>,</span>
+<span id="cb4-116"><a href="#cb4-116" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-117"><a href="#cb4-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-118"><a href="#cb4-118" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalize_question_numbers_de(t: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb4-119"><a href="#cb4-119" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb4-120"><a href="#cb4-120" aria-hidden="true" tabindex="-1"></a><span class="co">    Normalisiert 'Frage &lt;zahlwort&gt;' -&gt; 'Frage &lt;zahl&gt;' (inkl. bis 62).</span></span>
+<span id="cb4-121"><a href="#cb4-121" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb4-122"><a href="#cb4-122" aria-hidden="true" tabindex="-1"></a>    <span class="co"># z.B. "Frage Nummer fünf" / "Frage Nr. fünf" / "Frage fünf"</span></span>
+<span id="cb4-123"><a href="#cb4-123" aria-hidden="true" tabindex="-1"></a>    pattern <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r'</span><span class="fu">(?i)</span><span class="dv">\b</span><span class="vs">Frage</span>(?:<span class="dv">\s</span><span class="op">+</span><span class="vs">Nr</span><span class="ch">\.</span><span class="op">?</span><span class="cf">|</span><span class="dv">\s</span><span class="op">+</span><span class="vs">Nummer</span>)<span class="op">?</span><span class="dv">\s</span><span class="op">+</span><span class="kw">(</span><span class="pp">[A-Za-zäöüÄÖÜß]</span><span class="op">+</span><span class="kw">)</span><span class="dv">\b</span><span class="vs">'</span>)</span>
+<span id="cb4-124"><a href="#cb4-124" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-125"><a href="#cb4-125" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> repl(m):</span>
+<span id="cb4-126"><a href="#cb4-126" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> m.group(<span class="dv">1</span>).lower()</span>
+<span id="cb4-127"><a href="#cb4-127" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="ss">f"Frage </span><span class="sc">{</span>NUM_WORDS_Q<span class="sc">.</span>get(w, w)<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb4-128"><a href="#cb4-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-129"><a href="#cb4-129" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pattern.sub(repl, t)</span>
+<span id="cb4-130"><a href="#cb4-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-131"><a href="#cb4-131" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalize_digit_sequences_de(t: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb4-132"><a href="#cb4-132" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb4-133"><a href="#cb4-133" aria-hidden="true" tabindex="-1"></a><span class="co">    Ersetzt isolierte Zahlwörter 0-9 durch Ziffern.</span></span>
+<span id="cb4-134"><a href="#cb4-134" aria-hidden="true" tabindex="-1"></a><span class="co">    Das hilft v.a. bei 6-stelligen Code-Folgen, die als 'eins zwei drei ...' eingesprochen werden.</span></span>
+<span id="cb4-135"><a href="#cb4-135" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb4-136"><a href="#cb4-136" aria-hidden="true" tabindex="-1"></a>    keys <span class="op">=</span> <span class="bu">sorted</span>(NUM_WORDS_DIGITS.keys(), key<span class="op">=</span><span class="bu">len</span>, reverse<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb4-137"><a href="#cb4-137" aria-hidden="true" tabindex="-1"></a>    pattern <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r'</span><span class="fu">(?i)</span><span class="dv">\b</span><span class="kw">(</span><span class="vs">'</span> <span class="op">+</span> <span class="st">"|"</span>.join(<span class="bu">map</span>(re.escape, keys)) <span class="op">+</span> <span class="vs">r'</span><span class="er">)</span><span class="dv">\b</span><span class="vs">'</span>)</span>
+<span id="cb4-138"><a href="#cb4-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-139"><a href="#cb4-139" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> repl(m):</span>
+<span id="cb4-140"><a href="#cb4-140" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> NUM_WORDS_DIGITS[m.group(<span class="dv">1</span>).lower()]</span>
+<span id="cb4-141"><a href="#cb4-141" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-142"><a href="#cb4-142" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pattern.sub(repl, t)</span>
+<span id="cb4-143"><a href="#cb4-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-144"><a href="#cb4-144" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> normalize_transcript_for_extraction(text: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb4-145"><a href="#cb4-145" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> text</span>
+<span id="cb4-146"><a href="#cb4-146" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> normalize_question_numbers_de(x)</span>
+<span id="cb4-147"><a href="#cb4-147" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> normalize_digit_sequences_de(x)</span>
+<span id="cb4-148"><a href="#cb4-148" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> x</span>
+<span id="cb4-149"><a href="#cb4-149" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-150"><a href="#cb4-150" aria-hidden="true" tabindex="-1"></a><span class="co"># === Erwartete Fragen ===</span></span>
+<span id="cb4-151"><a href="#cb4-151" aria-hidden="true" tabindex="-1"></a>expected_markers <span class="op">=</span> [</span>
+<span id="cb4-152"><a href="#cb4-152" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Frage 5"</span>, <span class="st">"Frage 6"</span>, <span class="st">"Frage 7"</span>, <span class="st">"Frage 8"</span>, <span class="st">"Frage 9"</span>, </span>
+<span id="cb4-153"><a href="#cb4-153" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Frage 10"</span>, <span class="st">"Frage 11"</span>, <span class="st">"Frage 12"</span>, <span class="st">"Frage 13"</span>, </span>
+<span id="cb4-154"><a href="#cb4-154" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Frage 40"</span>, <span class="st">"Frage 60"</span>, <span class="st">"Frage 61"</span>, <span class="st">"Frage 62"</span></span>
+<span id="cb4-155"><a href="#cb4-155" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb4-156"><a href="#cb4-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-157"><a href="#cb4-157" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> clean_answer(answer: <span class="bu">str</span>) <span class="op">-&gt;</span> <span class="bu">str</span>:</span>
+<span id="cb4-158"><a href="#cb4-158" aria-hidden="true" tabindex="-1"></a>    answer <span class="op">=</span> re.sub(<span class="vs">r'</span><span class="fu">(?i)</span><span class="dv">^\s</span><span class="op">*</span><span class="vs">hier folgt die antwort auf</span><span class="dv">\s</span><span class="op">*</span><span class="vs">'</span>, <span class="st">''</span>, answer)</span>
+<span id="cb4-159"><a href="#cb4-159" aria-hidden="true" tabindex="-1"></a>    answer <span class="op">=</span> re.sub(<span class="vs">r'</span><span class="fu">(?i)</span><span class="dv">\s</span><span class="op">*</span><span class="vs">hier folgt die antwort auf</span><span class="dv">\s</span><span class="op">*</span><span class="dv">$</span><span class="vs">'</span>, <span class="st">''</span>, answer)</span>
+<span id="cb4-160"><a href="#cb4-160" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> answer.strip(<span class="st">" .,-"</span>)</span>
+<span id="cb4-161"><a href="#cb4-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-162"><a href="#cb4-162" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> robust_extract_questions(text: <span class="bu">str</span>, expected_markers: <span class="bu">list</span>) <span class="op">-&gt;</span> <span class="bu">dict</span>:</span>
+<span id="cb4-163"><a href="#cb4-163" aria-hidden="true" tabindex="-1"></a>    marker_pattern <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r'</span><span class="kw">(</span><span class="vs">Frage</span><span class="dv">\s</span><span class="op">*</span><span class="dv">\d</span><span class="op">+</span><span class="kw">)</span><span class="vs">'</span>, re.IGNORECASE)</span>
+<span id="cb4-164"><a href="#cb4-164" aria-hidden="true" tabindex="-1"></a>    matches <span class="op">=</span> <span class="bu">list</span>(marker_pattern.finditer(text))</span>
+<span id="cb4-165"><a href="#cb4-165" aria-hidden="true" tabindex="-1"></a>    answers <span class="op">=</span> {marker: <span class="va">None</span> <span class="cf">for</span> marker <span class="kw">in</span> expected_markers}</span>
+<span id="cb4-166"><a href="#cb4-166" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-167"><a href="#cb4-167" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> normalize_marker(m):</span>
+<span id="cb4-168"><a href="#cb4-168" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> re.sub(<span class="vs">r'</span><span class="dv">\s</span><span class="op">+</span><span class="vs">'</span>, <span class="st">' '</span>, m.group()).strip().capitalize()</span>
+<span id="cb4-169"><a href="#cb4-169" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-170"><a href="#cb4-170" aria-hidden="true" tabindex="-1"></a>    extracted <span class="op">=</span> []</span>
+<span id="cb4-171"><a href="#cb4-171" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, m <span class="kw">in</span> <span class="bu">enumerate</span>(matches):</span>
+<span id="cb4-172"><a href="#cb4-172" aria-hidden="true" tabindex="-1"></a>        marker_text <span class="op">=</span> normalize_marker(m)</span>
+<span id="cb4-173"><a href="#cb4-173" aria-hidden="true" tabindex="-1"></a>        start_index <span class="op">=</span> m.end()</span>
+<span id="cb4-174"><a href="#cb4-174" aria-hidden="true" tabindex="-1"></a>        end_index <span class="op">=</span> matches[i <span class="op">+</span> <span class="dv">1</span>].start() <span class="cf">if</span> i <span class="op">+</span> <span class="dv">1</span> <span class="op">&lt;</span> <span class="bu">len</span>(matches) <span class="cf">else</span> <span class="bu">len</span>(text)</span>
+<span id="cb4-175"><a href="#cb4-175" aria-hidden="true" tabindex="-1"></a>        extracted.append((marker_text, start_index, end_index))</span>
+<span id="cb4-176"><a href="#cb4-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-177"><a href="#cb4-177" aria-hidden="true" tabindex="-1"></a>    <span class="co"># NEU: kein break -&gt; letzte Version überschreibt frühere</span></span>
+<span id="cb4-178"><a href="#cb4-178" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> exp_marker <span class="kw">in</span> expected_markers:</span>
+<span id="cb4-179"><a href="#cb4-179" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> marker_text, start, end <span class="kw">in</span> extracted:</span>
+<span id="cb4-180"><a href="#cb4-180" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> marker_text.lower() <span class="op">==</span> exp_marker.lower():</span>
+<span id="cb4-181"><a href="#cb4-181" aria-hidden="true" tabindex="-1"></a>                answer <span class="op">=</span> clean_answer(text[start:end].strip())</span>
+<span id="cb4-182"><a href="#cb4-182" aria-hidden="true" tabindex="-1"></a>                answers[exp_marker] <span class="op">=</span> answer</span>
+<span id="cb4-183"><a href="#cb4-183" aria-hidden="true" tabindex="-1"></a>                <span class="co"># kein break -&gt; spätere Treffer überschreiben frühere</span></span>
+<span id="cb4-184"><a href="#cb4-184" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> answers</span>
+<span id="cb4-185"><a href="#cb4-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-186"><a href="#cb4-186" aria-hidden="true" tabindex="-1"></a><span class="co"># === Alle neuen Audio-Dateien sammeln ===</span></span>
+<span id="cb4-187"><a href="#cb4-187" aria-hidden="true" tabindex="-1"></a>audio_files <span class="op">=</span> []</span>
+<span id="cb4-188"><a href="#cb4-188" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> root, _, files <span class="kw">in</span> os.walk(raw_audio_path):</span>
+<span id="cb4-189"><a href="#cb4-189" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> f <span class="kw">in</span> files:</span>
+<span id="cb4-190"><a href="#cb4-190" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> f.lower().endswith((<span class="st">'.wav'</span>, <span class="st">'.mp3'</span>, <span class="st">'.m4a'</span>, <span class="st">'.flac'</span>)) <span class="kw">and</span> <span class="kw">not</span> f.startswith(<span class="st">'._'</span>):</span>
+<span id="cb4-191"><a href="#cb4-191" aria-hidden="true" tabindex="-1"></a>            full_path <span class="op">=</span> os.path.abspath(os.path.join(root, f)).replace(<span class="st">"</span><span class="ch">\\</span><span class="st">"</span>, <span class="st">"/"</span>)  <span class="co"># Normalisieren</span></span>
+<span id="cb4-192"><a href="#cb4-192" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> full_path <span class="kw">not</span> <span class="kw">in</span> processed_files:</span>
+<span id="cb4-193"><a href="#cb4-193" aria-hidden="true" tabindex="-1"></a>                audio_files.append(full_path)</span>
+<span id="cb4-194"><a href="#cb4-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-195"><a href="#cb4-195" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span><span class="bu">len</span>(audio_files)<span class="sc">}</span><span class="ss"> neue Dateien gefunden."</span>)</span>
+<span id="cb4-196"><a href="#cb4-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-197"><a href="#cb4-197" aria-hidden="true" tabindex="-1"></a><span class="co"># === Falls schon CSV existiert, laden ===</span></span>
+<span id="cb4-198"><a href="#cb4-198" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> os.path.exists(output_csv):</span>
+<span id="cb4-199"><a href="#cb4-199" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.read_csv(output_csv)</span>
+<span id="cb4-200"><a href="#cb4-200" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> df.to_dict(<span class="st">"records"</span>)</span>
+<span id="cb4-201"><a href="#cb4-201" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb4-202"><a href="#cb4-202" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> []</span>
+<span id="cb4-203"><a href="#cb4-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-204"><a href="#cb4-204" aria-hidden="true" tabindex="-1"></a><span class="co"># === Neue Dateien verarbeiten ===</span></span>
+<span id="cb4-205"><a href="#cb4-205" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> audio_path <span class="kw">in</span> audio_files:</span>
+<span id="cb4-206"><a href="#cb4-206" aria-hidden="true" tabindex="-1"></a>    audio_path <span class="op">=</span> os.path.abspath(audio_path).replace(<span class="st">"</span><span class="ch">\\</span><span class="st">"</span>, <span class="st">"/"</span>)</span>
+<span id="cb4-207"><a href="#cb4-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-208"><a href="#cb4-208" aria-hidden="true" tabindex="-1"></a>    <span class="co"># print(f"Processing: {audio_path}")  # Un-kommentieren, um Pfad sichtbar zu machen</span></span>
+<span id="cb4-209"><a href="#cb4-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-210"><a href="#cb4-210" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Transkription: WAV direkt mit librosa laden ---</span></span>
+<span id="cb4-211"><a href="#cb4-211" aria-hidden="true" tabindex="-1"></a>    audio, sr <span class="op">=</span> librosa.load(audio_path, sr<span class="op">=</span><span class="dv">16000</span>)  <span class="co"># resample auf 16 kHz</span></span>
+<span id="cb4-212"><a href="#cb4-212" aria-hidden="true" tabindex="-1"></a>    result <span class="op">=</span> model.transcribe(audio, language<span class="op">=</span><span class="st">"de"</span>)</span>
+<span id="cb4-213"><a href="#cb4-213" aria-hidden="true" tabindex="-1"></a>    text <span class="op">=</span> result[<span class="st">'text'</span>]</span>
+<span id="cb4-214"><a href="#cb4-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-215"><a href="#cb4-215" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Normalisierung für robuste Extraktion (Zahlwörter etc.)</span></span>
+<span id="cb4-216"><a href="#cb4-216" aria-hidden="true" tabindex="-1"></a>    text_norm <span class="op">=</span> normalize_transcript_for_extraction(text)</span>
+<span id="cb4-217"><a href="#cb4-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-218"><a href="#cb4-218" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Chiffre-Extraktion robust (NATO Aliases + Fuzzy)</span></span>
+<span id="cb4-219"><a href="#cb4-219" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-220"><a href="#cb4-220" aria-hidden="true" tabindex="-1"></a>    <span class="co"># NATO-Wort (auch x-ray / x ray) + 6 Ziffern (mit Leerzeichen/Kommas erlaubt)</span></span>
+<span id="cb4-221"><a href="#cb4-221" aria-hidden="true" tabindex="-1"></a>    code_match <span class="op">=</span> re.search(<span class="vs">r'</span><span class="dv">\b</span><span class="kw">(</span><span class="pp">[A-Za-zÄÖÜäöüß</span><span class="ch">\-</span><span class="pp"> ]</span><span class="op">+?</span><span class="kw">)</span><span class="dv">\s</span><span class="op">*</span><span class="pp">[:;,]</span><span class="op">?</span><span class="dv">\s</span><span class="op">*</span><span class="kw">(</span><span class="pp">[0-9][0-9</span><span class="dv">\s</span><span class="pp">,</span><span class="ch">\.\-\/</span><span class="pp">]</span><span class="op">{4,}</span><span class="pp">[0-9]</span><span class="kw">)</span><span class="dv">\b</span><span class="vs">'</span>, text_norm)</span>
+<span id="cb4-222"><a href="#cb4-222" aria-hidden="true" tabindex="-1"></a>    code <span class="op">=</span> <span class="va">None</span></span>
+<span id="cb4-223"><a href="#cb4-223" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> code_match:</span>
+<span id="cb4-224"><a href="#cb4-224" aria-hidden="true" tabindex="-1"></a>        nato_raw <span class="op">=</span> code_match.group(<span class="dv">1</span>)</span>
+<span id="cb4-225"><a href="#cb4-225" aria-hidden="true" tabindex="-1"></a>        digit_blob <span class="op">=</span> code_match.group(<span class="dv">2</span>)</span>
+<span id="cb4-226"><a href="#cb4-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-227"><a href="#cb4-227" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Alle Nicht-Ziffern raus =&gt; nur digits</span></span>
+<span id="cb4-228"><a href="#cb4-228" aria-hidden="true" tabindex="-1"></a>        digits <span class="op">=</span> re.sub(<span class="vs">r'</span><span class="dv">\D</span><span class="op">+</span><span class="vs">'</span>, <span class="st">''</span>, digit_blob)</span>
+<span id="cb4-229"><a href="#cb4-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-230"><a href="#cb4-230" aria-hidden="true" tabindex="-1"></a>        nato_norm <span class="op">=</span> normalize_nato_word(nato_raw)</span>
+<span id="cb4-231"><a href="#cb4-231" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> nato_norm <span class="kw">and</span> <span class="bu">len</span>(digits) <span class="op">==</span> <span class="dv">6</span>:</span>
+<span id="cb4-232"><a href="#cb4-232" aria-hidden="true" tabindex="-1"></a>            code <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>NATO_CANON[nato_norm]<span class="sc">}{</span>digits<span class="sc">}</span><span class="ss">"</span></span>
+<span id="cb4-233"><a href="#cb4-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-234"><a href="#cb4-234" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Fragen-Extraktion (auf normalisiertem Text) ---</span></span>
+<span id="cb4-235"><a href="#cb4-235" aria-hidden="true" tabindex="-1"></a>    question_answers <span class="op">=</span> robust_extract_questions(text_norm, expected_markers)</span>
+<span id="cb4-236"><a href="#cb4-236" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Ergebnis speichern</span></span>
+<span id="cb4-237"><a href="#cb4-237" aria-hidden="true" tabindex="-1"></a>    entry <span class="op">=</span> {<span class="st">"file_path"</span>: audio_path, <span class="st">"code"</span>: code, <span class="st">"full_transcript"</span>: text}</span>
+<span id="cb4-238"><a href="#cb4-238" aria-hidden="true" tabindex="-1"></a>    entry.update({<span class="ss">f"q</span><span class="sc">{</span>m<span class="sc">.</span>split()[<span class="dv">1</span>]<span class="sc">}</span><span class="ss">"</span>: question_answers.get(m) <span class="cf">for</span> m <span class="kw">in</span> expected_markers})</span>
+<span id="cb4-239"><a href="#cb4-239" aria-hidden="true" tabindex="-1"></a>    data.append(entry)</span>
+<span id="cb4-240"><a href="#cb4-240" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-241"><a href="#cb4-241" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- CSV aktualisieren ---</span></span>
+<span id="cb4-242"><a href="#cb4-242" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(data)</span>
+<span id="cb4-243"><a href="#cb4-243" aria-hidden="true" tabindex="-1"></a>    df.to_csv(output_csv, index<span class="op">=</span><span class="va">False</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>)</span>
+<span id="cb4-244"><a href="#cb4-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-245"><a href="#cb4-245" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- Log aktualisieren ---</span></span>
+<span id="cb4-246"><a href="#cb4-246" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(processed_log_path, <span class="st">"a"</span>, encoding<span class="op">=</span><span class="st">"utf-8"</span>) <span class="im">as</span> log:</span>
+<span id="cb4-247"><a href="#cb4-247" aria-hidden="true" tabindex="-1"></a>        log.write(audio_path <span class="op">+</span> <span class="st">"</span><span class="ch">\n</span><span class="st">"</span>)</span>
+<span id="cb4-248"><a href="#cb4-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-249"><a href="#cb4-249" aria-hidden="true" tabindex="-1"></a><span class="co"># === Abschlussmeldung ===</span></span>
+<span id="cb4-250"><a href="#cb4-250" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Fertig mit der Verarbeitung aller neuen Dateien."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div></div>
      </main>
 <!-- /main column -->  <script id="quarto-html-after-body" type="application/javascript">
